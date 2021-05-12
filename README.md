@@ -1,6 +1,6 @@
 # _Good_
 
-## A pretty good web app scaffold for Golang
+## A pretty good web scaffold for Golang
 
 1. Generate obvious, grok-able code
 1. Only basic dependencies
@@ -45,8 +45,8 @@ make it fun to generate and refactor new endpoints as needed.
 
 #### 2. Only Basic Dependencies
 
-With few mandatory dependencies<sup>[1]</sup> it is straightforward to
-integrate the libraries that have value for a given project.
+With few mandatory dependencies<sup>[1]</sup> it is more straightforward to
+add the other libraries you might want for your project.
 
 #### 3. Binary Embedded
 
@@ -54,9 +54,9 @@ The `//go:embed ` directive is configured so that the web server is fully embedd
 
 #### 4. Easy to Secure
 
-One way in and out, uniform endpoints greatly reduce the surface area you have to think about.
+One way in or out, uniform endpoints greatly reduce the surface area you have to think about.
 
 #### 5. No Surprises
 
-No grand abstractions or under-the-hood dynamics. If prose is not what you are striving for,
+No grand abstractions or under-the-hood dynamics. If poetry is not what you are striving for,
 a thoughtful bootstrap is a pretty good option!
