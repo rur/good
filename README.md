@@ -2,15 +2,16 @@
 
 ## A pretty good web scaffold for Golang
 
-1. Generates obvious, grok-able code
+1. Generate obvious, grok-able code
 1. Only basic dependencies
-1. Binary embedded
+1. Embedded in the binary
 1. Easy to secure
 1. No surprises
 
-`good` is a code-gen tool for embedding a web GUI in your Golang project. The scaffold
-is geared towards an admin portal or server dashboard. However, it is a general purpose setup,
-useful when a framework might be over-doing it.
+`good` is a code-gen tool for adding a web GUI to a Golang project. 
+The scaffold is geared towards integrated apps like admin portals
+or service dashboards. It's a general purpose setup however, with a focus
+on being low-maintenance over time.
 
 ### CLI Overview
 
@@ -39,14 +40,15 @@ and output any handler functions that are missing.
 
 #### 1. Generate obvious, grok-able code
 
-The output is mostly vanilla Golang and HTML. Code-gen helps us to embrace a little
-redundancy so our code can be more static and easier to modify. Go tooling and builtin HTML templates
-make it fun to generate and refactor new endpoints as needed. (It can also help performance ⚡️)
+The output is mostly vanilla Golang and HTML. We embrace a little redundancy
+so that the code will be more static, easier to customize and more obvious. This works
+well with the Golang tooling, which makes refactoring a cinch.
 
 #### 2. Only Basic Dependencies
 
-With few mandatory dependencies<sup>[1]</sup> it is more straightforward to
-add the other libraries you might want.
+It is simpler to add the libraries you need, if there are fewer there to begin with.
+We use a library for managing handlers ([treetop](https://github.com/rur/treetop)), and the go
+standard library for the rest.
 
 #### 3. Binary Embedded
 
@@ -54,12 +56,11 @@ The `//go:embed ` directive is configured so that the web server is fully embedd
 
 #### 4. Easy to Secure
 
-Only one way in or out, uniform endpoints greatly reduce the surface area you need to think about.
+Only one way in or out; uniform endpoints greatly reduce the surface area you need to think about.
 
 #### 5. No Surprises
 
-No grand abstractions or under-the-hood dynamics. If poetry is not what you are striving for,
-a nice bootstrap is a pretty good option!
+If a framework might be overkill for your project, this bootstrap is a pretty good alternative.
 
 ## QnA
 
@@ -70,16 +71,17 @@ Routing is the only untouchable code, mostly because it is tedious and not very 
 
 #### Why use a special library to manage handlers?
 
-This is what a web framework does that I don't want to live without.
-Coordination of requests, handlers and templates needs to be declarative (otherwise 🤯). [Treetop](https://github.com/rur/treetop)
-does this with no transitive dependencies.
+Basically, I don't want to live without plumbing! The coordination of handlers and templates with
+request routing needs to be declarative (otherwise 🤯). [Treetop](https://github.com/rur/treetop)
+does this without transitive dependencies.
 
 #### Where does the frontend go?
 
 TODO: ...
 
-#### Is this just a 'code bloat' generator?
+#### The generator creates lots of handlers, why so much bloat?
 
-Kinda yes, but there is method... Most _reuse_ is multi-purposing, and it sucks.
-Reusability (DRY) should emerge from refactoring. Generate some simple bloat-y code, make it work,
-refactoring as you go. The patterns will be obvious after a while.
+I take the view that DRY code ariases from repeated refactoring (see TDD). 
+Generating a bunch of simple working code is a nice way to start the refactoring process,
+but the rest is up to the programmer.
+
