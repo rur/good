@@ -9,13 +9,15 @@
 1. No surprises
 
 `good` is a code-gen tool for adding a web GUI to a Golang project. 
-The scaffold is geared towards integrated apps like admin portals
-or service dashboards. It's a general purpose setup however, with a focus
-on being low-maintenance over time.
+This is a a general purpose scaffold that focuses
+on being low maintenance over time.
+The bootstrap is geared towards intetgrated apps like an admin portal
+or service dashboard. 
 
 ### CLI Overview
 
-These commands support a rapid development flow: generate code and refactor to suit your needs.
+These commands support a quick loop of generating static code that can be refactored to suit your needs,
+while taking advantage of the Go developer tooling.
 
 #### Good Scaffold
 
