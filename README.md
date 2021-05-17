@@ -8,22 +8,21 @@
 1. Easy to secure
 1. No surprises
 
-`good` is a code-gen tool for adding a web GUI to a Golang project. 
-This is a a general purpose scaffold that focuses
-on being low maintenance over time.
-The bootstrap is geared towards intetgrated apps like an admin portal
-or service dashboard. 
+`good` is a code-gen tool for embedding a web GUI in a Golang application. 
+It outputs a hard-coded scaffold for a serverside app, with the aim of being
+general purpose and low maintenance over time. The examples are geared towards intetgrated apps
+like a service dashboard or admin tools. 
 
 ### CLI Overview
 
-These commands support a quick loop of generating static code that can be refactored to suit your needs,
-while taking advantage of the Go developer tooling.
+The CLI workflow involves generating static code and refactoring to suit your needs, taking advantage of the
+Go development tooling.
 
 #### Good Scaffold
 
-    $ good scaffold portal
+    $ good scaffold portal home settings
 
-Create a new app at `[pkg]/portal`. The namespace is read from `./go.mod`.
+Create a new app at `[pkg]/portal` with two pages: home and settings. The namespace is read from `./go.mod`.
 
 #### Good Page
 
@@ -33,9 +32,9 @@ Add a new page 'mypage' to the portal (contains its own route config).
 
 #### Good Routes
 
-    $ good routes ./portal/mypage/routemap.toml
+    $ good routes ./portal/settings/routemap.toml
 
-(Re)generate the routing code from a config file. This will overwrite `./portal/mypage/routemap.go`
+(Re)generate the routing code from a config file. This will overwrite `./portal/settings/routemap.go`
 and output any handler functions that are missing.
 
 ## Intro
