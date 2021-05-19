@@ -1,0 +1,47 @@
+package [[ .Name ]]
+
+import (
+	"github.com/rur/treetop"
+	"[[ .Namespace ]]/page"
+)
+
+func Routes(m page.Mux, exec treetop.ViewExecutor) {
+	[[ block "routes" . ]]
+	[[ range $index, $view := .Views ]]
+	[[ $view.Assignment ]] := treetop.NewView(
+		"[[ $view.Template ]]",
+		[[ $view.Handler ]],
+	)
+	[[ end ]]
+	[[ range $index, $entry := .Entries -]]
+	[[ if eq $entry.Type "DefaultSubView" -]]
+	[[ $entry.Assignment ]] [[ $entry.Extends ]].NewDefaultSubView(
+		"[[ $entry.Block ]]",
+		"[[ $entry.Template ]]",
+		[[ $entry.Handler ]],
+	)
+	[[- else if eq $entry.Type "SubView" -]]
+	[[ $entry.Assignment ]] [[ $entry.Extends ]].NewSubView(
+		"[[ $entry.Block ]]",
+		"[[ $entry.Template ]]",
+		[[ $entry.Handler ]],
+	)
+	[[- else if eq $entry.Type "Spacer" ]]
+	// [[ $entry.Name ]]
+	[[- else -]]
+	nil // unknown entry type: [[ $entry.Type ]]
+	[[- end ]]
+	[[ end ]][[ range $index, $route := .Routes ]]
+	m.Handle[[ $route.Method ]]("[[ $route.Path ]]",
+		[[ if not $route.Includes ]]exec.NewViewHandler([[ $route.Reference ]])
+		[[- else ]]exec.NewViewHandler(
+			[[ $route.Reference ]],
+			[[ range $index, $include := $route.Includes ]][[ $include ]],
+		[[end]])
+		[[- end ]]
+	[[- if eq $route.Type "Page" ]].PageOnly()
+	[[- else if eq $route.Type "Fragment" ]].FragmentOnly()
+	[[- end ]])
+	[[- end ]]
+	[[ end ]]
+}

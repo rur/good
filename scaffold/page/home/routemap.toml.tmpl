@@ -1,0 +1,34 @@
+_namespace = "[[ .Namespace ]]"
+_page = "[[ .Name ]]"
+_template = "[[ .SharedTemplates ]]/base.html.tmpl"
+_doc = "Landing page of the site"
+_uri = "/"
+
+    [[nav]]
+    _name = "[[ .PageSlugDash ]]-nav"
+    _default = true
+    _doc = "principle navigation"
+
+    [[wrapper]]
+    _name = "landing"
+    _default = true
+    _path = "/"
+    _doc = "General landing area"
+
+        [[wrapper.tab]]
+        _name = "tab1"
+        _path = "/tab1"
+
+        [[wrapper.tab]]
+        _name = "tab2"
+        _path = "/tab2"
+
+    [[wrapper]]
+    _name = "content"
+    _default = true
+    _doc = "Main content handler"
+
+        [[wrapper.tab]]
+        _name = "content-tab-nav"
+        _path = "/content"
+        _doc = "loads tabs wihtout need for Env or page resources"

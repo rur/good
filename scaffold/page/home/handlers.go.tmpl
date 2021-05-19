@@ -1,0 +1,57 @@
+package [[ .Name ]]
+
+import (
+	"net/http"
+
+	"github.com/rur/treetop"
+)
+
+[[ if .ViewHandlers -]]
+// -------------------------
+// [[.Name]] View Handlers
+// -------------------------
+[[ end ]]
+[[ range $index, $handler := .ViewHandlers ]]
+// [[ $handler.Info ]] [[ $handler.Type ]][[ if $handler.Extends ]]
+// Extends: [[ $handler.Extends ]][[ end ]]
+// Method: [[ $handler.Method ]][[ if $handler.Doc ]]
+// Doc: [[ $handler.Doc ]]
+[[- end ]]
+func [[ $handler.Identifier ]](rsc *resources, env *app.Env, rsp treetop.Response, req *http.Request)
+	data :=  struct {
+		HandlerInfo string[[ range $index, $block := .Blocks ]]
+		[[ $block.FieldName ]] interface{}
+		[[- end ]]
+	}{
+		HandlerInfo: "[[ $handler.Info ]]",[[ range $index, $block := .Blocks ]]
+		[[ $block.FieldName ]]: rsp.HandleSubView("[[ $block.Name ]]", req),
+		[[- end ]]
+	}
+	return data
+}
+[[ end ]]
+
+[[ if .BlockHandlers -]]
+// -------------------------
+// [[.Name]] Block Handlers
+// -------------------------
+[[ end ]]
+[[ range $index, $handler := .BlockHandlers ]]
+// [[ $handler.Info ]] [[ $handler.Type ]][[ if $handler.Extends ]]
+// Extends: [[ $handler.Extends ]][[ end ]]
+// Method: [[ $handler.Method ]][[ if $handler.Doc ]]
+// Doc: [[ $handler.Doc ]]
+[[- end ]]
+func [[ $handler.Identifier ]](rsc *resources, env *app.Env, rsp treetop.Response, req *http.Request)
+	data :=  struct {
+		HandlerInfo string[[ range $index, $block := .Blocks ]]
+		[[ $block.FieldName ]] interface{}
+		[[- end ]]
+	}{
+		HandlerInfo: "[[ $handler.Info ]]",[[ range $index, $block := .Blocks ]]
+		[[ $block.FieldName ]]: rsp.HandleSubView("[[ $block.Name ]]", req),
+		[[- end ]]
+	}
+	return data
+}
+[[ end ]]

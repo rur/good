@@ -1,0 +1,101 @@
+package [[ .Name ]]
+
+import (
+	"net/http"
+	"sync"
+
+	"github.com/rur/treetop"
+	"[[ .Namespace ]]/app"
+	"[[ .Namespace ]]/page"
+)
+
+// resources that are request-scoped
+type resources struct {
+	user    app.User
+	path    string
+	payload string
+	// EDITME: add request-specific resources, this is passed to request handlers
+	//         bound using bindResources(..)
+}
+
+// loadResources constructs a resources struct for use by the request handlers of this page
+// given the application Env and a Request instance.
+//
+// If an error or failure occurs this function is responsible for responding
+// directly to the client.
+//
+// Invoking the Write method of the ResponseWriter will prevent subsequent functions from
+// attempting to handle this request.
+func loadResources(env *app.Env, w http.ResponseWriter, req *http.Request) (rsc *resources, ok bool) {
+	if env.DB == nil {
+		env.ErrorLog.Panicln("DB is not initialized")
+		treetop.Redirect(w, req, "/error", http.StatusInternalServerError)
+		return
+	}
+
+	ok = true
+	rsc = &resources{
+		user: app.User{
+			Name: "test",
+		},
+	}
+	return
+}
+
+// teardownResources happens after the response has been written for the request,
+// this hook exists in case any special teardown is needed for your resources instance
+func teardownResources(rsc *resources, env *app.Env) {
+	// pass
+}
+
+//
+// caching and bind mechanics
+//
+
+var (
+	cache     map[uint32]*resources
+	cacheLock sync.RWMutex
+)
+
+type handlerWithResources func(*resources, *app.Env, treetop.Response, *http.Request) interface{}
+
+// bindResources is middleware with memoization which loads home page resources for local request handlers
+func bindResources(f handlerWithResources) page.ViewHandlerWithEnv {
+	return func(env *app.Env, rsp treetop.Response, req *http.Request) interface{} {
+		key := rsp.ResponseID()
+		cacheLock.RLock()
+		rsc, ok := cache[key]
+		cacheLock.RUnlock()
+		if ok {
+			return f(rsc, env, rsp, req)
+		}
+		// expensive path
+		rsc, ok = loadResources(env, rsp, req)
+		if !ok {
+			// an error ocurred, abort
+			return nil
+		}
+
+		// cache resources for this request ID and setup a
+		// callback to tear it down when the response is finished
+		cacheLock.Lock()
+		cache[key] = rsc
+		cacheLock.Unlock()
+		go func() {
+			// wait until the response is concluded and clear the cache entry
+			<-rsp.Context().Done()
+			cacheLock.Lock()
+			rsc, ok := cache[key]
+			delete(cache, key)
+			cacheLock.Unlock() // release lock before attempting teardown
+			if ok {
+				teardownResources(rsc, env)
+			}
+		}()
+		return f(rsc, env, rsp, req)
+	}
+}
+
+func init() {
+	cache = make(map[uint32]*resources)
+}

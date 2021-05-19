@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ .PageTitle }}</title>
+</head>
+<body>
+    {{ block "nav" .Nav }}
+    <div id="nav">nav</div>
+    {{ end }}
+
+    <h2>Block wrapper</h2>
+    {{ block "wrapper" .Wrapper }}
+    <div id="wrapper">wrapper</div>
+    {{ end }}
+
+    <script async src="/js/treetop.js"></script>
+    <script>
+    window.TREETOP_CONFIG = {
+        mountAttr: {
+            'test': (el) => {
+            }
+        },
+        unmountAttr: {
+            'test': (el) => {
+            }
+        },
+    };
+    if (window.treetop) {
+        winodw.treetop.init(window.TREETOP_CONFIG);
+    }
+    </script>
+</body>
+</html>
