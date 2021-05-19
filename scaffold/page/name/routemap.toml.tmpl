@@ -5,23 +5,23 @@ _doc = "Landing page of the site"
 _uri = "/"
 
     [[nav]]
-    _name = "[[ .PageSlugDash ]]-nav"
+    _name = "[[ .NameSlugDash ]]-nav"
     _default = true
     _doc = "principle navigation"
 
     [[wrapper]]
     _name = "landing"
     _default = true
-    _path = "/"
+    _path = "/[[ .NameSlugDash ]]"
     _doc = "General landing area"
 
         [[wrapper.tab]]
         _name = "tab1"
-        _path = "/tab1"
+        _path = "/[[ .NameSlugDash ]]/tab1"
 
         [[wrapper.tab]]
         _name = "tab2"
-        _path = "/tab2"
+        _path = "/[[ .NameSlugDash ]]/tab2"
 
     [[wrapper]]
     _name = "content"
@@ -30,5 +30,5 @@ _uri = "/"
 
         [[wrapper.tab]]
         _name = "content-tab-nav"
-        _path = "/content"
+        _path = "/[[ .NameSlugDash ]]/content"
         _doc = "loads tabs wihtout need for Env or page resources"
