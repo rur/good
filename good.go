@@ -13,9 +13,9 @@ var usage = `usage: good <command> [<args>]
 
 These are scaffolding commands for the Good tool:
 
-	scaffold <package_name>
-	page     <package_name> <page_name>
-	routes   <page_package_name>
+	scaffold <package_name> [<page_name>...]    Create a new site scaffold at at a package relative to the working dir
+	page     <package_name> <page_name>         Add a new page to an existing scaffold
+	routes   <routemap_toml>                    Generate a routes.go file from a TOML config
 
 TODO: add more docs
 
@@ -31,7 +31,7 @@ func main() {
 	}
 	switch os.Args[1] {
 	case "scaffold":
-		mod, err := generate.ReadGoModFile("./go.mod")
+		mod, err := generate.GoList()
 		mustNot(err)
 		dest, err := generate.ValidateScaffoldPath(os.Args[2])
 		mustNot(err)
@@ -40,12 +40,12 @@ func main() {
 		err = generate.FlushFiles(files)
 		mustNot(err)
 		// TODO: create pages for os.Args[3:] default to a single example page
-		fmt.Printf("Created good scaffold for %s! go version %d.%d", mod.Module, mod.MajorVersion, mod.MinorVersion)
+		fmt.Printf("Created good scaffold for %s!", mod)
 
 	case "page":
-		mod, err := generate.ReadGoModFile("./go.mod")
+		mod, err := generate.GoList()
 		mustNot(err)
-		fmt.Printf("Good page for %s! go version %d.%d", mod.Module, mod.MajorVersion, mod.MinorVersion)
+		fmt.Printf("Good page for %s!", mod)
 	case "routes":
 		fmt.Println("Good routes")
 	default:

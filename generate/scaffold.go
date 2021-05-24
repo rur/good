@@ -14,16 +14,11 @@ import (
 )
 
 // Scaffold will return a list of files that need to be created
-func Scaffold(mod GoMod, dest string, scaffold fs.FS) (files []File, err error) {
-	// scaffold requires go version 1.16 or greater
-	if mod.MajorVersion <= 1 && mod.MinorVersion < 16 {
-		return nil, fmt.Errorf("Scaffold requires your project to be Golang version 1.16 or greater, got %d.%d", mod.MajorVersion, mod.MinorVersion)
-	}
-
+func Scaffold(mod string, dest string, scaffold fs.FS) (files []File, err error) {
 	data := struct {
 		Namespace string
 	}{
-		Namespace: fmt.Sprintf("%s/%s", mod.Module, dest),
+		Namespace: fmt.Sprintf("%s/%s", mod, dest),
 	}
 
 	// Assemble the file data we intend to write to disk in memory
