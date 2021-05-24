@@ -37,13 +37,16 @@ func main() {
 		mustNot(err)
 		files, err := generate.Scaffold(pkg.Module.Path, dest, scaffold)
 		mustNot(err)
+
+		// TODO: create pages for os.Args[3:] default to a single example page
+		// TODO: run pages update on scaffold
+
 		err = generate.FlushFiles(files)
 		mustNot(err)
 		sitePkg, err := generate.GoListPackage("./" + os.Args[2])
 		if err != nil {
 			log.Fatalf("Scaffold was create with errors: %s", err)
 		}
-		// TODO: create pages for os.Args[3:] default to a single example page
 		fmt.Printf("Created good scaffold for %s!", sitePkg.ImportPath)
 
 	case "page":

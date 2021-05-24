@@ -8,19 +8,19 @@ import (
 )
 
 type GoModule struct {
-	Path      string
-	Main      bool
-	Dir       string
-	GoMod     string
-	GoVersion string
+	Path      string `json:"Path"`
+	Main      bool   `json:"Main"`
+	Dir       string `json:"Dir"`
+	GoMod     string `json:"GoMod"`
+	GoVersion string `json:"GoVersion"`
 }
 
 type GoPackage struct {
-	Dir        string
-	ImportPath string
-	Name       string
-	Root       string
-	Module     GoModule
+	Dir        string   `json:"Dir"`
+	ImportPath string   `json:"ImportPath"`
+	Name       string   `json:"Name"`
+	Root       string   `json:"Root"`
+	Module     GoModule `json:"Module"`
 }
 
 // GoListPackage will get the Go module information for the go path provied
