@@ -11,3 +11,7 @@ good
 *.swp
 *.swo
 .vscode
+
+# General purpose dirs
+admin/
+idea/

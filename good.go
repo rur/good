@@ -31,21 +31,26 @@ func main() {
 	}
 	switch os.Args[1] {
 	case "scaffold":
-		mod, err := generate.GoList()
+		pkg, err := generate.GoListPackage(".")
 		mustNot(err)
 		dest, err := generate.ValidateScaffoldPath(os.Args[2])
 		mustNot(err)
-		files, err := generate.Scaffold(mod, dest, scaffold)
+		files, err := generate.Scaffold(pkg.Module.Path, dest, scaffold)
 		mustNot(err)
 		err = generate.FlushFiles(files)
 		mustNot(err)
+		sitePkg, err := generate.GoListPackage("./" + os.Args[2])
+		if err != nil {
+			log.Fatalf("Scaffold was create with errors: %s", err)
+		}
 		// TODO: create pages for os.Args[3:] default to a single example page
-		fmt.Printf("Created good scaffold for %s!", mod)
+		fmt.Printf("Created good scaffold for %s!", sitePkg.ImportPath)
 
 	case "page":
-		mod, err := generate.GoList()
+		pkg, err := generate.GoListPackage(".")
 		mustNot(err)
-		fmt.Printf("Good page for %s!", mod)
+		mustNot(err)
+		fmt.Printf("Good page for %s!", pkg.ImportPath)
 	case "routes":
 		fmt.Println("Good routes")
 	default:
