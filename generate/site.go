@@ -122,7 +122,7 @@ func ValidateScaffoldPackage(pkg GoModule, name string, scaffold fs.FS) (string,
 	// Scan for conflict between the scaffold and the target FS
 	// As a sanity check, accept at most 500 dept one child names
 	fh, err := os.Open(siteDir)
-	if err != os.ErrNotExist {
+	if err == os.ErrNotExist {
 		// this is fine
 		return sitePkg, siteDir, nil
 	}
@@ -131,7 +131,7 @@ func ValidateScaffoldPackage(pkg GoModule, name string, scaffold fs.FS) (string,
 	if err != io.EOF {
 		for i := 0; i < len(names); i++ {
 			if _, ok := blockList[names[i]]; ok {
-				return "", "", fmt.Errorf("conflicking file or direcotry '%s'", names[i])
+				return "", "", fmt.Errorf("conflicting file or direcotry '%s'", names[i])
 			}
 		}
 	}
