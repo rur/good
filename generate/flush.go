@@ -7,6 +7,8 @@ import (
 
 const FILE_PERMS = 0755
 
+// File description and contents that will later be
+// flushed to disk
 type File struct {
 	Dir      string
 	Name     string
@@ -29,6 +31,8 @@ func FlushFiles(files []File) error {
 	return nil
 }
 
+// flushFile will attempt to build the necessary folder
+// structure and write content bytes to disk
 func flushFile(file File) error {
 	err := os.MkdirAll(file.Dir, FILE_PERMS)
 	if err != nil {

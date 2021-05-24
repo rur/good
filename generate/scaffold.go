@@ -21,8 +21,6 @@ func Scaffold(mod string, dest string, scaffold fs.FS) (files []File, err error)
 		Namespace: fmt.Sprintf("%s/%s", mod, dest),
 	}
 
-	// Assemble the file data we intend to write to disk in memory
-	//
 	// main.go
 	files = append(files, File{
 		Dir:      dest,
@@ -36,7 +34,7 @@ func Scaffold(mod string, dest string, scaffold fs.FS) (files []File, err error)
 		Contents: mustExecute("scaffold/gen.go.tmpl", data, scaffold),
 	})
 	// static/*
-	err = fs.WalkDir(scaffold, "scaffold/static", func(path string, d fs.DirEntry, err error) error {
+	if err = fs.WalkDir(scaffold, "scaffold/static", func(path string, d fs.DirEntry, err error) error {
 		if d.IsDir() {
 			return nil
 		}
@@ -47,12 +45,11 @@ func Scaffold(mod string, dest string, scaffold fs.FS) (files []File, err error)
 			Contents: mustExecute(path, data, scaffold),
 		})
 		return nil
-	})
-	if err != nil {
+	}); err != nil {
 		return
 	}
 	// app/*
-	err = fs.WalkDir(scaffold, "scaffold/app", func(path string, d fs.DirEntry, err error) error {
+	if err = fs.WalkDir(scaffold, "scaffold/app", func(path string, d fs.DirEntry, err error) error {
 		if d.IsDir() {
 			return nil
 		}
@@ -62,16 +59,15 @@ func Scaffold(mod string, dest string, scaffold fs.FS) (files []File, err error)
 			Contents: mustExecute(path, data, scaffold),
 		})
 		return nil
-	})
+	}); err != nil {
+		return
+	}
 	// page/helper.go
 	files = append(files, File{
 		Dir:      filepath.Join(dest, "page"),
 		Name:     "helper.go",
 		Contents: mustExecute("scaffold/page/helper.go.tmpl", data, scaffold),
 	})
-	if err != nil {
-		return
-	}
 	// page/templates/*
 	err = fs.WalkDir(scaffold, "scaffold/page/templates", func(path string, d fs.DirEntry, err error) error {
 		if d.IsDir() {
@@ -92,7 +88,7 @@ func Scaffold(mod string, dest string, scaffold fs.FS) (files []File, err error)
 func ValidateScaffoldPath(name string) (string, error) {
 	dest := path.Clean(name)
 	if path.IsAbs(dest) || strings.Contains(dest, "..") {
-		return "", fmt.Errorf("Invalid scaffold path '%s'", name)
+		return "", fmt.Errorf("invalid scaffold path '%s'", name)
 	}
 
 	// now to make sure that it is not a file or a non-empty directory
@@ -108,7 +104,7 @@ func ValidateScaffoldPath(name string) (string, error) {
 		// empty dir, this is fine
 		return dest, nil
 	} else if err == nil {
-		err = fmt.Errorf("Destination scaffold directory is not empty")
+		err = fmt.Errorf("destination scaffold directory is not empty")
 	}
 	return "", err
 }
