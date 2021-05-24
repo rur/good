@@ -33,12 +33,25 @@ func main() {
 	case "scaffold":
 		pkg, err := generate.GoListPackage(".")
 		mustNot(err)
-		dest, err := generate.ValidateScaffoldPath(os.Args[2])
+		siteDir, siteModule, err := generate.ValidateScaffoldPackage(pkg.Module, os.Args[2], scaffold)
 		mustNot(err)
-		files, err := generate.Scaffold(pkg.Module.Path, dest, scaffold)
+		files, err := generate.SiteScaffold(siteModule, siteDir, scaffold)
 		mustNot(err)
 
-		// TODO: create pages for os.Args[3:] default to a single example page
+		// setup initial pages
+		var pages []string
+		if len(os.Args) > 2 {
+			pages = os.Args[2:]
+		} else {
+			// if no page names were listed, add a page called 'example'
+			pages = []string{"example"}
+		}
+		for _, page := range pages {
+			pFiles, err := generate.ScaffoldPage(pkg.Module.Path, os.Args[2], page, scaffold)
+			mustNot(err)
+			files = append(files, pFiles...)
+		}
+
 		// TODO: run pages update on scaffold
 
 		err = generate.FlushFiles(files)
