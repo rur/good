@@ -14,18 +14,26 @@ import (
 )
 
 // SiteScaffold will return a list of files that need to be created
-func SiteScaffold(mod string, dest string, scaffold fs.FS) (files []File, err error) {
+func SiteScaffold(mod string, dest string, pages []string, scaffold fs.FS) (files []File, err error) {
 	data := struct {
 		Namespace string
+		Pages     []string
 	}{
-		Namespace: fmt.Sprintf("%s/%s", mod, dest),
+		Namespace: mod,
+		Pages:     pages,
 	}
 
-	// gen.go
+	// main.go
 	files = append(files, File{
 		Dir:      dest,
 		Name:     "main.go",
 		Contents: mustExecute("scaffold/main.go.tmpl", data, scaffold),
+	})
+	// pages.go
+	files = append(files, File{
+		Dir:      dest,
+		Name:     "pages.go",
+		Contents: mustExecute("scaffold/pages.go.tmpl", data, scaffold),
 	})
 	// gen.go
 	files = append(files, File{
@@ -62,15 +70,12 @@ func SiteScaffold(mod string, dest string, scaffold fs.FS) (files []File, err er
 	}); err != nil {
 		return
 	}
-	// page/helper.go
-	files = append(files, File{
-		Dir:      filepath.Join(dest, "page"),
-		Name:     "helper.go",
-		Contents: mustExecute("scaffold/page/helper.go.tmpl", data, scaffold),
-	})
-	// page/templates/*
-	err = fs.WalkDir(scaffold, "scaffold/page/templates", func(path string, d fs.DirEntry, err error) error {
+	// page/
+	err = fs.WalkDir(scaffold, "scaffold/page", func(path string, d fs.DirEntry, err error) error {
 		if d.IsDir() {
+			if path == "scaffold/page/name" {
+				return fs.SkipDir
+			}
 			return nil
 		}
 		files = append(files, File{
@@ -96,7 +101,7 @@ func ValidateScaffoldPackage(pkg GoModule, name string, scaffold fs.FS) (string,
 	)
 	if name == "." {
 		sitePkg = pkg.Path
-		siteDir = pkg.Dir
+		siteDir = ""
 	} else if strings.HasPrefix(name, pkg.Path) {
 		return "", "", fmt.Errorf("site package name must be relative to the current module, got %s", name)
 	} else {
@@ -104,7 +109,7 @@ func ValidateScaffoldPackage(pkg GoModule, name string, scaffold fs.FS) (string,
 		name = strings.TrimPrefix(name, "./")
 		parts := strings.Split(name, "/")
 		sitePkg = strings.Join([]string{pkg.Path, name}, "/")
-		siteDir = filepath.Join(append([]string{pkg.Dir}, parts...)...)
+		siteDir = filepath.Join(parts...)
 	}
 
 	// now try to check if there will be files write conflicts
@@ -142,7 +147,7 @@ func ValidateScaffoldPackage(pkg GoModule, name string, scaffold fs.FS) (string,
 // Since the templates are embedded we can treat failure at this stage
 // as a bug
 func mustExecute(name string, data interface{}, scaffold fs.FS) []byte {
-	tmpl, err := template.New(path.Base(name)).Delims("[[", "]]").ParseFS(scaffold, name)
+	tmpl, err := template.New(path.Base(name)).Delims("<<", ">>").ParseFS(scaffold, name)
 	if err != nil {
 		log.Fatalln("Failed to parse template", name, err)
 	}

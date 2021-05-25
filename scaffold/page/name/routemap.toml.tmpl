@@ -1,34 +1,14 @@
-_namespace = "[[ .Namespace ]]"
-_page = "[[ .Name ]]"
-_template = "[[ .SharedTemplates ]]/base.html.tmpl"
-_doc = "Landing page of the site"
-_uri = "/"
+_namespace = "<< .Namespace >>"
+_page = "<< .Name >>"
+_template = "<< .PageEntry.Template >>"
+_handler = "<< .PageEntry.Handler >>"
+_doc = "Base HTML template for << .Name >> page"
+_uri = "/<< .Name >>"
 
-    [[nav]]
-    _name = "[[ .NameSlugDash ]]-nav"
+    [[content]]
+    _name = "<< .Name >>-placeholder"
     _default = true
-    _doc = "principle navigation"
-
-    [[wrapper]]
-    _name = "landing"
-    _default = true
-    _path = "/[[ .NameSlugDash ]]"
-    _doc = "General landing area"
-
-        [[wrapper.tab]]
-        _name = "tab1"
-        _path = "/[[ .NameSlugDash ]]/tab1"
-
-        [[wrapper.tab]]
-        _name = "tab2"
-        _path = "/[[ .NameSlugDash ]]/tab2"
-
-    [[wrapper]]
-    _name = "content"
-    _default = true
-    _doc = "Main content handler"
-
-        [[wrapper.tab]]
-        _name = "content-tab-nav"
-        _path = "/[[ .NameSlugDash ]]/content"
-        _doc = "loads tabs wihtout need for Env or page resources"
+    _doc = "Placeholder page"
+    _path = "/<< .Name >>"
+    _template = "<< .Templates >>/placedholder.html.tmpl"
+    _handler = "env.Bind(bindResources(placedholderHandler))"

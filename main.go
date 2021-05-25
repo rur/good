@@ -31,30 +31,31 @@ func main() {
 	}
 	switch os.Args[1] {
 	case "scaffold":
-		pkg, err := generate.GoListPackage(".")
-		mustNot(err)
-		siteDir, siteModule, err := generate.ValidateScaffoldPackage(pkg.Module, os.Args[2], scaffold)
-		mustNot(err)
-		files, err := generate.SiteScaffold(siteModule, siteDir, scaffold)
-		mustNot(err)
-
 		// setup initial pages
 		var pages []string
-		if len(os.Args) > 2 {
-			pages = os.Args[2:]
+		if len(os.Args) > 3 {
+			pages = os.Args[3:]
 		} else {
 			// if no page names were listed, add a page called 'example'
 			pages = []string{"example"}
 		}
+
+		pkg, err := generate.GoListPackage(".")
+		mustNot(err)
+		siteModule, siteDir, err := generate.ValidateScaffoldPackage(pkg.Module, os.Args[2], scaffold)
+		mustNot(err)
+		files, err := generate.SiteScaffold(siteModule, siteDir, pages, scaffold)
+		mustNot(err)
+
 		for _, page := range pages {
-			pFiles, err := generate.ScaffoldPage(pkg.Module.Path, os.Args[2], page, scaffold)
+			pFiles, err := generate.ScaffoldPage(siteModule, siteDir, page, scaffold)
 			mustNot(err)
 			files = append(files, pFiles...)
 		}
 
 		// TODO: run pages update on scaffold
 
-		err = generate.FlushFiles(files)
+		err = generate.FlushFiles(pkg.Module.Dir, files)
 		mustNot(err)
 		sitePkg, err := generate.GoListPackage("./" + os.Args[2])
 		if err != nil {
@@ -70,6 +71,7 @@ func main() {
 	case "routes":
 		fmt.Println("Good routes")
 	default:
+		fmt.Println(usage)
 		log.Fatalf("Unknown command %s", os.Args[1])
 	}
 	fmt.Println()

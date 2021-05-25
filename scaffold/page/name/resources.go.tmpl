@@ -1,12 +1,12 @@
-package [[ .Name ]]
+package << .Name >>
 
 import (
 	"net/http"
 	"sync"
 
 	"github.com/rur/treetop"
-	"[[ .Namespace ]]/app"
-	"[[ .Namespace ]]/page"
+	"<< .Namespace >>/app"
+	"<< .Namespace >>/page"
 )
 
 // resources that are request-scoped
@@ -27,12 +27,6 @@ type resources struct {
 // Invoking the Write method of the ResponseWriter will prevent subsequent functions from
 // attempting to handle this request.
 func loadResources(env *app.Env, w http.ResponseWriter, req *http.Request) (rsc *resources, ok bool) {
-	if env.DB == nil {
-		env.ErrorLog.Panicln("DB is not initialized")
-		treetop.Redirect(w, req, "/error", http.StatusInternalServerError)
-		return
-	}
-
 	ok = true
 	rsc = &resources{
 		user: app.User{
