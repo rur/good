@@ -14,13 +14,15 @@ import (
 )
 
 // SiteScaffold will return a list of files that need to be created
-func SiteScaffold(mod string, dest string, pages []string, scaffold fs.FS) (files []File, err error) {
+func SiteScaffold(mod, dest string, pages []string, scaffold fs.FS) (files []File, err error) {
 	data := struct {
-		Namespace string
-		Pages     []string
+		SiteDirRel string
+		Namespace  string
+		Pages      []string
 	}{
-		Namespace: mod,
-		Pages:     pages,
+		SiteDirRel: dest,
+		Namespace:  mod,
+		Pages:      pages,
 	}
 
 	// main.go
@@ -126,7 +128,7 @@ func ValidateScaffoldPackage(pkg GoModule, name string, scaffold fs.FS) (string,
 
 	// Scan for conflict between the scaffold and the target FS
 	// As a sanity check, accept at most 500 dept one child names
-	fh, err := os.Open(siteDir)
+	fh, err := os.Open(filepath.Join(pkg.Dir, siteDir))
 	if err == os.ErrNotExist {
 		// this is fine
 		return sitePkg, siteDir, nil

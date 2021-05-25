@@ -1,8 +1,6 @@
 package generate
 
 import (
-	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -24,20 +22,9 @@ func (f File) Path() string {
 
 // FlushFiles will write files out to a temp directory and move those files
 // to into the go package
-func FlushFiles(modulePath string, files []File) error {
-	tmp, err := ioutil.TempDir("", "goob-generate-")
-	if err != nil {
-		return fmt.Errorf("failed to create a temporary directory: %s", err)
-	}
+func FlushFiles(modDir string, files []File) error {
 	for _, file := range files {
-		err := flushFile(tmp, file)
-		if err != nil {
-			return err
-		}
-	}
-	items, _ := ioutil.ReadDir(tmp)
-	for _, item := range items {
-		err = os.Rename(filepath.Join(tmp, item.Name()), filepath.Join(modulePath, item.Name()))
+		err := flushFile(modDir, file)
 		if err != nil {
 			return err
 		}

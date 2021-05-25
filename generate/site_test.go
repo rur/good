@@ -28,13 +28,13 @@ func TestValidateScaffoldPackage(t *testing.T) {
 			name:    "basic",
 			path:    "./admin/site",
 			wantPkg: "github.com/rur/good/admin/site",
-			wantDir: filepath.Join(pkg.Module.Dir, "admin", "site"),
+			wantDir: filepath.Join("admin", "site"),
 		},
 		{
 			name:    "using . as destination",
 			path:    ".",
 			wantPkg: "github.com/rur/good",
-			wantDir: pkg.Module.Dir,
+			wantDir: "",
 		},
 		{
 			name:    "conflicting file",

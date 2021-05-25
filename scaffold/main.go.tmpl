@@ -43,9 +43,7 @@ func init() {
 	flag.UintVar(&port, "port", 8000, "Port number to bind to")
 	flag.Parse()
 
-	//
-	// Initialize server-wide resources and services
-	//
+	// EDITME: Initialize server-wide resources and services
 	if devMode {
 		// all static assets and templates should be read from disk at runtime
 		fmt.Println("Server running in DEVELOPMENT MODE")
@@ -65,7 +63,7 @@ func init() {
 	}
 	env = &app.Env{
 		// EDITME: pass application-wide config & resources to handlers using the env
-		DB: nil, // TODO: initialize database connection pool
+		DB: nil, // TODO: initialize database connection pool here
 	}
 }
 
