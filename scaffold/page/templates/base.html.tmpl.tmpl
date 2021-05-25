@@ -7,13 +7,8 @@
     <title>{{ .PageTitle }}</title>
 </head>
 <body>
-    {{ block "nav" .Nav }}
-    <div id="nav">nav</div>
-    {{ end }}
-
-    <h2>Block wrapper</h2>
-    {{ block "wrapper" .Wrapper }}
-    <div id="wrapper">wrapper</div>
+    {{ block "content" .Content }}
+    <div id="content">fallback content</div>
     {{ end }}
 
     <script async src="/js/treetop.js"></script>

@@ -1,6 +1,7 @@
 package generate
 
 import (
+	"errors"
 	"io/fs"
 	"path/filepath"
 	"strings"
@@ -41,6 +42,10 @@ type Route struct {
 
 // ScaffoldPage will assemble files for adding a new page to the site scaffold
 func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []File, err error) {
+	if name == "templates" {
+		return nil, errors.New("'templates' cannot be used as a page name, it is reserved for shared template files")
+	}
+	// setup page with some placeholder data
 	data := struct {
 		Name      string // Go package name for page
 		Namespace string
@@ -71,9 +76,10 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 		},
 		Entries: []Entry{{
 			Assignment: "placeholder",
+			Block:      "content",
 			Type:       "DefaultSubView",
 			Extends:    name,
-			Template:   filepath.Join(siteDir, "page", name, "templates", "placeholder.html.tmpl"),
+			Template:   filepath.Join(siteDir, "page", name, "templates", "content", "placeholder.html.tmpl"),
 			Handler:    "hlp.BindEnv(bindResources(placeholderHandler))",
 		}},
 		Routes: []Route{{

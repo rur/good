@@ -10,8 +10,10 @@ import (
 // BaseHandler is the root handler use for most pages
 func BaseHandler(env *app.Env, rsp treetop.Response, req *http.Request) interface{} {
 	return struct {
-		Content     interface{}
+		PageTitle string
+		Content   interface{}
 	}{
-		Content:     rsp.HandleSubView("content", req),
+		PageTitle: "Base page",
+		Content:   rsp.HandleSubView("content", req),
 	}
 }

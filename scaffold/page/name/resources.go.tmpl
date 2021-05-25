@@ -9,24 +9,20 @@ import (
 	"<< .Namespace >>/page"
 )
 
-// resources that are request-scoped
+// resources that are request-scoped data bound to page handlers
 type resources struct {
 	user    app.User
-	path    string
-	payload string
-	// EDITME: add request-specific resources, this is passed to request handlers
-	//         bound using bindResources(..)
+	// EDITME: add request specific resources for this page
 }
 
 // loadResources constructs a resources struct for use by the request handlers of this page
-// given the application Env and a Request instance.
 //
-// If an error or failure occurs this function is responsible for responding
-// directly to the client.
+// If an error or failure occurs this function is responsible for responding  directly to the client.
 //
 // Invoking the Write method of the ResponseWriter will prevent subsequent functions from
-// attempting to handle this request.
+// handling this request.
 func loadResources(env *app.Env, w http.ResponseWriter, req *http.Request) (rsc *resources, ok bool) {
+	// EDITME: setup your handler resources here
 	ok = true
 	rsc = &resources{
 		user: app.User{
@@ -43,12 +39,12 @@ func teardownResources(rsc *resources, env *app.Env) {
 }
 
 //
-// caching and bind mechanics
+// resource caching mechanics
 //
 
 var (
-	cache     map[uint32]*resources
-	cacheLock sync.RWMutex
+	rscCache     map[uint32]*resources
+	rscCacheLock sync.RWMutex
 )
 
 type handlerWithResources func(*resources, *app.Env, treetop.Response, *http.Request) interface{}
@@ -57,9 +53,9 @@ type handlerWithResources func(*resources, *app.Env, treetop.Response, *http.Req
 func bindResources(f handlerWithResources) page.ViewHandlerWithEnv {
 	return func(env *app.Env, rsp treetop.Response, req *http.Request) interface{} {
 		key := rsp.ResponseID()
-		cacheLock.RLock()
-		rsc, ok := cache[key]
-		cacheLock.RUnlock()
+		rscCacheLock.RLock()
+		rsc, ok := rscCache[key]
+		rscCacheLock.RUnlock()
 		if ok {
 			return f(rsc, env, rsp, req)
 		}
@@ -70,18 +66,18 @@ func bindResources(f handlerWithResources) page.ViewHandlerWithEnv {
 			return nil
 		}
 
-		// cache resources for this request ID and setup a
+		// Cache resources for this response ID and setup a
 		// callback to tear it down when the response is finished
-		cacheLock.Lock()
-		cache[key] = rsc
-		cacheLock.Unlock()
+		rscCacheLock.Lock()
+		rscCache[key] = rsc
+		rscCacheLock.Unlock()
 		go func() {
-			// wait until the response is concluded and clear the cache entry
+			// wait until the response is concluded and clear the rscCache entry
 			<-rsp.Context().Done()
-			cacheLock.Lock()
-			rsc, ok := cache[key]
-			delete(cache, key)
-			cacheLock.Unlock() // release lock before attempting teardown
+			rscCacheLock.Lock()
+			rsc, ok := rscCache[key]
+			delete(rscCache, key)
+			rscCacheLock.Unlock() // release lock before attempting teardown
 			if ok {
 				teardownResources(rsc, env)
 			}
@@ -91,5 +87,5 @@ func bindResources(f handlerWithResources) page.ViewHandlerWithEnv {
 }
 
 func init() {
-	cache = make(map[uint32]*resources)
+	rscCache = make(map[uint32]*resources)
 }
