@@ -43,7 +43,6 @@ func init() {
 	flag.UintVar(&port, "port", 8000, "Port number to bind to")
 	flag.Parse()
 
-	// EDITME: Initialize server-wide resources and services
 	if devMode {
 		// all static assets and templates should be read from disk at runtime
 		fmt.Println("Server running in DEVELOPMENT MODE")
@@ -61,28 +60,31 @@ func init() {
 			FS: http.FS(templates),
 		}
 	}
+
+	// EDITME: initialize site-wide config & resources. Env will be passed to handlers
 	env = &app.Env{
-		// EDITME: pass application-wide config & resources to handlers using the env
-		DB: nil, // TODO: initialize database connection pool here
+		DB: nil,
 	}
 }
 
 func main() {
 	m := &http.ServeMux{}
-	// see ./page.go
+
+	// see ./pages.go
 	registerPages(&page.DefaultHelper{
 		Env: env,
 		Mux: m,
 	}, exec)
 
 	if errs := exec.FlushErrors(); len(errs) > 0 {
-		// list templates referred by the router but could not be found
+		// templates referred by the router but could not be found
 		log.Fatalf("Template errors:\n%s", errs)
 	}
 
 	m.Handle("/styles/", http.FileServer(staticFS))
 	m.Handle("/js/", http.FileServer(staticFS))
 	m.Handle("/public/", http.FileServer(staticFS))
+	// TODO: embed treetop client in serverside library
 	// m.Handle("/js/treetop.js", treetop.ServeClientLibrary)
 
 	addr := fmt.Sprintf(":%d", port)

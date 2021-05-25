@@ -101,7 +101,7 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 	// page/name/handlers.go
 	files = append(files, File{
 		Dir:      pageDir,
-		Name:     "handles.go",
+		Name:     "handlers.go",
 		Contents: mustExecute("scaffold/page/name/handlers.go.tmpl", data, scaffold),
 	})
 	// page/name/resources.go
