@@ -3,74 +3,70 @@ package generate
 import (
 	"embed"
 	"io/fs"
-	"path"
+	"path/filepath"
+	"strings"
 	"testing"
 )
 
 //go:embed testdata/scaffold
 var testScaffold embed.FS
 
-func TestValidateScaffoldPackage_Basic(t *testing.T) {
+func TestValidateScaffoldPackage(t *testing.T) {
 	scaffold, _ := fs.Sub(testScaffold, "testdata")
-
 	pkg, err := GoListPackage(".")
 	if err != nil {
 		t.Fatal("ValidateScaffoldPackage error getting local package details", err)
 	}
-	sitePkg, siteDir, err := ValidateScaffoldPackage(
-		pkg.Module, "./admin/site", scaffold,
-	)
-
-	if err != nil {
-		t.Error("ValidateScaffoldPackage: unexpected error", err)
-		return
+	tests := []struct {
+		name    string
+		path    string
+		wantPkg string
+		wantDir string
+		wantErr string
+	}{
+		{
+			name:    "basic",
+			path:    "./admin/site",
+			wantPkg: "github.com/rur/good/admin/site",
+			wantDir: filepath.Join(pkg.Module.Dir, "admin", "site"),
+		},
+		{
+			name:    "using . as destination",
+			path:    ".",
+			wantPkg: "github.com/rur/good",
+			wantDir: pkg.Module.Dir,
+		},
+		{
+			name:    "conflicting file",
+			path:    "./generate/testdata/with_conflict_file",
+			wantErr: "conflicting file or direcotry 'file.go'",
+		},
+		{
+			name:    "conflicting directory",
+			path:    "./generate/testdata/with_conflict_folder",
+			wantErr: "conflicting file or direcotry 'folder'",
+		},
 	}
-	expect := "github.com/rur/good/admin/site"
-	if sitePkg != expect {
-		t.Errorf("ValidateScaffoldPackage: expecting site package %s, got %s", expect, sitePkg)
-	}
-	expect = path.Join(pkg.Module.Dir, "admin", "site")
-	if siteDir != expect {
-		t.Errorf("ValidateScaffoldPackage: expecting site directory %s, got %s", expect, siteDir)
-	}
-}
-
-func TestValidateScaffoldPackage_ConflictFile(t *testing.T) {
-	scaffold, _ := fs.Sub(testScaffold, "testdata")
-
-	pkg, err := GoListPackage(".")
-	if err != nil {
-		t.Fatal("ValidateScaffoldPackage error getting local package details", err)
-	}
-	_, _, err = ValidateScaffoldPackage(
-		pkg.Module, "./generate/testdata/with_conflict_file", scaffold,
-	)
-
-	if err == nil {
-		t.Error("ValidateScaffoldPackage: expecting an error due to conflicts")
-		return
-	}
-	if err.Error() != "conflicting file or direcotry 'file.go'" {
-		t.Errorf("ValidateScaffoldPackage: expecting conflict error on file.go, got: %s", err)
-	}
-}
-
-func TestValidateScaffoldPackage_ConflictFolder(t *testing.T) {
-	scaffold, _ := fs.Sub(testScaffold, "testdata")
-
-	pkg, err := GoListPackage(".")
-	if err != nil {
-		t.Fatal("ValidateScaffoldPackage error getting local package details", err)
-	}
-	_, _, err = ValidateScaffoldPackage(
-		pkg.Module, "./generate/testdata/with_conflict_folder", scaffold,
-	)
-
-	if err == nil {
-		t.Error("ValidateScaffoldPackage: expecting an error due to conflicts")
-		return
-	}
-	if err.Error() != "conflicting file or direcotry 'folder'" {
-		t.Errorf("ValidateScaffoldPackage: expecting conflicting directory error, got: %s", err)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1, err := ValidateScaffoldPackage(pkg.Module, tt.path, scaffold)
+			if tt.wantErr != "" {
+				if err == nil {
+					t.Errorf("ValidateScaffoldPackage() expecting an error containing message %s", tt.wantErr)
+					return
+				} else if !strings.Contains(err.Error(), tt.wantErr) {
+					t.Errorf("ValidateScaffoldPackage() expecting error to contain '%s', got '%s'", tt.wantErr, err)
+				}
+			} else if err != nil {
+				t.Errorf("ValidateScaffoldPackage() unexpected error = %v", err)
+				return
+			}
+			if got != tt.wantPkg {
+				t.Errorf("ValidateScaffoldPackage() got = %v, want %v", got, tt.wantPkg)
+			}
+			if got1 != tt.wantDir {
+				t.Errorf("ValidateScaffoldPackage() got1 = %v, want %v", got1, tt.wantDir)
+			}
+		})
 	}
 }
