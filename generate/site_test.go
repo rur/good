@@ -46,6 +46,11 @@ func TestValidateScaffoldPackage(t *testing.T) {
 			path:    "./generate/testdata/with_conflict_folder",
 			wantErr: "conflicting file or direcotry 'folder'",
 		},
+		{
+			name:    "embedded import",
+			path:    "github.com/rur/good/admin/site",
+			wantErr: "site package name must be relative to the current module, got github.com/rur/good/admin/site",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
