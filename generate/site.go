@@ -147,7 +147,7 @@ func ValidateScaffoldPackage(pkg GoModule, name string, scaffold fs.FS) (string,
 // Since the templates are embedded we can treat failure at this stage
 // as a bug
 func mustExecute(name string, data interface{}, scaffold fs.FS) []byte {
-	tmpl, err := template.New(path.Base(name)).Delims("<<", ">>").ParseFS(scaffold, name)
+	tmpl, err := template.New(path.Base(name)).Delims("[#", "#]").ParseFS(scaffold, name)
 	if err != nil {
 		log.Fatalln("Failed to parse template", name, err)
 	}

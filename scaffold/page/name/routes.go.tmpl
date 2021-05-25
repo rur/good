@@ -1,45 +1,45 @@
-package << .Name >>
+package [# .Name #]
 
 import (
 	"github.com/rur/treetop"
-	"<< .Namespace >>/page"
+	"[# .Namespace #]/page"
 )
 
 func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
-	<< block "routes" . >>
-	<< .PageEntry.Assignment >> := treetop.NewView(
-		"<< .PageEntry.Template >>",
-		<< .PageEntry.Handler >>,
+	[# block "routes" . #]
+	[# .PageEntry.Assignment #] := treetop.NewView(
+		"[# .PageEntry.Template #]",
+		[# .PageEntry.Handler #],
 	)
-	<< range $index, $entry := .Entries ->>
-	<< if eq $entry.Type "DefaultSubView" ->>
-	<< if $entry.Assignment >><< $entry.Assignment >> := <<end>><< $entry.Extends >>.NewDefaultSubView(
-		"<< $entry.Block >>",
-		"<< $entry.Template >>",
-		<< $entry.Handler >>,
+	[# range $index, $entry := .Entries -#]
+	[# if eq $entry.Type "DefaultSubView" -#]
+	[# if $entry.Assignment #][# $entry.Assignment #] := [#end#][# $entry.Extends #].NewDefaultSubView(
+		"[# $entry.Block #]",
+		"[# $entry.Template #]",
+		[# $entry.Handler #],
 	)
-	<<- else if eq $entry.Type "SubView" ->>
-	<< if $entry.Assignment >><< $entry.Assignment >> := <<end>><< $entry.Extends >>.NewSubView(
-		"<< $entry.Block >>",
-		"<< $entry.Template >>",
-		<< $entry.Handler >>,
+	[#- else if eq $entry.Type "SubView" -#]
+	[# if $entry.Assignment #][# $entry.Assignment #] := [#end#][# $entry.Extends #].NewSubView(
+		"[# $entry.Block #]",
+		"[# $entry.Template #]",
+		[# $entry.Handler #],
 	)
-	<<- else if eq $entry.Type "Spacer" >>
-	// << $entry.Name >>
-	<<- else ->>
-	nil // unknown entry type: << $entry.Type >>
-	<<- end >>
-	<< end >><< range $index, $route := .Routes >>
-	hlp.Handle<< $route.Method >>("<< $route.Path >>",
-		<< if not $route.Includes >>exec.NewViewHandler(<< $route.Reference >>)
-		<<- else >>exec.NewViewHandler(
-			<< $route.Reference >>,
-			<< range $index, $include := $route.Includes >><< $include >>,
-		<<end>>)
-		<<- end >>
-	<<- if eq $route.Type "Page" >>.PageOnly()
-	<<- else if eq $route.Type "Fragment" >>.FragmentOnly()
-	<<- end >>)
-	<<- end >>
-	<< end >>
+	[#- else if eq $entry.Type "Spacer" #]
+	// [# $entry.Name #]
+	[#- else -#]
+	nil // unknown entry type: [# $entry.Type #]
+	[#- end #]
+	[# end #][# range $index, $route := .Routes #]
+	hlp.Handle[# $route.Method #]("[# $route.Path #]",
+		[# if not $route.Includes #]exec.NewViewHandler([# $route.Reference #])
+		[#- else #]exec.NewViewHandler(
+			[# $route.Reference #],
+			[# range $index, $include := $route.Includes #][# $include #],
+		[#end#])
+		[#- end #]
+	[#- if eq $route.Type "Page" #].PageOnly()
+	[#- else if eq $route.Type "Fragment" #].FragmentOnly()
+	[#- end #])
+	[#- end #]
+	[# end #]
 }

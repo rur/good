@@ -10,8 +10,8 @@ import (
 
 	"github.com/rur/treetop"
 
-	"<< .Namespace >>/app"
-	"<< .Namespace >>/page"
+	"[# .Namespace #]/app"
+	"[# .Namespace #]/page"
 )
 
 var (
@@ -88,7 +88,7 @@ func main() {
 	// m.Handle("/js/treetop.js", treetop.ServeClientLibrary)
 
 	addr := fmt.Sprintf(":%d", port)
-	fmt.Printf("Starting << .Namespace >> server at %s\n", addr)
+	fmt.Printf("Starting [# .Namespace #] server at %s\n", addr)
 
 	// Bind to an addr and pass our router in
 	log.Fatal(http.ListenAndServe(addr, m))

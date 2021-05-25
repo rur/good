@@ -1,23 +1,23 @@
-<div id="<< .Extends >>"<< if .Merge >> treetop-merge="<< .Merge >>"<< end >>>
-    << if .Fragment >>Fragment view named <<.Name>>
-    <<- else >>Partial view named <<.Name>><< end >>
-    <<- range $index, $block := .Blocks >>
-    <h3>Block << $block.Name >></h3>
+<div id="[# .Extends #]"[# if .Merge #] treetop-merge="[# .Merge #]"[# end #]>
+    [# if .Fragment #]Fragment view named [#.Name#]
+    [#- else #]Partial view named [#.Name#][# end #]
+    [#- range $index, $block := .Blocks #]
+    <h3>Block [# $block.Name #]</h3>
     <ul>
-        << range $partial := $block.Partials >>
-        <<- if $partial.Path ->>
-            <<- if $partial.POSTOnly ->>
-            <li><form action="<< $partial.Path >>" method="POST" treetop><button><< $partial.Name >><< if $partial.Default >>*<<end>></button></form></li>
-            <<- else ->><<- if $partial.Fragment ->>
-            <li><button treetop-link="<< $partial.Path >>"><< $partial.Name >><< if $partial.Default >>*<<end>></button></li>
-            <<- else ->>
-            <li><a href="<< $partial.Path >>" treetop><< $partial.Name >><< if $partial.Default >>*<<end>></a></li>
-            <<- end ->><<- end ->>
-        <<- end >>
-        << end >>
+        [# range $partial := $block.Partials #]
+        [#- if $partial.Path -#]
+            [#- if $partial.POSTOnly -#]
+            <li><form action="[# $partial.Path #]" method="POST" treetop><button>[# $partial.Name #][# if $partial.Default #]*[#end#]</button></form></li>
+            [#- else -#][#- if $partial.Fragment -#]
+            <li><button treetop-link="[# $partial.Path #]">[# $partial.Name #][# if $partial.Default #]*[#end#]</button></li>
+            [#- else -#]
+            <li><a href="[# $partial.Path #]" treetop>[# $partial.Name #][# if $partial.Default #]*[#end#]</a></li>
+            [#- end -#][#- end -#]
+        [#- end #]
+        [# end #]
     </ul>
-    {{ block "<< $block.Name >>" .<< $block.FieldName >> }}
-    <div id="<< $block.Name  >>"> default for block named << $block.Name >> </div>
+    {{ block "[# $block.Name #]" .[# $block.FieldName #] }}
+    <div id="[# $block.Name  #]"> default for block named [# $block.Name #] </div>
     {{ end }}
-    << end >>
+    [# end #]
 </div>

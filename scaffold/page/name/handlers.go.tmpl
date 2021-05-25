@@ -1,33 +1,33 @@
-package << .Name >>
+package [# .Name #]
 
 import (
 	"net/http"
 
 	"github.com/rur/treetop"
-	"<< .Namespace >>/app"
+	"[# .Namespace #]/app"
 )
 
-<< if .Handlers ->>
+[# if .Handlers -#]
 // -------------------------
-// <<.Name>> Handlers
+// [#.Name#] Handlers
 // -------------------------
-<< end >>
-<< range $index, $handler := .Handlers >>
-// << $handler.Info >> << $handler.Type >><< if $handler.Extends >>
-// Extends: << $handler.Extends >><< end >>
-// Method: << $handler.Method >><< if $handler.Doc >>
-// Doc: << $handler.Doc >>
-<<- end >>
-func << $handler.Identifier >>(rsc *resources, env *app.Env, rsp treetop.Response, req *http.Request) interface{} {
+[# end #]
+[# range $index, $handler := .Handlers #]
+// [# $handler.Info #] [# $handler.Type #][# if $handler.Extends #]
+// Extends: [# $handler.Extends #][# end #]
+// Method: [# $handler.Method #][# if $handler.Doc #]
+// Doc: [# $handler.Doc #]
+[#- end #]
+func [# $handler.Identifier #](rsc *resources, env *app.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data :=  struct {
-		HandlerInfo string<< range $index, $block := .Blocks >>
-		<< $block.FieldName >> interface{}
-		<<- end >>
+		HandlerInfo string[# range $index, $block := .Blocks #]
+		[# $block.FieldName #] interface{}
+		[#- end #]
 	}{
-		HandlerInfo: "<< $handler.Info >>",<< range $index, $block := .Blocks >>
-		<< $block.FieldName >>: rsp.HandleSubView("<< $block.Name >>", req),
-		<<- end >>
+		HandlerInfo: "[# $handler.Info #]",[# range $index, $block := .Blocks #]
+		[# $block.FieldName #]: rsp.HandleSubView("[# $block.Name #]", req),
+		[#- end #]
 	}
 	return data
 }
-<< end >>
+[# end #]

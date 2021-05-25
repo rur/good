@@ -1,14 +1,14 @@
-_namespace = "<< .Namespace >>"
-_page = "<< .Name >>"
-_template = "<< .PageEntry.Template >>"
-_handler = "<< .PageEntry.Handler >>"
-_doc = "Base HTML template for << .Name >> page"
-_uri = "/<< .Name >>"
+_namespace = "[# .Namespace #]"
+_page = "[# .Name #]"
+_template = "[# .PageEntry.Template #]"
+_handler = "[# .PageEntry.Handler #]"
+_doc = "Base HTML template for [# .Name #] page"
+_uri = "/[# .Name #]"
 
     [[content]]
-    _name = "<< .Name >>-placeholder"
+    _name = "[# .Name #]-placeholder"
     _default = true
     _doc = "Placeholder page"
-    _path = "/<< .Name >>"
-    _template = "<< .Templates >>/placedholder.html.tmpl"
+    _path = "/[# .Name #]"
+    _template = "[# .Templates #]/placedholder.html.tmpl"
     _handler = "env.Bind(bindResources(placedholderHandler))"
