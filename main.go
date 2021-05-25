@@ -52,16 +52,14 @@ func main() {
 			mustNot(err)
 			files = append(files, pFiles...)
 		}
-
-		// TODO: run pages update on scaffold
-
+		// FS operations
 		err = generate.FlushFiles(pkg.Module.Dir, files)
 		mustNot(err)
-		sitePkg, err := generate.GoListPackage("./" + os.Args[2])
-		if err != nil {
+
+		if err := generate.GoFormat(siteModule); err != nil {
 			log.Fatalf("Scaffold was create with errors: %s", err)
 		}
-		fmt.Printf("Created good scaffold for %s!", sitePkg.ImportPath)
+		fmt.Printf("Created good scaffold for %s!", siteModule)
 
 	case "page":
 		pkg, err := generate.GoListPackage(".")

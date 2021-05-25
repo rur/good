@@ -36,3 +36,13 @@ func GoListPackage(path string) (pkg GoPackage, err error) {
 	err = json.Unmarshal(stdout.Bytes(), &pkg)
 	return
 }
+
+// GoFormat will execute the go fmt command on the module path
+func GoFormat(path string) error {
+	cmd := exec.Command("go", "fmt", path+"/...")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("error while formatting scaffold: %s, output: %s", err, output)
+	}
+	return nil
+}
