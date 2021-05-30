@@ -8,12 +8,12 @@ import (
 func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 	
 	example := treetop.NewView(
-		"_baseline/site/page/templates/base.html.tmpl",
+		"page/templates/base.html.tmpl",
 		hlp.BindEnv(page.BaseHandler),
 	)
 	placeholder := example.NewDefaultSubView(
 		"content",
-		"_baseline/site/page/example/templates/content/placeholder.html.tmpl",
+		"page/example/templates/content/placeholder.html.tmpl",
 		hlp.BindEnv(bindResources(placeholderHandler)),
 	)
 	
