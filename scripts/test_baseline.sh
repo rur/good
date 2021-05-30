@@ -22,4 +22,25 @@ if [[ ! -z $diff ]]; then
     exit 1
 fi
 
-echo "Baseline matches!"
+echo "Scaffold baseline matches!"
+
+rm -rf _baseline/page
+cp -r _baseline/site _baseline/site_bk
+
+go run . page _baseline/site settings
+
+mv _baseline/site _baseline/page
+mv _baseline/site_bk _baseline/site
+
+diff=$(git diff _baseline/page)
+
+if [[ ! -z $diff ]]; then
+    echo "WARNING: Check baseline"
+    echo ">>> git diff out >>>"
+    printf "$diff"
+    echo
+    echo ">>> git diff end >>>"
+    exit 1
+fi
+
+echo "Page scaffold baseline matches!"
