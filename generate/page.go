@@ -86,7 +86,7 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 		},
 		PageEntry: Entry{
 			Assignment: name,
-			Template:   filepath.Join(siteDir, "page", "templates", "base.html.tmpl"),
+			Template:   filepath.Join("page", "templates", "base.html.tmpl"),
 			Handler:    "hlp.BindEnv(page.BaseHandler)",
 		},
 		Entries: []Entry{{
@@ -94,7 +94,7 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 			Block:      "content",
 			Type:       "DefaultSubView",
 			Extends:    name,
-			Template:   filepath.Join(siteDir, "page", name, "templates", "content", "placeholder.html.tmpl"),
+			Template:   filepath.Join("page", name, "templates", "content", "placeholder.html.tmpl"),
 			Handler:    "hlp.BindEnv(bindResources(placeholderHandler))",
 		}},
 		Routes: []Route{{
@@ -102,7 +102,7 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 			Path:      "/" + name,
 			Reference: "placeholder",
 		}},
-		Templates: filepath.Join(siteDir, "page", name, "templates"),
+		Templates: filepath.Join("page", name, "templates"),
 	}
 
 	pageDir := filepath.Join(siteDir, "page", name)

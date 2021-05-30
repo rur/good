@@ -18,8 +18,6 @@ These are scaffolding commands for the Good tool:
 	page     <package_name> <page_name>         Add a new page to an existing scaffold
 	routes   <routemap_toml>                    Generate a routes.go file from a TOML config
 
-TODO: add more docs
-
 `
 	scaffoldUsage = `usage: good scaffold <site_pkg_rel> [<page_name>...]
 
@@ -30,8 +28,6 @@ eg.
 
 site_pkg_rel    import path of the new site, relative to the root of the current Go module
 page_name       optional list of page names to be initialized along with the site, default is 'example'
-
-TODO: add more docs
 
 `
 	pageUsage = `usage: good page <site_pkg_rel> <page_name>
@@ -44,8 +40,6 @@ eg.
 site_pkg_rel   import path of an existing _good scaffold_ site
 page_name      package name of the new page to initialize
 
-TODO: add more docs
-
 `
 	routesUsage = `usage: good routes <page_pkg_rel>
 
@@ -56,8 +50,6 @@ eg.
 	good routes ./admin/site/page/example
 
 page_pkg_rel   page import path from the root of the Go module
-
-TODO: add more docs
 
 `
 )
@@ -72,7 +64,6 @@ func main() {
 	}
 	switch os.Args[1] {
 	case "scaffold":
-		// setup initial pages
 		var pages []string
 		if len(os.Args) < 3 {
 			fmt.Println(scaffoldUsage)
