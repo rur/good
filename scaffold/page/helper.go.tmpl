@@ -5,12 +5,12 @@ import (
 	"strings"
 
 	"github.com/rur/treetop"
-	"[# .Namespace #]/app"
+	"[# .Namespace #]/service"
 )
 
 // ViewHandlerWithEnv is the signature of a treetop view handler with an additional
 // Env type parameter, used
-type ViewHandlerWithEnv func(*app.Env, treetop.Response, *http.Request) interface{}
+type ViewHandlerWithEnv func(*service.Env, treetop.Response, *http.Request) interface{}
 
 // Helper is used by the page Routes function to perform the following tasks
 type Helper interface {
@@ -25,7 +25,7 @@ type Helper interface {
 // on your requirements. If so, you can simply modify the following
 // code to suit your needs
 type DefaultHelper struct {
-	Env *app.Env
+	Env *service.Env
 	// EDITME: if you wish to use a different router library
 	Mux *http.ServeMux
 }

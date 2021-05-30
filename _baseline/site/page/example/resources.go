@@ -5,13 +5,13 @@ import (
 	"sync"
 
 	"github.com/rur/treetop"
-	"github.com/rur/good/_baseline/site/app"
+	"github.com/rur/good/_baseline/site/service"
 	"github.com/rur/good/_baseline/site/page"
 )
 
 // resources that are request-scoped data bound to page handlers
 type resources struct {
-	user    app.User
+	user    service.User
 	// EDITME: add request specific resources for this page
 }
 
@@ -21,11 +21,11 @@ type resources struct {
 //
 // Invoking the Write method of the ResponseWriter will prevent subsequent functions from
 // handling this request.
-func loadResources(env *app.Env, w http.ResponseWriter, req *http.Request) (rsc *resources, ok bool) {
+func loadResources(env *service.Env, w http.ResponseWriter, req *http.Request) (rsc *resources, ok bool) {
 	// EDITME: setup your handler resources here
 	ok = true
 	rsc = &resources{
-		user: app.User{
+		user: service.User{
 			Name: "test",
 		},
 	}
@@ -34,7 +34,7 @@ func loadResources(env *app.Env, w http.ResponseWriter, req *http.Request) (rsc 
 
 // teardownResources happens after the response has been written for the request,
 // this hook exists in case any special teardown is needed for your resources instance
-func teardownResources(rsc *resources, env *app.Env) {
+func teardownResources(rsc *resources, env *service.Env) {
 	// EDITME: Add teardown logic for your resources
 }
 
@@ -47,11 +47,11 @@ var (
 	rscCacheLock sync.RWMutex
 )
 
-type handlerWithResources func(*resources, *app.Env, treetop.Response, *http.Request) interface{}
+type handlerWithResources func(*resources, *service.Env, treetop.Response, *http.Request) interface{}
 
 // bindResources is middleware with memoization which loads home page resources for local request handlers
 func bindResources(f handlerWithResources) page.ViewHandlerWithEnv {
-	return func(env *app.Env, rsp treetop.Response, req *http.Request) interface{} {
+	return func(env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 		key := rsp.ResponseID()
 		rscCacheLock.RLock()
 		rsc, ok := rscCache[key]

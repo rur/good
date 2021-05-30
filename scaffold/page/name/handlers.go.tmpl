@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/rur/treetop"
-	"[# .Namespace #]/app"
+	"[# .Namespace #]/service"
 )
 
 [# if .Handlers -#]
@@ -18,7 +18,7 @@ import (
 // Method: [# $handler.Method #][# if $handler.Doc #]
 // Doc: [# $handler.Doc #]
 [#- end #]
-func [# $handler.Identifier #](rsc *resources, env *app.Env, rsp treetop.Response, req *http.Request) interface{} {
+func [# $handler.Identifier #](rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data :=  struct {
 		HandlerInfo string[# range $index, $block := .Blocks #]
 		[# $block.FieldName #] interface{}

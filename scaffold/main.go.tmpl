@@ -10,7 +10,7 @@ import (
 
 	"github.com/rur/treetop"
 
-	"[# .Namespace #]/app"
+	"[# .Namespace #]/service"
 	"[# .Namespace #]/page"
 )
 
@@ -34,7 +34,7 @@ var (
 	// binding views to template files
 	exec treetop.ViewExecutor
 
-	env *app.Env
+	env *service.Env
 )
 
 func init() {
@@ -62,7 +62,7 @@ func init() {
 	}
 
 	// EDITME: initialize site-wide config & resources. Env will be passed to handlers
-	env = &app.Env{
+	env = &service.Env{
 		DB: nil,
 	}
 }

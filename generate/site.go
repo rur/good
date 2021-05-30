@@ -58,8 +58,8 @@ func SiteScaffold(mod, dest string, pages []string, scaffold fs.FS) (files []Fil
 	}); err != nil {
 		return
 	}
-	// app/*
-	if err = fs.WalkDir(scaffold, "scaffold/app", func(path string, d fs.DirEntry, err error) error {
+	// service/*
+	if err = fs.WalkDir(scaffold, "scaffold/service", func(path string, d fs.DirEntry, err error) error {
 		if d.IsDir() {
 			return nil
 		}

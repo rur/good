@@ -1,4 +1,4 @@
-package app
+package service
 
 // User type referred to by handlers
 type User struct {
