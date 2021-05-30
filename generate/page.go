@@ -2,9 +2,15 @@ package generate
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"path/filepath"
+	"regexp"
 	"strings"
+)
+
+var (
+	PageNameRegex = regexp.MustCompile(`^[a-z][a-z]+$`)
 )
 
 type Handler struct {
@@ -43,8 +49,17 @@ type Route struct {
 // ScaffoldPage will assemble files for adding a new page to the site scaffold
 func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []File, err error) {
 	if name == "templates" {
-		return nil, errors.New("'templates' cannot be used as a page name, it is reserved for shared template files")
+		err = errors.New("'templates' cannot be used as a page name, it is reserved for the shared template directory")
+		return
 	}
+	if !PageNameRegex.MatchString(name) {
+		err = fmt.Errorf(
+			`page name '%s' is not accepted. Use best practices for Go package names: all lowercase, all alpha. See helpful guideline https://blog.golang.org/package-names`,
+			name,
+		)
+		return
+	}
+
 	// setup page with some placeholder data
 	data := struct {
 		Name      string // Go package name for page

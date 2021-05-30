@@ -42,13 +42,13 @@ func main() {
 
 		pkg, err := generate.GoListPackage(".")
 		mustNot(err)
-		siteModule, siteDir, err := generate.ValidateScaffoldPackage(pkg.Module, os.Args[2], scaffold)
+		sitePkg, siteDir, err := generate.ValidateScaffoldPackage(pkg.Module, os.Args[2], scaffold)
 		mustNot(err)
-		files, err := generate.SiteScaffold(siteModule, siteDir, pages, scaffold)
+		files, err := generate.SiteScaffold(sitePkg, siteDir, pages, scaffold)
 		mustNot(err)
 
 		for _, page := range pages {
-			pFiles, err := generate.ScaffoldPage(siteModule, siteDir, page, scaffold)
+			pFiles, err := generate.ScaffoldPage(sitePkg, siteDir, page, scaffold)
 			mustNot(err)
 			files = append(files, pFiles...)
 		}
@@ -56,16 +56,31 @@ func main() {
 		err = generate.FlushFiles(pkg.Module.Dir, files)
 		mustNot(err)
 
-		if err := generate.GoFormat(siteModule); err != nil {
+		if err := generate.GoFormat(sitePkg + "/..."); err != nil {
 			log.Fatalf("Scaffold was create with errors: %s", err)
 		}
-		fmt.Printf("Created good scaffold for %s!", siteModule)
+		fmt.Printf("Created good scaffold for %s!", sitePkg)
 
 	case "page":
+		if len(os.Args) < 3 {
+			fmt.Println(usage)
+			log.Fatalf("Missing page name")
+		}
 		pkg, err := generate.GoListPackage(".")
 		mustNot(err)
+		sitePkg, siteDir, err := generate.ParseSitePackage(pkg.Module, os.Args[2])
 		mustNot(err)
-		fmt.Printf("Good page for %s!", pkg.ImportPath)
+		files, err := generate.ScaffoldPage(sitePkg, siteDir, os.Args[3], scaffold)
+		mustNot(err)
+		// FS operations
+		err = generate.FlushFiles(pkg.Module.Dir, files)
+		mustNot(err)
+
+		pagePkg := fmt.Sprintf("%s/page/%s", sitePkg, os.Args[3])
+		if err := generate.GoFormat(pagePkg + "/..."); err != nil {
+			log.Fatalf("Page '%s' scaffold was create with errors: %s", pagePkg, err)
+		}
+		fmt.Printf("Created good page for %s!", pagePkg)
 	case "routes":
 		fmt.Println("Good routes")
 	default:

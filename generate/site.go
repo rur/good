@@ -90,6 +90,25 @@ func SiteScaffold(mod, dest string, pages []string, scaffold fs.FS) (files []Fil
 	return
 }
 
+// ParseSitePackage will normalize a relative path from a valid Go module and
+// return a golang package import path and directory path relative to the module dir
+func ParseSitePackage(pkg GoModule, name string) (sitePkg string, siteDir string, err error) {
+	if name == "." {
+		sitePkg = pkg.Path
+		siteDir = ""
+		return
+	} else if strings.HasPrefix(name, pkg.Path) {
+		err = fmt.Errorf("site package name must be relative to the current module, got %s", name)
+		return
+	}
+	// strip relative prefix since being relative is assumed
+	name = strings.TrimPrefix(name, "./")
+	parts := strings.Split(name, "/")
+	sitePkg = strings.Join([]string{pkg.Path, name}, "/")
+	siteDir = filepath.Join(parts...)
+	return
+}
+
 // ValidateScaffoldPackage will check that a relative go package path is available for
 // a site scaffold to to be installed and return the go import path and directory for the
 // new scaffold site.
@@ -97,21 +116,10 @@ func SiteScaffold(mod, dest string, pages []string, scaffold fs.FS) (files []Fil
 // Note that '.' will attempt to install the site in the root directory of the current go module
 //
 // If the target directory is not empty, this will scan for conflicts against the scaffold
-func ValidateScaffoldPackage(pkg GoModule, name string, scaffold fs.FS) (string, string, error) {
-	var (
-		sitePkg, siteDir string
-	)
-	if name == "." {
-		sitePkg = pkg.Path
-		siteDir = ""
-	} else if strings.HasPrefix(name, pkg.Path) {
-		return "", "", fmt.Errorf("site package name must be relative to the current module, got %s", name)
-	} else {
-		// strip relative prefix since being relative is assumed
-		name = strings.TrimPrefix(name, "./")
-		parts := strings.Split(name, "/")
-		sitePkg = strings.Join([]string{pkg.Path, name}, "/")
-		siteDir = filepath.Join(parts...)
+func ValidateScaffoldPackage(pkg GoModule, name string, scaffold fs.FS) (sitePkg string, siteDir string, err error) {
+	sitePkg, siteDir, err = ParseSitePackage(pkg, name)
+	if err != nil {
+		return
 	}
 
 	// now try to check if there will be files write conflicts
@@ -120,7 +128,8 @@ func ValidateScaffoldPackage(pkg GoModule, name string, scaffold fs.FS) (string,
 	blockList := make(map[string]struct{})
 	entries, err := fs.ReadDir(scaffold, "scaffold")
 	if err != nil {
-		return "", "", fmt.Errorf("failed to open scaffold folder: %s", err)
+		err = fmt.Errorf("failed to open scaffold folder: %s", err)
+		return
 	}
 	for _, entry := range entries {
 		blockList[strings.TrimSuffix(entry.Name(), ".tmpl")] = blocked
@@ -129,20 +138,28 @@ func ValidateScaffoldPackage(pkg GoModule, name string, scaffold fs.FS) (string,
 	// Scan for conflict between the scaffold and the target FS
 	// As a sanity check, accept at most 500 dept one child names
 	fh, err := os.Open(filepath.Join(pkg.Dir, siteDir))
-	if err == os.ErrNotExist {
-		// this is fine
-		return sitePkg, siteDir, nil
+	if os.IsNotExist(err) {
+		// no destination folder, no conflicts, all good
+		err = nil
+		return
+	} else if err != nil {
+		err = fmt.Errorf("error while scanning target dir: %s", err)
+		return
 	}
 	defer fh.Close()
 	names, err := fh.Readdirnames(500)
-	if err != io.EOF {
+	if err == io.EOF {
+		// empty dir, no conflicts, all good
+		err = nil
+	} else {
 		for i := 0; i < len(names); i++ {
 			if _, ok := blockList[names[i]]; ok {
-				return "", "", fmt.Errorf("conflicting file or direcotry '%s'", names[i])
+				err = fmt.Errorf("conflicting file or direcotry '%s'", names[i])
+				break
 			}
 		}
 	}
-	return sitePkg, siteDir, nil
+	return
 }
 
 // mustExecute will execute a template against data or panic!

@@ -58,19 +58,18 @@ func TestValidateScaffoldPackage(t *testing.T) {
 			if tt.wantErr != "" {
 				if err == nil {
 					t.Errorf("ValidateScaffoldPackage() expecting an error containing message %s", tt.wantErr)
-					return
 				} else if !strings.Contains(err.Error(), tt.wantErr) {
 					t.Errorf("ValidateScaffoldPackage() expecting error to contain '%s', got '%s'", tt.wantErr, err)
 				}
 			} else if err != nil {
-				t.Errorf("ValidateScaffoldPackage() unexpected error = %v", err)
-				return
-			}
-			if got != tt.wantPkg {
-				t.Errorf("ValidateScaffoldPackage() got = %v, want %v", got, tt.wantPkg)
-			}
-			if got1 != tt.wantDir {
-				t.Errorf("ValidateScaffoldPackage() got1 = %v, want %v", got1, tt.wantDir)
+				t.Errorf("ValidateScaffoldPackage() unexpected error = %s", err)
+			} else {
+				if got != tt.wantPkg {
+					t.Errorf("ValidateScaffoldPackage() got = %v, want %v", got, tt.wantPkg)
+				}
+				if got1 != tt.wantDir {
+					t.Errorf("ValidateScaffoldPackage() got1 = %v, want %v", got1, tt.wantDir)
+				}
 			}
 		})
 	}
