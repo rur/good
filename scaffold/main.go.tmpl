@@ -61,8 +61,9 @@ func init() {
 		}
 	}
 
-	// EDITME: initialize site-wide config & resources. Env will be passed to handlers
+	// Initialize Env instance to be shared with all handlers
 	env = &service.Env{
+		// EDITME: initialize site-wide stuff here
 		DB: nil,
 	}
 }

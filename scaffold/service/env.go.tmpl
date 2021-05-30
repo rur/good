@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-// Env is used to pass site-wide resources to handlers.
+// Env is used to pass site-wide configuration and resources to handlers
 type Env struct {
 	// loggers
 	ErrorLog *log.Logger
@@ -15,5 +15,5 @@ type Env struct {
 	// DB Pool reference, for example
 	DB *sql.DB
 
-	// EDITME: add resource instances as needed
+	// EDITME: add your site-wide stuff here
 }
