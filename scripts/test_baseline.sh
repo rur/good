@@ -24,11 +24,26 @@ fi
 
 echo "Scaffold baseline matches!"
 
-rm -rf _baseline/page
-cp -r _baseline/site _baseline/site_bk
+function restoreBackup() {
+    exitcode=$?
+    if [[ -d _baseline/site_page_bk ]]; then
+        # restore site from backup during page test
+        rm -r _baseline/page
+        mv _baseline/site _baseline/page
+        mv _baseline/site_page_bk _baseline/site
+    fi
+    exit $exitcode
+}
 
+trap restoreBackup EXIT
+
+cp -r _baseline/site _baseline/site_page_bk/
+
+# run page generator on the _baseline/site scaffold
 go run . page _baseline/site settings
 
+# prepare _baseline/pages working dir for comparison and restore site
+rm -rf _baseline/page
 mv _baseline/site _baseline/page
 mv _baseline/site_bk _baseline/site
 
