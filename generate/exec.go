@@ -46,13 +46,3 @@ func GoFormat(path string) (string, error) {
 	}
 	return string(output), nil
 }
-
-// GoGenerate will execute the go generate command on the module path
-func GoGenerate(path string) (string, error) {
-	cmd := exec.Command("go", "generate", path)
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return "", fmt.Errorf("go fmt error: %s, output: %s", err, output)
-	}
-	return string(output), nil
-}

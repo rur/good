@@ -10,8 +10,8 @@ import (
 
 	"github.com/rur/treetop"
 
-	"github.com/rur/good/_baseline/site/service"
 	"github.com/rur/good/_baseline/site/page"
+	"github.com/rur/good/_baseline/site/service"
 )
 
 var (

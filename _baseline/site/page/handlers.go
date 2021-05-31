@@ -3,8 +3,8 @@ package page
 import (
 	"net/http"
 
-	"github.com/rur/treetop"
 	"github.com/rur/good/_baseline/site/service"
+	"github.com/rur/treetop"
 )
 
 // BaseHandler is the root handler use for most pages
