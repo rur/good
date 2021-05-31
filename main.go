@@ -119,15 +119,21 @@ func main() {
 		}
 		pkg, err := generate.GoListPackage(".")
 		mustNot(err)
-		sitePkg, siteDir, err := generate.ParseSitePackage(pkg.Module, os.Args[2])
+		siteImport, siteDir, err := generate.ParseSitePackage(pkg.Module, os.Args[2])
 		mustNot(err)
-		files, err := generate.ScaffoldPage(sitePkg, siteDir, os.Args[3], scaffold)
+		files, err := generate.ScaffoldPage(siteImport, siteDir, os.Args[3], scaffold)
 		mustNot(err)
-		// FS operations
 		err = generate.FlushFiles(pkg.Module.Dir, files)
 		mustNot(err)
 
-		pagePkg := fmt.Sprintf("%s/page/%s", sitePkg, os.Args[3])
+		sitePkg, err := generate.GoListPackage(siteImport)
+		mustNot(err)
+		pages, err := generate.PagesFile(sitePkg, scaffold)
+		mustNot(err)
+		err = generate.FlushFiles(pkg.Module.Dir, []generate.File{pages})
+		mustNot(err)
+
+		pagePkg := fmt.Sprintf("%s/page/%s", siteImport, os.Args[3])
 		if err := generate.GoFormat(pagePkg + "/..."); err != nil {
 			log.Fatalf("Page '%s' scaffold was create with errors: %s", pagePkg, err)
 		}
