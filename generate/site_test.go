@@ -3,6 +3,7 @@ package generate
 import (
 	"embed"
 	"io/fs"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -111,4 +112,105 @@ func TestParseSitePackage(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestSiteScaffold(t *testing.T) {
+	fs := os.DirFS("../")
+	gotFiles, err := SiteScaffold(
+		"github.com/rur/example/admin/site",
+		"admin/site",
+		[]string{"page1", "page2"},
+		fs,
+	)
+	if err != nil {
+		t.Errorf("SiteScaffold() error = %v", err)
+		return
+	}
+	gotFileMap := filesToMap(gotFiles)
+	tests := []struct {
+		name     string
+		file     string
+		contains string
+	}{
+		{
+			"simple /service/user.go",
+			"admin/site/service/user.go",
+			"type User struct {",
+		}, {
+			"simple /page/helper.go",
+			"admin/site/page/helper.go",
+			`"github.com/rur/example/admin/site/service"`,
+		}, {
+			"simple /main.go",
+			"admin/site/main.go",
+			`FS: http.Dir("admin/site"), // read templates from file system`,
+		}, {
+			"first /pages.go",
+			"admin/site/pages.go",
+			`"github.com/rur/example/admin/site/page/page1"`,
+		}, {
+			"second /pages.go",
+			"admin/site/pages.go",
+			`"github.com/rur/example/admin/site/page/page2"`,
+		}, {
+			"first /pages.go routes",
+			"admin/site/pages.go",
+			`page1.Routes(hlp, exec)`,
+		}, {
+			"second pages.go routes",
+			"admin/site/pages.go",
+			`page2.Routes(hlp, exec)`,
+		}, {
+			"simple /gen.go",
+			"admin/site/gen.go",
+			`//go:generate good pages admin/site`,
+		}, {
+			"simple main.css",
+			"admin/site/static/styles/main.css",
+			"background-color: red",
+		}, {
+			"simple service env.go",
+			"admin/site/service/env.go",
+			"type Env struct {",
+		}, {
+			"simple main.js",
+			"admin/site/static/js/main.js",
+			"function hello(name) {",
+		}, {
+			"simple test.txt",
+			"admin/site/static/public/test.txt",
+			"hello world",
+		}, {
+			"import for page handlers.go",
+			"admin/site/page/handlers.go",
+			`"github.com/rur/example/admin/site/service"`,
+		}, {
+			"content handler for page handlers.go",
+			"admin/site/page/handlers.go",
+			`rsp.HandleSubView("content", req)`,
+		}, {
+			"simple Base HTML",
+			"admin/site/page/templates/base.html.tmpl",
+			`<title>{{ .PageTitle }}</title>`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			content, ok := gotFileMap[tt.file]
+			if !ok {
+				t.Errorf("Expecting file name in output: %s", tt.file)
+			} else if !strings.Contains(content, tt.contains) {
+				t.Errorf("Expecting %s to contain: %s, got: %s", tt.file, tt.contains, content)
+			}
+		})
+	}
+}
+
+func filesToMap(files []File) map[string]string {
+	byPath := make(map[string]string)
+	for i := range files {
+		file := files[i]
+		byPath[filepath.Join(file.Dir, file.Name)] = string(file.Contents)
+	}
+	return byPath
 }
