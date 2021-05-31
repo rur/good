@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/rur/good/generate"
 )
@@ -47,7 +48,7 @@ Arguments
 `
 	pagesUsage = `usage: good pages <site_pkg_rel>
 
-Scan site page/ folder and update the pages.go file to import the route config
+Scan site page/ folder and update the pages.go file with any pages added manually.
 
 Example
 	good pages ./admin/site
@@ -58,8 +59,8 @@ Arguments
 `
 	routesUsage = `usage: good routes <page_pkg_rel>
 
-Generate golang code for the routing config in a target page and populate code for any handlers or templates
-that are missing.
+Generate golang code for the routemap.toml config file in a target page. This will also populate code
+for any handlers or templates that are missing from the config.
 
 Example
 	good routes ./admin/site/page/example
@@ -80,95 +81,152 @@ func main() {
 	}
 	switch os.Args[1] {
 	case "scaffold":
-		var pages []string
 		if len(os.Args) < 3 {
 			fmt.Println(scaffoldUsage)
 			log.Fatalf("Missing target site package path")
-		} else if len(os.Args) > 3 {
-			pages = os.Args[3:]
-		} else {
-			// if no page names were listed, add a page called 'example'
-			pages = []string{"example"}
 		}
-
-		pkg, err := generate.GoListPackage(".")
-		mustNot(err)
-		sitePkg, siteDir, err := generate.ValidateScaffoldPackage(pkg.Module, os.Args[2], scaffold)
-		mustNot(err)
-		files, err := generate.SiteScaffold(sitePkg, siteDir, pages, scaffold)
-		mustNot(err)
-
-		for _, page := range pages {
-			pFiles, err := generate.ScaffoldPage(sitePkg, siteDir, page, scaffold)
-			mustNot(err)
-			files = append(files, pFiles...)
-		}
-		// FS operations
-		err = generate.FlushFiles(pkg.Module.Dir, files)
-		mustNot(err)
-
-		if err := generate.GoFormat(sitePkg + "/..."); err != nil {
-			log.Fatalf("Scaffold was create with errors: %s", err)
-		}
-		fmt.Printf("Created good scaffold for %s!", sitePkg)
+		scaffoldCmd(os.Args[2], os.Args[3:])
 
 	case "page":
 		if len(os.Args) < 4 {
 			fmt.Println(pageUsage)
 			log.Fatalf("Missing required arguments")
 		}
-		pkg, err := generate.GoListPackage(".")
-		mustNot(err)
-		siteImport, siteDir, err := generate.ParseSitePackage(pkg.Module, os.Args[2])
-		mustNot(err)
-		files, err := generate.ScaffoldPage(siteImport, siteDir, os.Args[3], scaffold)
-		mustNot(err)
-		err = generate.FlushFiles(pkg.Module.Dir, files)
-		mustNot(err)
-
-		sitePkg, err := generate.GoListPackage(siteImport)
-		mustNot(err)
-		pages, err := generate.PagesFile(sitePkg, scaffold)
-		mustNot(err)
-		err = generate.FlushFiles(pkg.Module.Dir, []generate.File{pages})
-		mustNot(err)
-
-		pagePkg := fmt.Sprintf("%s/page/%s", siteImport, os.Args[3])
-		if err := generate.GoFormat(pagePkg + "/..."); err != nil {
-			log.Fatalf("Page '%s' scaffold was create with errors: %s", pagePkg, err)
-		}
-		fmt.Printf("Created good page for %s!", pagePkg)
+		pageCmd(os.Args[2], os.Args[3])
 
 	case "pages":
 		if len(os.Args) < 3 {
 			fmt.Println(pagesUsage)
 			log.Fatalf("Missing target site package path")
 		}
-		pkg, err := generate.GoListPackage(".")
-		mustNot(err)
-		siteImport, _, err := generate.ParseSitePackage(pkg.Module, os.Args[2])
-		mustNot(err)
-		sitePkg, err := generate.GoListPackage(siteImport)
-		mustNot(err)
-		pages, err := generate.PagesFile(sitePkg, scaffold)
-		mustNot(err)
-		err = generate.FlushFiles(pkg.Module.Dir, []generate.File{pages})
-		mustNot(err)
-
-		if err := generate.GoFormat(siteImport); err != nil {
-			log.Fatalf("Pages file at '%s' scaffold was updated with errors: %s", siteImport, err)
-		}
-		fmt.Printf("Updated pages.go for scaffold %s!", siteImport)
+		pagesCmd(os.Args[2])
 
 	case "routes":
-		fmt.Println(routesUsage)
-		log.Fatalf("Good routes is not implemented yet!")
+		if len(os.Args) < 3 {
+			fmt.Println(routesUsage)
+			log.Fatalln("Missing target scaffold page path")
+		}
+		routesCmd(os.Args[2])
 
 	default:
 		fmt.Println(usage)
 		log.Fatalf("Unknown command %s", os.Args[1])
 	}
 	fmt.Println()
+}
+
+// scaffoldCmd creates a full site scaffold at a location relative to the
+// current golang module.
+func scaffoldCmd(sitePkgRel string, pages []string) {
+	if len(pages) == 0 {
+		// if no page names were listed, add a page called 'example'
+		pages = []string{"example"}
+	}
+
+	pkg, err := generate.GoListPackage(".")
+	mustNot(err)
+	sitePkg, siteDir, err := generate.ParseSitePackage(pkg.Module, os.Args[2])
+	mustNot(err)
+	err = generate.ValidateScaffoldLocation(filepath.Join(pkg.Dir, siteDir), scaffold)
+	mustNot(err)
+	files, err := generate.SiteScaffold(sitePkg, siteDir, pages, scaffold)
+	mustNot(err)
+	for _, page := range pages {
+		err = generate.ValidatePageName(page)
+		mustNot(err)
+		pFiles, err := generate.ScaffoldPage(sitePkg, siteDir, page, scaffold)
+		mustNot(err)
+		files = append(files, pFiles...)
+	}
+
+	// FS operations
+	err = generate.FlushFiles(pkg.Module.Dir, files)
+	mustNot(err)
+
+	stdout, err := generate.GoGenerate(sitePkg + "/...")
+	if err != nil {
+		log.Fatalf("Page '%s' scaffold was create with generator errors: %s", sitePkg, err)
+	}
+	if len(stdout) > 0 {
+		fmt.Println("Output from go generate:")
+		fmt.Println(stdout)
+	}
+	stdout, err = generate.GoFormat(sitePkg + "/...")
+	if err != nil {
+		log.Fatalf("Page '%s' scaffold was create with formatting errors: %s", sitePkg, err)
+	}
+	if len(stdout) > 0 {
+		fmt.Println("Output from go fmt:")
+		fmt.Println(stdout)
+	}
+	fmt.Printf("Created good scaffold for %s!", sitePkg)
+}
+
+// pageCmd attempts to add a new page to an existing scaffold site
+func pageCmd(sitePkgRel, pageName string) {
+	err := generate.ValidatePageName(pageName)
+	mustNot(err)
+	pkg, err := generate.GoListPackage(".")
+	mustNot(err)
+	siteImport, siteDir, err := generate.ParseSitePackage(pkg.Module, sitePkgRel)
+	mustNot(err)
+	err = generate.ValidatePageLocation(filepath.Join(pkg.Module.Dir, siteDir, "page", pageName), scaffold)
+	mustNot(err)
+	files, err := generate.ScaffoldPage(siteImport, siteDir, pageName, scaffold)
+	mustNot(err)
+	err = generate.FlushFiles(pkg.Module.Dir, files)
+	mustNot(err)
+
+	pageImport := fmt.Sprintf("%s/page/%s", siteImport, pageName)
+	fmt.Printf("Create page at %s\n", pageImport)
+
+	stdout, err := generate.GoGenerate(siteImport + "/...")
+	if err != nil {
+		log.Fatalf("Page '%s' scaffold was create with generator error: %s", pageImport, err)
+	}
+	if len(stdout) > 0 {
+		fmt.Println("Output from go generate:")
+		fmt.Println(stdout)
+	}
+	stdout, err = generate.GoFormat(pageImport + "/...")
+	if err != nil {
+		log.Fatalf("Page '%s' scaffold was create with fmt error: %s", pageImport, err)
+	}
+	if len(stdout) > 0 {
+		fmt.Println("Output from go fmt:")
+		fmt.Println(stdout)
+	}
+	fmt.Printf("Created good page for %s!", pageName)
+}
+
+// pagesCmd generates a new pages.go file by scanning the [site]/page/* directory
+// for pages
+func pagesCmd(sitePkgRel string) {
+	pkg, err := generate.GoListPackage(".")
+	mustNot(err)
+	siteImport, _, err := generate.ParseSitePackage(pkg.Module, sitePkgRel)
+	mustNot(err)
+	sitePkg, err := generate.GoListPackage(siteImport)
+	mustNot(err)
+	pages, err := generate.PagesFile(sitePkg, scaffold)
+	mustNot(err)
+	err = generate.FlushFiles(pkg.Module.Dir, []generate.File{pages})
+	mustNot(err)
+	stdout, err := generate.GoFormat(siteImport)
+	if err != nil {
+		log.Fatalf("Pages file for '%s' scaffold was create with formatting error: %s", siteImport, err)
+	}
+	if len(stdout) > 0 {
+		fmt.Println("Output from go fmt:")
+		fmt.Println(stdout)
+	}
+	fmt.Printf("Updated pages.go for scaffold %s!", siteImport)
+}
+
+// routesCmd will parse a routemap.toml file and generate routes, handlers and templates
+// as needed
+func routesCmd(pagePkgRel string) {
+	fmt.Println("Good routes is not implemented yet!")
 }
 
 func mustNot(err error) {

@@ -119,20 +119,14 @@ func ParseSitePackage(pkg GoModule, name string) (sitePkg string, siteDir string
 // Note that '.' will attempt to install the site in the root directory of the current go module
 //
 // If the target directory is not empty, this will scan for conflicts against the scaffold
-func ValidateScaffoldPackage(pkg GoModule, name string, scaffold fs.FS) (sitePkg string, siteDir string, err error) {
-	sitePkg, siteDir, err = ParseSitePackage(pkg, name)
-	if err != nil {
-		return
-	}
-
+func ValidateScaffoldLocation(siteDir string, scaffold fs.FS) error {
 	// now try to check if there will be files write conflicts
 	// build block list index
 	blocked := struct{}{} // zero size sentinel
 	blockList := make(map[string]struct{})
 	entries, err := fs.ReadDir(scaffold, "scaffold")
 	if err != nil {
-		err = fmt.Errorf("failed to open scaffold folder: %s", err)
-		return
+		return fmt.Errorf("failed to open scaffold folder: %s", err)
 	}
 	for _, entry := range entries {
 		blockList[strings.TrimSuffix(entry.Name(), ".tmpl")] = blocked
@@ -140,29 +134,26 @@ func ValidateScaffoldPackage(pkg GoModule, name string, scaffold fs.FS) (sitePkg
 
 	// Scan for conflict between the scaffold and the target FS
 	// As a sanity check, accept at most 500 dept one child names
-	fh, err := os.Open(filepath.Join(pkg.Dir, siteDir))
+	fh, err := os.Open(siteDir)
 	if os.IsNotExist(err) {
 		// no destination folder, no conflicts, all good
-		err = nil
-		return
+		return nil
 	} else if err != nil {
-		err = fmt.Errorf("error while scanning target dir: %s", err)
-		return
+		return fmt.Errorf("error while scanning target dir: %s", err)
 	}
 	defer fh.Close()
 	names, err := fh.Readdirnames(500)
 	if err == io.EOF {
 		// empty dir, no conflicts, all good
-		err = nil
+		return nil
 	} else {
 		for i := 0; i < len(names); i++ {
 			if _, ok := blockList[names[i]]; ok {
-				err = fmt.Errorf("conflicting file or direcotry '%s'", names[i])
-				break
+				return fmt.Errorf("conflicting file or direcotry '%s'", names[i])
 			}
 		}
 	}
-	return
+	return nil
 }
 
 // mustExecute will execute a template against data or panic!

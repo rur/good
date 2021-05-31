@@ -38,11 +38,21 @@ func GoListPackage(path string) (pkg GoPackage, err error) {
 }
 
 // GoFormat will execute the go fmt command on the module path
-func GoFormat(path string) error {
-	cmd := exec.Command("go", "fmt", path+"/...")
+func GoFormat(path string) (string, error) {
+	cmd := exec.Command("go", "fmt", path)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("error while formatting scaffold: %s, output: %s", err, output)
+		return "", fmt.Errorf("go fmt error: %s, output: %s", err, output)
 	}
-	return nil
+	return string(output), nil
+}
+
+// GoGenerate will execute the go generate command on the module path
+func GoGenerate(path string) (string, error) {
+	cmd := exec.Command("go", "generate", path)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf("go fmt error: %s, output: %s", err, output)
+	}
+	return string(output), nil
 }

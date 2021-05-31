@@ -11,7 +11,8 @@ import (
 // PagesFile creates a new pages.go file by scanning the target scaffold site
 // for directories inside the ./page sub-package
 func PagesFile(sitePkg GoPackage, scaffold fs.FS) (file File, err error) {
-	list, err := ioutil.ReadDir(path.Join(sitePkg.Dir, "page"))
+	dir := path.Join(sitePkg.Dir, "page")
+	list, err := ioutil.ReadDir(dir)
 	if err != nil {
 		err = fmt.Errorf("failed to scan scaffold '%s' for pages: %s", sitePkg.ImportPath, err)
 		return
@@ -19,7 +20,8 @@ func PagesFile(sitePkg GoPackage, scaffold fs.FS) (file File, err error) {
 	var pages []string
 	for i := range list {
 		// note that 'templates' is reserved for shared template files
-		if list[i].IsDir() && list[i].Name() != "templates" {
+		name := list[i].Name()
+		if list[i].IsDir() && name != "templates" {
 			pages = append(pages, list[i].Name())
 		}
 	}
