@@ -14,31 +14,46 @@ var (
 
 These are scaffolding commands for the Good tool:
 
-	scaffold <package_name> [<page_name>...]    Create a new site scaffold at at a package relative to the working dir
-	page     <package_name> <page_name>         Add a new page to an existing scaffold
-	routes   <routemap_toml>                    Generate a routes.go file from a TOML config
+Commands
+	scaffold <site_pkg> [<page_name>...]    Create a new site scaffold at at a package relative to the working dir
+	page     <site_pkg> <page_name>         Add a new page to an existing scaffold
+	pages    <site_pkg>                    Generate a routes.go file from a TOML config
+	routes   <page_pkg>                    Generate a routes.go file from a TOML config
 
 `
 	scaffoldUsage = `usage: good scaffold <site_pkg_rel> [<page_name>...]
 
 Create a new site scaffold in the current Golang project
 
-eg.
+Example
 	good scaffold ./admin/site dashboard settings
 
-site_pkg_rel    import path of the new site, relative to the root of the current Go module
-page_name       optional list of page names to be initialized along with the site, default is 'example'
+Arguments
+	site_pkg_rel    relative import path of the new site from the current Go module
+	page_name       optional list of page names to be initialized along with the site, default is 'example'
 
 `
 	pageUsage = `usage: good page <site_pkg_rel> <page_name>
 
 Add a new page to an existing scaffold site.
 
-eg.
+Example
 	good page ./admin/site settings
 
-site_pkg_rel   import path of an existing _good scaffold_ site
-page_name      package name of the new page to initialize
+Arguments
+	site_pkg_rel   relative import path of an existing scaffold site from the current Go module
+	page_name      package name of the new page to initialize
+
+`
+	pagesUsage = `usage: good pages <site_pkg_rel>
+
+Scan site page/ folder and update the pages.go file to import the route config
+
+Example
+	good pages ./admin/site
+
+Arguments
+	site_pkg_rel   relative import path of an existing scaffold site from the current Go module
 
 `
 	routesUsage = `usage: good routes <page_pkg_rel>
@@ -46,10 +61,11 @@ page_name      package name of the new page to initialize
 Generate golang code for the routing config in a target page and populate code for any handlers or templates
 that are missing.
 
-eg.
+Example
 	good routes ./admin/site/page/example
 
-page_pkg_rel   page import path from the root of the Go module
+Arguments
+	page_pkg_rel   page import path from the root of the Go module
 
 `
 )
@@ -116,6 +132,28 @@ func main() {
 			log.Fatalf("Page '%s' scaffold was create with errors: %s", pagePkg, err)
 		}
 		fmt.Printf("Created good page for %s!", pagePkg)
+
+	case "pages":
+		if len(os.Args) < 3 {
+			fmt.Println(pagesUsage)
+			log.Fatalf("Missing target site package path")
+		}
+		pkg, err := generate.GoListPackage(".")
+		mustNot(err)
+		siteImport, _, err := generate.ParseSitePackage(pkg.Module, os.Args[2])
+		mustNot(err)
+		sitePkg, err := generate.GoListPackage(siteImport)
+		mustNot(err)
+		pages, err := generate.PagesFile(sitePkg, scaffold)
+		mustNot(err)
+		err = generate.FlushFiles(pkg.Module.Dir, []generate.File{pages})
+		mustNot(err)
+
+		if err := generate.GoFormat(siteImport); err != nil {
+			log.Fatalf("Pages file at '%s' scaffold was updated with errors: %s", siteImport, err)
+		}
+		fmt.Printf("Updated pages.go for scaffold %s!", siteImport)
+
 	case "routes":
 		fmt.Println(routesUsage)
 		log.Fatalf("Good routes is not implemented yet!")
@@ -129,6 +167,6 @@ func main() {
 
 func mustNot(err error) {
 	if err != nil {
-		log.Fatalln(err)
+		panic(err)
 	}
 }

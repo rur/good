@@ -1,3 +1,3 @@
 package settings
 
-//go:generate echo 'generate settings page routes file'
+//go:generate good routes _baseline/site/page/settings

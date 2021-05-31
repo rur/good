@@ -24,6 +24,9 @@ func SiteScaffold(mod, dest string, pages []string, scaffold fs.FS) (files []Fil
 		Namespace:  mod,
 		Pages:      pages,
 	}
+	if dest == "" {
+		data.SiteDirRel = "."
+	}
 
 	// main.go
 	files = append(files, File{

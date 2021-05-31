@@ -1,3 +1,3 @@
 package example
 
-//go:generate echo 'generate example page routes file'
+//go:generate good routes _baseline/site/page/example

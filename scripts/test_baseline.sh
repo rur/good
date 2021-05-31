@@ -45,7 +45,7 @@ go run . page _baseline/site settings
 # prepare _baseline/pages working dir for comparison and restore site
 rm -rf _baseline/page
 mv _baseline/site _baseline/page
-mv _baseline/site_bk _baseline/site
+mv _baseline/site_page_bk _baseline/site
 
 diff=$(git diff _baseline/page)
 

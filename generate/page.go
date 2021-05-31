@@ -62,18 +62,20 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 
 	// setup page with some placeholder data
 	data := struct {
-		Name      string // Go package name for page
-		Namespace string
-		Handlers  []Handler
-		PageEntry Entry
-		Entries   []Entry
-		Routes    []Route
-		Templates string
-		PagePath  string
+		Name       string // Go package name for page
+		Namespace  string
+		SiteDirRel string
+		Handlers   []Handler
+		PageEntry  Entry
+		Entries    []Entry
+		Routes     []Route
+		Templates  string
+		PagePath   string
 	}{
-		PagePath:  strings.Join([]string{siteModule, "page", name}, "/"),
-		Name:      name,
-		Namespace: siteModule,
+		PagePath:   strings.Join([]string{siteModule, "page", name}, "/"),
+		Name:       name,
+		Namespace:  siteModule,
+		SiteDirRel: siteDir,
 		Handlers: []Handler{
 			{
 				Info:       "placeholder handler",
@@ -103,6 +105,9 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 			Reference: "placeholder",
 		}},
 		Templates: filepath.Join("page", name, "templates"),
+	}
+	if siteDir == "" {
+		data.SiteDirRel = "."
 	}
 
 	pageDir := filepath.Join(siteDir, "page", name)
