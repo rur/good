@@ -1,23 +1,23 @@
-package settings
+package newpage
 
 import (
 	"github.com/rur/treetop"
-	"github.com/rur/good/_baseline/site/page"
+	"github.com/rur/good/_baseline/page/page"
 )
 
 func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 	
-	settings := treetop.NewView(
+	newpage := treetop.NewView(
 		"page/templates/base.html.tmpl",
 		hlp.BindEnv(page.BaseHandler),
 	)
-	placeholder := settings.NewDefaultSubView(
+	placeholder := newpage.NewDefaultSubView(
 		"content",
-		"page/settings/templates/content/placeholder.html.tmpl",
+		"page/newpage/templates/content/placeholder.html.tmpl",
 		hlp.BindEnv(bindResources(placeholderHandler)),
 	)
 	
-	hlp.HandleGET("/settings",
+	hlp.HandleGET("/newpage",
 		exec.NewViewHandler(placeholder))
 	
 }

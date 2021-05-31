@@ -1,14 +1,14 @@
-package settings
+package newpage
 
 import (
 	"net/http"
 
 	"github.com/rur/treetop"
-	"github.com/rur/good/_baseline/site/service"
+	"github.com/rur/good/_baseline/page/service"
 )
 
 // -------------------------
-// settings Handlers
+// newpage Handlers
 // -------------------------
 
 

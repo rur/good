@@ -1,3 +1,3 @@
 package main
 
-//go:generate good pages _baseline/site
+//go:generate good pages _baseline/page

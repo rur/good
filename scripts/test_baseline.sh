@@ -8,6 +8,10 @@ if [[ ! $(head -n 1 ./go.mod) == "module github.com/rur/good" ]]; then
     exit 1
 fi
 
+cat <<TESTINFO
+--- testing good scaffold command ---
+TESTINFO
+
 rm -rf _baseline/site/*
 go run . scaffold _baseline/site
 
@@ -22,30 +26,15 @@ if [[ ! -z $diff ]]; then
     exit 1
 fi
 
-echo "Scaffold baseline matches!"
+echo "[ok] Scaffold baseline matches!"
 
-function restoreBackup() {
-    exitcode=$?
-    if [[ -d _baseline/site_page_bk ]]; then
-        # restore site from backup during page test
-        rm -r _baseline/page
-        mv _baseline/site _baseline/page
-        mv _baseline/site_page_bk _baseline/site
-    fi
-    exit $exitcode
-}
+cat <<TESTINFO
+--- testing good page command ---
+TESTINFO
 
-trap restoreBackup EXIT
-
-cp -r _baseline/site _baseline/site_page_bk/
-
-# run page generator on the _baseline/site scaffold
-go run . page _baseline/site settings
-
-# prepare _baseline/pages working dir for comparison and restore site
-rm -rf _baseline/page
-mv _baseline/site _baseline/page
-mv _baseline/site_page_bk _baseline/site
+rm -rf _baseline/page/*
+go run . scaffold _baseline/page
+go run . page _baseline/page newpage
 
 diff=$(git diff _baseline/page)
 
@@ -58,4 +47,4 @@ if [[ ! -z $diff ]]; then
     exit 1
 fi
 
-echo "Page scaffold baseline matches!"
+echo "[ok] Page scaffold baseline matches!"

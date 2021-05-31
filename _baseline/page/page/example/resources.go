@@ -5,8 +5,8 @@ import (
 	"sync"
 
 	"github.com/rur/treetop"
-	"github.com/rur/good/_baseline/site/service"
-	"github.com/rur/good/_baseline/site/page"
+	"github.com/rur/good/_baseline/page/service"
+	"github.com/rur/good/_baseline/page/page"
 )
 
 // resources that are request-scoped data bound to page handlers

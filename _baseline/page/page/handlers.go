@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/rur/treetop"
-	"github.com/rur/good/_baseline/site/service"
+	"github.com/rur/good/_baseline/page/service"
 )
 
 // BaseHandler is the root handler use for most pages
