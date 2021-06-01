@@ -129,8 +129,15 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 	mustNot(err)
 	err = generate.ValidateScaffoldLocation(filepath.Join(pkg.Dir, siteDir), scaffold)
 	mustNot(err)
-	files, err := generate.SiteScaffold(sitePkg, siteDir, pages, scaffold)
+	files, err := generate.SiteScaffold(sitePkg, siteDir, scaffold)
 	mustNot(err)
+	pageFile, err := generate.PagesScaffold(generate.GoPackage{
+		Dir:        filepath.Join(pkg.Module.Dir, siteDir),
+		ImportPath: sitePkg,
+		Module:     pkg.Module,
+	}, pages, scaffold)
+	mustNot(err)
+	files = append(files, pageFile)
 	for _, page := range pages {
 		err = generate.ValidatePageName(page)
 		mustNot(err)
@@ -172,7 +179,9 @@ func pageCmd(sitePkgRel, pageName string) {
 	pageImport := fmt.Sprintf("%s/page/%s", siteImport, pageName)
 	fmt.Printf("Created page at %s\n", pageImport)
 
-	pages, err := generate.PagesFile(pkg, scaffold)
+	pageList, err := generate.ScanSitemap(pkg)
+	mustNot(err)
+	pages, err := generate.PagesScaffold(pkg, pageList, scaffold)
 	mustNot(err)
 	err = generate.FlushFiles(pkg.Module.Dir, []generate.File{pages})
 	mustNot(err)
@@ -197,7 +206,9 @@ func pagesCmd(sitePkgRel string) {
 	mustNot(err)
 	sitePkg, err := generate.GoListPackage(siteImport)
 	mustNot(err)
-	pages, err := generate.PagesFile(sitePkg, scaffold)
+	pageList, err := generate.ScanSitemap(sitePkg)
+	mustNot(err)
+	pages, err := generate.PagesScaffold(sitePkg, pageList, scaffold)
 	mustNot(err)
 	err = generate.FlushFiles(pkg.Module.Dir, []generate.File{pages})
 	mustNot(err)

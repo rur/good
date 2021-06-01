@@ -63,6 +63,7 @@ func init() {
 
 	// Initialize Env instance to be shared with all handlers
 	env = &service.Env{
+		SiteMap: sitemap,
 		// EDITME: initialize site-wide stuff here
 		DB: nil,
 	}

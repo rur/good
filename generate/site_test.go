@@ -119,7 +119,6 @@ func TestSiteScaffold(t *testing.T) {
 	gotFiles, err := SiteScaffold(
 		"github.com/rur/example/admin/site",
 		"admin/site",
-		[]string{"page1", "page2"},
 		fs,
 	)
 	if err != nil {
@@ -144,22 +143,6 @@ func TestSiteScaffold(t *testing.T) {
 			"simple /main.go",
 			"admin/site/main.go",
 			`FS: http.Dir("admin/site"), // read templates from file system`,
-		}, {
-			"first /pages.go",
-			"admin/site/pages.go",
-			`"github.com/rur/example/admin/site/page/page1"`,
-		}, {
-			"second /pages.go",
-			"admin/site/pages.go",
-			`"github.com/rur/example/admin/site/page/page2"`,
-		}, {
-			"first /pages.go routes",
-			"admin/site/pages.go",
-			`page1.Routes(hlp, exec)`,
-		}, {
-			"second pages.go routes",
-			"admin/site/pages.go",
-			`page2.Routes(hlp, exec)`,
 		}, {
 			"simple /gen.go",
 			"admin/site/gen.go",

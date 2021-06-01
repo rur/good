@@ -7,6 +7,8 @@ import (
 
 // Env is used to pass site-wide configuration and resources to handlers
 type Env struct {
+	Sitemap Sitemap
+
 	// loggers
 	ErrorLog *log.Logger
 	WarnLog  *log.Logger

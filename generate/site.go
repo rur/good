@@ -14,15 +14,13 @@ import (
 )
 
 // SiteScaffold will return a list of files that need to be created
-func SiteScaffold(mod, dest string, pages []string, scaffold fs.FS) (files []File, err error) {
+func SiteScaffold(mod, dest string, scaffold fs.FS) (files []File, err error) {
 	data := struct {
 		SiteDirRel string
 		Namespace  string
-		Pages      []string
 	}{
 		SiteDirRel: dest,
 		Namespace:  mod,
-		Pages:      pages,
 	}
 	if dest == "" {
 		data.SiteDirRel = "."
@@ -33,12 +31,6 @@ func SiteScaffold(mod, dest string, pages []string, scaffold fs.FS) (files []Fil
 		Dir:      dest,
 		Name:     "main.go",
 		Contents: mustExecute("scaffold/main.go.tmpl", data, scaffold),
-	})
-	// pages.go
-	files = append(files, File{
-		Dir:      dest,
-		Name:     "pages.go",
-		Contents: mustExecute("scaffold/pages.go.tmpl", data, scaffold),
 	})
 	// gen.go
 	files = append(files, File{

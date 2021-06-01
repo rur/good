@@ -8,18 +8,14 @@ import (
 )
 
 type GoModule struct {
-	Path      string `json:"Path"`
-	Main      bool   `json:"Main"`
-	Dir       string `json:"Dir"`
-	GoMod     string `json:"GoMod"`
-	GoVersion string `json:"GoVersion"`
+	Path  string `json:"Path"`
+	Dir   string `json:"Dir"`
+	GoMod string `json:"GoMod"`
 }
 
 type GoPackage struct {
 	Dir        string   `json:"Dir"`
 	ImportPath string   `json:"ImportPath"`
-	Name       string   `json:"Name"`
-	Root       string   `json:"Root"`
 	Module     GoModule `json:"Module"`
 }
 

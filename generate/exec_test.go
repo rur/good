@@ -36,9 +36,6 @@ func TestGoListPackageGenerate(t *testing.T) {
 	if !assertPattern("ImportPath", pkg.ImportPath, "github.com/rur/good/generate") {
 		return
 	}
-	if !assertPath("Root", pkg.Root, `/good$`) {
-		return
-	}
 	if !assertPattern("Module.Path", pkg.Module.Path, "^github.com/rur/good$") {
 		return
 	}
