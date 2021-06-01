@@ -22,7 +22,7 @@ func newpageHandler(rsc *resources, env *service.Env, rsp treetop.Response, req 
 		Content     interface{}
 		Scripts     interface{}
 	}{
-		HandlerInfo: "newpage",
+		HandlerInfo: "newpage Page newpageHandler",
 		SiteNav:     rsp.HandleSubView("site-nav", req),
 		Content:     rsp.HandleSubView("content", req),
 		Scripts:     rsp.HandleSubView("scripts", req),
@@ -38,7 +38,7 @@ func placeholderHandler(rsc *resources, env *service.Env, rsp treetop.Response, 
 	data := struct {
 		HandlerInfo string
 	}{
-		HandlerInfo: "placeholder",
+		HandlerInfo: "newpage Page placeholderHandler",
 	}
 	return data
 }
