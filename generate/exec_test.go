@@ -45,9 +45,6 @@ func TestGoListPackageGenerate(t *testing.T) {
 	if !assertPath("Module.GoMod", pkg.Module.GoMod, `go\.mod$`) {
 		return
 	}
-	if !assertPattern("Module.GoVersion", pkg.Module.GoVersion, `\d.\d{2}`) {
-		return
-	}
 }
 
 func TestGoListPackageError(t *testing.T) {
