@@ -60,16 +60,15 @@ func init() {
 			FS: http.FS(templates),
 		}
 	}
-
-	// Initialize Env instance to be shared with all handlers
-	env = &service.Env{
-		SiteMap: sitemap,
-		// EDITME: initialize site-wide stuff here
-		DB: nil,
-	}
 }
 
 func main() {
+	// Initialize Env instance to be shared with all handlers
+	env = &service.Env{
+		// EDITME: initialize site-wide stuff here
+		DB: nil,
+	}
+
 	m := &http.ServeMux{}
 
 	// see ./pages.go

@@ -37,32 +37,11 @@ func PagesScaffold(sitePkg GoPackage, pages []string, scaffold fs.FS) (file File
 	}
 	file.Name = "pages.go"
 	file.Contents = mustExecute("scaffold/pages.go.tmpl", struct {
-		Pages       []string
-		Namespace   string
-		SitemapJSON string
+		Pages     []string
+		Namespace string
 	}{
 		Pages:     pages,
 		Namespace: sitePkg.ImportPath,
-		SitemapJSON: `{
-			"example": {
-				"path": "/example",
-				"routes": {
-					"placeholder": {
-						"block": "content",
-						"path": "/example/placeholder"
-					}
-				}
-			},
-			"testing: {
-				"path": "/testing",
-				"routes": {
-					"placeholder": {
-						"block": "content",
-						"path": "/testing/placeholder"
-					}
-				}
-			}
-		}`,
 	}, scaffold)
 	return
 }
