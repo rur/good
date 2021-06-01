@@ -1,14 +1,26 @@
 _namespace = "github.com/rur/good/_baseline/page"
-_page = "newpage"
-_template = "page/templates/base.html.tmpl"
-_handler = "hlp.BindEnv(page.BaseHandler)"
+_ref = "newpage"
+_template = "page/newpage/templates/newpage.html.tmpl"
+_handler = "hlp.BindEnv(bindResources(newpageHandler))"
 _doc = "Base HTML template for newpage page"
 _uri = "/newpage"
 
+    [[site-nav]]
+    _ref = "main-nav"
+    _default = true
+    _template = "page/templates/nav.html.tmpl"
+    _handler = "env.Bind(page.SiteNavHandler)"
+
     [[content]]
-    _name = "newpage-placeholder"
+    _ref = "newpage-placeholder"
     _default = true
     _doc = "Placeholder page"
     _path = "/newpage"
     _template = "page/newpage/templates/placedholder.html.tmpl"
     _handler = "env.Bind(bindResources(placedholderHandler))"
+
+    [[scripts]]
+    _ref = "site-scripts"
+    _default = true
+    _template = "page/templates/scripts.html.tmpl"
+    _handler = "treetop.Noop"

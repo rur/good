@@ -18,9 +18,6 @@ type resources struct {
 // loadResources constructs a resources struct for use by the request handlers of this page
 //
 // If an error or failure occurs this function is responsible for responding  directly to the client.
-//
-// Invoking the Write method of the ResponseWriter will prevent subsequent functions from
-// handling this request.
 func loadResources(env *service.Env, w http.ResponseWriter, req *http.Request) (rsc *resources, ok bool) {
 	// EDITME: setup your handler resources here
 	ok = true

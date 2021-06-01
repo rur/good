@@ -11,15 +11,34 @@ import (
 // newpage Handlers
 // -------------------------
 
-// placeholder handler DefaultSubView
+// Ref: newpage
 // Extends: content
 // Method: GET
-// Doc: This is a placeholder, run go generate command
+// Doc: Root handler for the newpage page
+func newpageHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data := struct {
+		HandlerInfo string
+		SiteNav     interface{}
+		Content     interface{}
+		Scripts     interface{}
+	}{
+		HandlerInfo: "newpage",
+		SiteNav:     rsp.HandleSubView("site-nav", req),
+		Content:     rsp.HandleSubView("content", req),
+		Scripts:     rsp.HandleSubView("scripts", req),
+	}
+	return data
+}
+
+// Ref: placeholder
+// Extends: content
+// Method: GET
+// Doc: This is placeholder content, add your endpoints to the routemap.toml and run go generate
 func placeholderHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{
-		HandlerInfo: "placeholder handler",
+		HandlerInfo: "placeholder",
 	}
 	return data
 }
