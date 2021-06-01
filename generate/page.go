@@ -76,7 +76,7 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 				Identifier: name + "Handler",
 				Blocks: []Block{
 					{FieldName: "SiteNav", Name: "site-nav"},
-					{FieldName: "Contents", Name: "contents"},
+					{FieldName: "Content", Name: "content"},
 					{FieldName: "Scripts", Name: "scripts"},
 				},
 			},
@@ -91,7 +91,7 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 		},
 		PageEntry: Entry{
 			Assignment: name,
-			Template:   filepath.Join("page", name, "templates", "main.html.tmpl"),
+			Template:   filepath.Join("page", name, "templates", name+".html.tmpl"),
 			Handler:    fmt.Sprintf("hlp.BindEnv(bindResources(%sHandler))", name),
 		},
 		Entries: []Entry{{
@@ -158,6 +158,12 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 		Dir:      pageDir,
 		Name:     "routes.go",
 		Contents: mustExecute("scaffold/page/name/routes.go.tmpl", data, scaffold),
+	})
+	// page/name/templates/name.html.tmpl
+	files = append(files, File{
+		Dir:      filepath.Join(pageDir, "templates"),
+		Name:     name + ".html.tmpl",
+		Contents: mustExecute("scaffold/page/name/templates/name.html.tmpl.tmpl", data, scaffold),
 	})
 	// page/name/templates/content/placeholder.html.tmpl
 	files = append(files, File{

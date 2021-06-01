@@ -18,12 +18,12 @@ func exampleHandler(rsc *resources, env *service.Env, rsp treetop.Response, req 
 	data := struct {
 		HandlerInfo string
 		SiteNav     interface{}
-		Contents    interface{}
+		Content     interface{}
 		Scripts     interface{}
 	}{
 		HandlerInfo: "example",
 		SiteNav:     rsp.HandleSubView("site-nav", req),
-		Contents:    rsp.HandleSubView("contents", req),
+		Content:     rsp.HandleSubView("content", req),
 		Scripts:     rsp.HandleSubView("scripts", req),
 	}
 	return data
