@@ -10,8 +10,8 @@ import (
 
 	"github.com/rur/treetop"
 
-	"github.com/rur/good/_baseline/page/service"
 	"github.com/rur/good/_baseline/page/page"
+	"github.com/rur/good/_baseline/page/service"
 )
 
 var (
@@ -63,6 +63,7 @@ func init() {
 
 	// Initialize Env instance to be shared with all handlers
 	env = &service.Env{
+		SiteMap: sitemap,
 		// EDITME: initialize site-wide stuff here
 		DB: nil,
 	}

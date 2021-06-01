@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/rur/treetop"
 	"github.com/rur/good/_baseline/page/service"
+	"github.com/rur/treetop"
 )
 
 // ViewHandlerWithEnv is the signature of a treetop view handler with an additional

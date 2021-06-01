@@ -4,14 +4,14 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/rur/treetop"
-	"github.com/rur/good/_baseline/page/service"
 	"github.com/rur/good/_baseline/page/page"
+	"github.com/rur/good/_baseline/page/service"
+	"github.com/rur/treetop"
 )
 
 // resources that are request-scoped data bound to page handlers
 type resources struct {
-	user    service.User
+	user service.User
 	// EDITME: add request specific resources for this page
 }
 
