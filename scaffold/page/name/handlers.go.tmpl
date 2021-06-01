@@ -24,7 +24,7 @@ func [# $handler.Identifier #](rsc *resources, env *service.Env, rsp treetop.Res
 		[# $block.FieldName #] interface{}
 		[#- end #]
 	}{
-		HandlerInfo: "[# $handler.Ref #]",[# range $index, $block := .Blocks #]
+		HandlerInfo: "[# $.Name #] Page [# $handler.Identifier #]",[# range $index, $block := .Blocks #]
 		[# $block.FieldName #]: rsp.HandleSubView("[# $block.Name #]", req),
 		[#- end #]
 	}
