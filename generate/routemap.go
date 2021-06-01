@@ -2,15 +2,22 @@ package generate
 
 import (
 	"fmt"
+	"sort"
 
 	toml "github.com/pelletier/go-toml"
 )
 
+// TemplateBlock is a named child template slot within in a
+// go template. Views is a list of RouteViews directly defined for that
+// slot
 type TemplateBlock struct {
 	Name  string
 	Views []RouteView
 }
 
+// RouteView is a handler + template pair corresponding to a single
+// partial, it may contain a number of slots available for extention
+// by sub views
 type RouteView struct {
 	Name     string `toml:"_name"`
 	Default  bool   `toml:"_default"`
@@ -24,13 +31,17 @@ type RouteView struct {
 	Blocks   []TemplateBlock
 }
 
+// PageRoutes is the top level view for a site page, it includes
+// a URI and golang package namespace
 type PageRoutes struct {
 	RouteView
 	Namespace string `toml:"_namespace"`
 	URI       string `toml:"_uri"`
 }
 
-func LoadRouteRoutemap(routemap string) (*PageRoutes, error) {
+// LoadRoutemap will allocate routing data for a page given a TOML
+// encoded string
+func LoadRoutemap(routemap string) (*PageRoutes, error) {
 	tree, err := toml.Load(routemap)
 	if err != nil {
 		return nil, err
@@ -60,6 +71,7 @@ func (rv *RouteView) UnmarshalFrom(tree *toml.Tree) error {
 	}
 
 	keys := tree.Keys()
+	sort.Strings(keys)
 	for _, key := range keys {
 		if key[0] == '_' {
 			continue

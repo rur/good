@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestLoadRouteRoutemap(t *testing.T) {
+func TestLoadRoutemap(t *testing.T) {
 	toml, err := ioutil.ReadFile("./testdata/routemap.toml")
 	if err != nil {
 		t.Fatal("failed ot load test data", err)
@@ -20,17 +20,6 @@ func TestLoadRouteRoutemap(t *testing.T) {
 			Template: "page/templates/base.html.tmpl",
 			Handler:  "hlp.BindEnv(page.BaseHandler)",
 			Blocks: []TemplateBlock{
-				{
-					Name: "scripts",
-					Views: []RouteView{
-						{
-							Name:     "site-wide-script",
-							Default:  true,
-							Template: "page/templates/scripts.html.tmpl",
-							Handler:  "treetop.Noop",
-						},
-					},
-				},
 				{
 					Name: "content",
 					Views: []RouteView{
@@ -75,15 +64,26 @@ func TestLoadRouteRoutemap(t *testing.T) {
 						},
 					},
 				},
+				{
+					Name: "scripts",
+					Views: []RouteView{
+						{
+							Name:     "site-wide-script",
+							Default:  true,
+							Template: "page/templates/scripts.html.tmpl",
+							Handler:  "treetop.Noop",
+						},
+					},
+				},
 			},
 		},
 	}
-	got, err := LoadRouteRoutemap(string(toml))
+	got, err := LoadRoutemap(string(toml))
 	if err != nil {
-		t.Errorf("LoadRouteRoutemap() error = %v", err)
+		t.Errorf("LoadRoutemap() error = %v", err)
 		return
 	}
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("LoadRouteRoutemap() = %v, want %v", got, want)
+		t.Errorf("LoadRoutemap() = %v, want %v", got, want)
 	}
 }
