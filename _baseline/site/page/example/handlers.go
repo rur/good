@@ -11,6 +11,22 @@ import (
 // example Handlers
 // -------------------------
 
+// base handle for example page
+// Doc: Root handle for the main page
+func exampleHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	return struct {
+		PageTitle string
+		SiteNav   interface{}
+		Content   interface{}
+		Scripts   interface{}
+	}{
+		PageTitle: "Some Example Page",
+		SiteNav:   rsp.HandleSubView("site-nav", req),
+		Content:   rsp.HandleSubView("content", req),
+		Scripts:   rsp.HandleSubView("scripts", req),
+	}
+}
+
 // placeholder handler DefaultSubView
 // Extends: content
 // Method: GET

@@ -1,9 +1,15 @@
 _namespace = "github.com/rur/good/_baseline/site"
 _page = "example"
-_template = "page/templates/base.html.tmpl"
-_handler = "hlp.BindEnv(page.BaseHandler)"
+_template = "page/example/templates/example.html.tmpl"
+_handler = "hlp.BindEnv(bindResources(exampleHandler))"
 _doc = "Base HTML template for example page"
 _uri = "/example"
+
+    [[site-nav]]
+    _name = "main-nav"
+    _default = true
+    _template = "page/templates/pages-nav.html.tmpl"
+    _handler = "env.Bind(page.SiteNavHandler)"
 
     [[content]]
     _name = "example-placeholder"
@@ -12,3 +18,9 @@ _uri = "/example"
     _path = "/example"
     _template = "page/example/templates/placedholder.html.tmpl"
     _handler = "env.Bind(bindResources(placedholderHandler))"
+
+    [[scripts]]
+    _name = "site-scripts"
+    _default = true
+    _template = "page/templates/site-scripts.html.tmpl"
+    _handler = "treetop.Noop"

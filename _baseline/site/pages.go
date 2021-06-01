@@ -4,6 +4,8 @@ import (
 	"github.com/rur/good/_baseline/site/page"
 	"github.com/rur/treetop"
 
+	"encoding/json"
+
 	"github.com/rur/good/_baseline/site/page/example"
 	"github.com/rur/good/_baseline/site/service"
 )
@@ -15,31 +17,35 @@ func registerPages(hlp page.Helper, exec treetop.ViewExecutor) {
 	example.Routes(hlp, exec)
 }
 
-var sitemap service.Sitemap
-
-func init() {
-	err := json.Unmarshal([]byte(`
+var (
+	sitemap  service.Sitemap
+	siteinfo = `
 {
-			"example": {
-				"path": "/example",
-				"routes": {
-					"placeholder": {
-						"block": "content",
-						"path": "/example/placeholder"
-					}
-				}
-			},
-			"testing: {
-				"path": "/testing",
-				"routes": {
-					"placeholder": {
-						"block": "content",
-						"path": "/testing/placeholder"
-					}
-				}
+	"example": {
+		"uri": "/example",
+		"routes": {
+			"placeholder": {
+				"block": "content",
+				"path": "/example/placeholder"
 			}
 		}
-`), &sitemap)
+	},
+	"testing": {
+		"uri": "/testing",
+		"routes": {
+			"placeholder": {
+				"block": "content",
+				"path": "/testing/placeholder"
+			}
+		}
+	}
+}`
+)
+
+func init() {
+	err := json.Unmarshal([]byte(siteinfo), &sitemap)
 	// prevent server from starting
-	panic(err)
+	if err != nil {
+		panic(err)
+	}
 }
