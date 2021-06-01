@@ -4,15 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>example - {{ .PageTitle }}</title>
+    <title>{{ .HandlerInfo }}</title>
 </head>
 <body>
     {{ template "site-nav" .SiteNav }}
-
-    {{ block "content" .Content }}
-    <div id="content">fallback content</div>
-    {{ end }}
-
+    {{ template "content" .Content }}
     {{ template "scripts" .Scripts }}
 </body>
 </html>

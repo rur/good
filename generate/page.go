@@ -91,7 +91,7 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 		},
 		PageEntry: Entry{
 			Assignment: name,
-			Template:   filepath.Join("page", name, "templates", name+".html.tmpl"),
+			Template:   filepath.Join("page", name, "templates", "main.html.tmpl"),
 			Handler:    fmt.Sprintf("hlp.BindEnv(bindResources(%sHandler))", name),
 		},
 		Entries: []Entry{{

@@ -8,7 +8,7 @@ import (
 func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 
 	example := treetop.NewView(
-		"page/example/templates/example.html.tmpl",
+		"page/example/templates/main.html.tmpl",
 		hlp.BindEnv(bindResources(exampleHandler)),
 	)
 	example.NewDefaultSubView(
