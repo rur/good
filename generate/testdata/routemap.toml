@@ -16,5 +16,14 @@ _uri = "/example"
     _default = true
     _doc = "Placeholder page"
     _path = "/example"
-    _template = "page/example/templates/placedholder.html.tmpl"
+    _template = "page/example/templates/content/placedholder.html.tmpl"
     _handler = "env.Bind(bindResources(placedholderHandler))"
+
+    [[content]]
+    _name = "example-submit-endpoint"
+    _method = "POST"
+    _fragment = true
+    _doc = "Some form post endpoint"
+    _path = "/example/submit"
+    _template = "page/example/templates/content/submit.html.tmpl"
+    _handler = "env.Bind(bindResources(submitHandler))"
