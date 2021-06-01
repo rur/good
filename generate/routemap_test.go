@@ -15,7 +15,7 @@ func TestLoadRoutemap(t *testing.T) {
 		Namespace: "github.com/rur/good/admin/site",
 		URI:       "/example",
 		RouteView: RouteView{
-			Name:     "example",
+			Ref:      "example",
 			Doc:      "Base HTML template for example page",
 			Template: "page/templates/base.html.tmpl",
 			Handler:  "hlp.BindEnv(page.BaseHandler)",
@@ -24,24 +24,25 @@ func TestLoadRoutemap(t *testing.T) {
 					Name: "content",
 					Views: []RouteView{
 						{
-							Name:     "example-placeholder",
+							Ref:      "example-placeholder",
 							Default:  true,
 							Doc:      "Placeholder page",
 							Path:     "/example",
 							Template: "page/example/templates/content/placedholder.html.tmpl",
 							Handler:  "env.Bind(bindResources(placedholderHandler))",
+							Includes: []string{"page-nav"},
 							Blocks: []TemplateBlock{
 								{
 									Name: "form",
 									Views: []RouteView{
 										{
-											Name:     "placeholder-form",
+											Ref:      "placeholder-form",
 											Default:  true,
 											Doc:      "embedded HTML form",
 											Template: "page/example/templates/content/form/placeholderForm.html.tmpl",
 											Handler:  "env.Bind(bindResources(placedholderFormHandler))",
 										}, {
-											Name:     "placeholder-form-preview",
+											Ref:      "placeholder-form-preview",
 											Fragment: true,
 											Method:   "POST",
 											Path:     "/example/preview",
@@ -54,7 +55,7 @@ func TestLoadRoutemap(t *testing.T) {
 							},
 						},
 						{
-							Name:     "example-submit-endpoint",
+							Ref:      "example-submit-endpoint",
 							Method:   "POST",
 							Page:     true,
 							Doc:      "Some form post endpoint",
@@ -65,10 +66,21 @@ func TestLoadRoutemap(t *testing.T) {
 					},
 				},
 				{
+					Name: "nav",
+					Views: []RouteView{
+						{
+							Ref:      "page-nav",
+							Default:  true,
+							Template: "page/example/templates/nav/page-nav.html.tmpl",
+							Handler:  "env.Bind(bindResources(pageNavHandler))",
+						},
+					},
+				},
+				{
 					Name: "scripts",
 					Views: []RouteView{
 						{
-							Name:     "site-wide-script",
+							Ref:      "site-wide-script",
 							Default:  true,
 							Template: "page/templates/scripts.html.tmpl",
 							Handler:  "treetop.Noop",

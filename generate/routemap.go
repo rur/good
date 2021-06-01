@@ -19,15 +19,16 @@ type TemplateBlock struct {
 // partial, it may contain a number of slots available for extention
 // by sub views
 type RouteView struct {
-	Name     string `toml:"_name"`
-	Default  bool   `toml:"_default"`
-	Doc      string `toml:"_doc"`
-	Path     string `toml:"_path"`
-	Template string `toml:"_template"`
-	Handler  string `toml:"_handler"`
-	Method   string `toml:"_method"`
-	Fragment bool   `toml:"_fragment"`
-	Page     bool   `toml:"_page"`
+	Ref      string   `toml:"_ref"`
+	Default  bool     `toml:"_default"`
+	Doc      string   `toml:"_doc"`
+	Path     string   `toml:"_path"`
+	Template string   `toml:"_template"`
+	Handler  string   `toml:"_handler"`
+	Method   string   `toml:"_method"`
+	Fragment bool     `toml:"_fragment"`
+	Page     bool     `toml:"_page"`
+	Includes []string `toml:"_includes"`
 	Blocks   []TemplateBlock
 }
 
