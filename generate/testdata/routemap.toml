@@ -1,0 +1,20 @@
+_namespace = "github.com/rur/good/admin/site"
+_name = "example"
+_template = "page/templates/base.html.tmpl"
+_handler = "hlp.BindEnv(page.BaseHandler)"
+_doc = "Base HTML template for example page"
+_uri = "/example"
+
+    [[scripts]]
+    _name = "site-wide-script"
+    _default = true
+    _template = "page/templates/scripts.html.tmpl"
+    _handler = "treetop.Noop"
+
+    [[content]]
+    _name = "example-placeholder"
+    _default = true
+    _doc = "Placeholder page"
+    _path = "/example"
+    _template = "page/example/templates/placedholder.html.tmpl"
+    _handler = "env.Bind(bindResources(placedholderHandler))"
