@@ -19,10 +19,26 @@ _uri = "/example"
     _template = "page/example/templates/content/placedholder.html.tmpl"
     _handler = "env.Bind(bindResources(placedholderHandler))"
 
+        [[content.form]]
+        _name = "placeholder-form"
+        _default = true
+        _doc = "embedded HTML form"
+        _template = "page/example/templates/content/form/placeholderForm.html.tmpl"
+        _handler = "env.Bind(bindResources(placedholderFormHandler))"
+
+        [[content.form]]
+        _name = "placeholder-form-preview"
+        _fragment = true
+        _method = "POST"
+        _path = "/example/preview"
+        _doc = "Preview data for submit endpoint"
+        _template = "page/example/templates/content/form/placeholderFormPreview.html.tmpl"
+        _handler = "env.Bind(bindResources(placedholderFormPreviewHandler))"
+
     [[content]]
     _name = "example-submit-endpoint"
     _method = "POST"
-    _fragment = true
+    _page = true
     _doc = "Some form post endpoint"
     _path = "/example/submit"
     _template = "page/example/templates/content/submit.html.tmpl"
