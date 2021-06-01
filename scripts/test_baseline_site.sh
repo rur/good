@@ -27,24 +27,3 @@ if [[ ! -z $diff ]]; then
 fi
 
 echo "[ok] Scaffold baseline matches!"
-
-cat <<TESTINFO
---- testing good page command ---
-TESTINFO
-
-rm -rf _baseline/page/*
-go run . scaffold _baseline/page
-go run . page _baseline/page newpage
-
-diff=$(git diff _baseline/page)
-
-if [[ ! -z $diff ]]; then
-    echo "WARNING: Check baseline"
-    echo ">>> git diff out >>>"
-    printf "$diff"
-    echo
-    echo ">>> git diff end >>>"
-    exit 1
-fi
-
-echo "[ok] Page scaffold baseline matches!"

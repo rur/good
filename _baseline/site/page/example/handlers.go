@@ -11,31 +11,32 @@ import (
 // example Handlers
 // -------------------------
 
-// base handle for example page
-// Doc: Root handle for the main page
+// Ref: example// Extends: content
+// Method: GET
+// Doc: Root handler for the example page
 func exampleHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
-	return struct {
-		PageTitle string
-		SiteNav   interface{}
-		Content   interface{}
-		Scripts   interface{}
+	data := struct {
+		HandlerInfo string
+		SiteNav     interface{}
+		Contents    interface{}
+		Scripts     interface{}
 	}{
-		PageTitle: "Some Example Page",
-		SiteNav:   rsp.HandleSubView("site-nav", req),
-		Content:   rsp.HandleSubView("content", req),
-		Scripts:   rsp.HandleSubView("scripts", req),
+		HandlerInfo: "example",
+		SiteNav:     rsp.HandleSubView("site-nav", req),
+		Contents:    rsp.HandleSubView("contents", req),
+		Scripts:     rsp.HandleSubView("scripts", req),
 	}
+	return data
 }
 
-// placeholder handler DefaultSubView
-// Extends: content
+// Ref: placeholder// Extends: content
 // Method: GET
-// Doc: This is a placeholder, run go generate command
+// Doc: This is placeholder content, add your endpoints to the routemap.toml and run go generate
 func placeholderHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{
-		HandlerInfo: "placeholder handler",
+		HandlerInfo: "placeholder",
 	}
 	return data
 }

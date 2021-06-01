@@ -5,6 +5,12 @@ _handler = "[# .PageEntry.Handler #]"
 _doc = "Base HTML template for [# .Name #] page"
 _uri = "/[# .Name #]"
 
+    [[site-nav]]
+    _ref = "main-nav"
+    _default = true
+    _template = "page/templates/nav.html.tmpl"
+    _handler = "env.Bind(page.SiteNavHandler)"
+
     [[content]]
     _ref = "[# .Name #]-placeholder"
     _default = true
@@ -12,3 +18,9 @@ _uri = "/[# .Name #]"
     _path = "/[# .Name #]"
     _template = "[# .Templates #]/placedholder.html.tmpl"
     _handler = "env.Bind(bindResources(placedholderHandler))"
+
+    [[scripts]]
+    _ref = "site-scripts"
+    _default = true
+    _template = "page/templates/scripts.html.tmpl"
+    _handler = "treetop.Noop"

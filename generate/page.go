@@ -16,7 +16,7 @@ var (
 )
 
 type Handler struct {
-	Info       string
+	Ref        string
 	Type       string // "Fragment" "Partial"
 	Extends    string
 	Method     string
@@ -68,26 +68,53 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 		SiteDirRel: siteDir,
 		Handlers: []Handler{
 			{
-				Info:       "placeholder handler",
+				Ref:        name,
 				Type:       "DefaultSubView",
 				Extends:    "content",
 				Method:     "GET",
-				Doc:        "This is a placeholder, run go generate command",
+				Doc:        "Root handler for the " + name + " page",
+				Identifier: name + "Handler",
+				Blocks: []Block{
+					{FieldName: "SiteNav", Name: "site-nav"},
+					{FieldName: "Contents", Name: "contents"},
+					{FieldName: "Scripts", Name: "scripts"},
+				},
+			},
+			{
+				Ref:        "placeholder",
+				Type:       "DefaultSubView",
+				Extends:    "content",
+				Method:     "GET",
+				Doc:        "This is placeholder content, add your endpoints to the routemap.toml and run go generate",
 				Identifier: "placeholderHandler",
 			},
 		},
 		PageEntry: Entry{
 			Assignment: name,
-			Template:   filepath.Join("page", "templates", "base.html.tmpl"),
-			Handler:    "hlp.BindEnv(page.BaseHandler)",
+			Template:   filepath.Join("page", name, "templates", name+".html.tmpl"),
+			Handler:    fmt.Sprintf("hlp.BindEnv(bindResources(%sHandler))", name),
 		},
 		Entries: []Entry{{
+			Assignment: "",
+			Block:      "site-nav",
+			Type:       "DefaultSubView",
+			Extends:    name,
+			Template:   filepath.Join("page", "templates", "nav.html.tmpl"),
+			Handler:    "hlp.BindEnv(page.SiteNavHandler)",
+		}, {
 			Assignment: "placeholder",
 			Block:      "content",
 			Type:       "DefaultSubView",
 			Extends:    name,
 			Template:   filepath.Join("page", name, "templates", "content", "placeholder.html.tmpl"),
 			Handler:    "hlp.BindEnv(bindResources(placeholderHandler))",
+		}, {
+			Assignment: "",
+			Block:      "scripts",
+			Type:       "DefaultSubView",
+			Extends:    name,
+			Template:   filepath.Join("page", "templates", "scripts.html.tmpl"),
+			Handler:    "treetop.Noop",
 		}},
 		Routes: []Route{{
 			Method:    "GET",

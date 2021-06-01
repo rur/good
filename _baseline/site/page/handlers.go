@@ -17,5 +17,6 @@ func SiteNavHandler(env *service.Env, rsp treetop.Response, req *http.Request) i
 	var data struct {
 		Links []link
 	}
+	// TODO: load pages from metadata of some sort
 	return data
 }
