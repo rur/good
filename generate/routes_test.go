@@ -16,6 +16,42 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 			Template: "page/mypage/templates/mypage.html.tmpl",
 			Handler:  "hlp.BindEnv(bindResources(mypageHandler))",
 			Doc:      "Test page docs",
+			Blocks: []routemap.TemplateBlock{
+				{
+					Name: "content",
+					Views: []routemap.RouteView{
+						{
+							Ref:      "my-content",
+							Template: "page/mypage/templates/content/my-content.html.tmpl",
+							Handler:  "myContentHandler",
+							Doc:      "The default content",
+							Default:  true,
+							Path:     "/my-page",
+							Method:   "GET",
+						},
+						{
+							Ref:      "other-content",
+							Template: "page/mypage/templates/content/other-content.html.tmpl",
+							Handler:  "otherContentHandler",
+							Doc:      "The other content",
+							Path:     "/my-page/other",
+							Method:   "POST",
+						},
+					},
+				},
+				{
+					Name: "nav",
+					Views: []routemap.RouteView{
+						{
+							Ref:      "my-nav",
+							Template: "page/mypage/templates/nav/my-nav.html.tmpl",
+							Handler:  "myNavHandler",
+							Doc:      "The default nav",
+							Default:  true,
+						},
+					},
+				},
+			},
 		},
 	}
 
@@ -27,6 +63,29 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 			Type:       "PageView",
 			Doc:        "Test page docs",
 			Identifier: "mypageHandler",
+		},
+		{
+			Ref:        "my-content",
+			Extends:    "content",
+			Type:       "DefaultSubView",
+			Method:     "GET",
+			Doc:        "The default content",
+			Identifier: "myContentHandler",
+		},
+		{
+			Ref:        "other-content",
+			Extends:    "content",
+			Type:       "SubView",
+			Method:     "POST",
+			Doc:        "The other content",
+			Identifier: "otherContentHandler",
+		},
+		{
+			Ref:        "my-nav",
+			Extends:    "nav",
+			Type:       "DefaultSubView",
+			Doc:        "The default nav",
+			Identifier: "myNavHandler",
 		},
 	}
 	wantEntries := []Entry{}

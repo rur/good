@@ -69,22 +69,32 @@ func TemplateDataFromRoutes(def routemap.PageRoutes) (handlers []Handler, entrie
 			hlr.Type = "SubView"
 		}
 		handlers = append(handlers, hlr)
+
+		for i := len(view.Blocks) - 1; i >= 0; i-- {
+			// Note: we can add a sentinel value to the extends stack for spacer entries
+			nExt := append(extends, view.Blocks[i].Name)
+			for j := len(view.Blocks[i].Views) - 1; j >= 0; j-- {
+				viewStack = append(viewStack, view.Blocks[i].Views[j])
+				extendsStack = append(extendsStack, nExt)
+			}
+		}
 	}
 	return
 }
 
-// popStr will return the first element of the slice and shorten it by one
+// popStr will return the last element of the slice and shorten it by one
 func popStr(stack *[][]string) []string {
-	str := (*stack)[0]
-	*stack = (*stack)[1:]
+	len := len(*stack)
+	str := (*stack)[len-1]
+	*stack = (*stack)[:len-1]
 	return str
 }
 
-// popView will return the first element of the slice and shorten it by one
+// popView will return the last element of the slice and shorten it by one
 func popView(stack *[]routemap.RouteView) routemap.RouteView {
-	view := (*stack)[0]
-	// Note: consider copying the underlying array when len < 50% cap
-	*stack = (*stack)[1:]
+	len := len(*stack)
+	view := (*stack)[len-1]
+	*stack = (*stack)[:len-1]
 	return view
 }
 
