@@ -9,6 +9,7 @@ import (
 
 	"github.com/pelletier/go-toml"
 	"github.com/rur/good/generate"
+	"github.com/rur/good/routemap"
 )
 
 var (
@@ -227,7 +228,7 @@ func routesCmd(pagePkgRel string) {
 	mustNot(err)
 	tree, err := toml.LoadFile(filepath.Join(pkg.Dir, "routemap.toml"))
 	mustNot(err)
-	_, err = generate.GetPageRoutes(tree)
+	_, err = routemap.GetFrom(tree)
 	mustNot(err)
 
 	fmt.Println("Good routes is not implemented yet!")

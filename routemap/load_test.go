@@ -1,4 +1,4 @@
-package generate
+package routemap
 
 import (
 	"io/ioutil"
@@ -8,7 +8,7 @@ import (
 	"github.com/pelletier/go-toml"
 )
 
-func TestGetPageRoutes(t *testing.T) {
+func TestGetFrom(t *testing.T) {
 	content, err := ioutil.ReadFile("./testdata/routemap.toml")
 	if err != nil {
 		t.Fatal("failed ot load test data", err)
@@ -97,7 +97,7 @@ func TestGetPageRoutes(t *testing.T) {
 			},
 		},
 	}
-	got, err := GetPageRoutes(tree)
+	got, err := GetFrom(tree)
 	if err != nil {
 		t.Errorf("GetPageRoutes() error = %v", err)
 		return

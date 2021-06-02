@@ -15,39 +15,6 @@ var (
 	PageNameRegex = regexp.MustCompile(`^[a-z][a-z]+$`)
 )
 
-type Handler struct {
-	Ref        string
-	Type       string // "Fragment" "Partial"
-	Extends    string
-	Method     string
-	Doc        string
-	Identifier string
-	Blocks     []Block
-}
-
-type Block struct {
-	FieldName string
-	Name      string
-}
-
-type Entry struct {
-	Type       string // "SubView" "DefaultSubView" "Spacer"
-	Assignment string
-	Extends    string
-	Block      string
-	Template   string
-	Handler    string
-	Name       string
-}
-
-type Route struct {
-	Method    string
-	Path      string
-	Includes  []string
-	Reference string
-	Type      string // "Page" "Fragment" ""
-}
-
 // ScaffoldPage will assemble files for adding a new page to the site scaffold
 func ScaffoldPage(sitePkg GoPackage, name string, scaffold fs.FS) (files []File, err error) {
 	relDir, err := sitePkg.RelPath()
@@ -79,7 +46,7 @@ func ScaffoldPage(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 				Method:     "GET",
 				Doc:        "Root handler for the " + name + " page",
 				Identifier: name + "Handler",
-				Blocks: []Block{
+				Blocks: []HandleBlock{
 					{FieldName: "SiteNav", Name: "site-nav"},
 					{FieldName: "Content", Name: "content"},
 					{FieldName: "Scripts", Name: "scripts"},

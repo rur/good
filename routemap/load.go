@@ -1,4 +1,4 @@
-package generate
+package routemap
 
 import (
 	"fmt"
@@ -40,8 +40,8 @@ type PageRoutes struct {
 	URI       string `toml:"_uri"`
 }
 
-// GetPageRoutes will attempt to unmarshal routes from a loaded TOML tree
-func GetPageRoutes(tree *toml.Tree) (*PageRoutes, error) {
+// GetFrom will attempt to unmarshal routes from a loaded TOML tree
+func GetFrom(tree *toml.Tree) (*PageRoutes, error) {
 	var rts PageRoutes
 
 	err := rts.RouteView.UnmarshalFrom(tree)
