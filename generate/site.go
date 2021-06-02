@@ -14,16 +14,17 @@ import (
 )
 
 // SiteScaffold will return a list of files that need to be created
-func SiteScaffold(mod, dest string, scaffold fs.FS) (files []File, err error) {
+func SiteScaffold(pkg GoPackage, scaffold fs.FS) (files []File, err error) {
+	dest, err := pkg.RelPath()
+	if err != nil {
+		return
+	}
 	data := struct {
 		SiteDirRel string
 		Namespace  string
 	}{
 		SiteDirRel: dest,
-		Namespace:  mod,
-	}
-	if dest == "" {
-		data.SiteDirRel = "."
+		Namespace:  pkg.ImportPath,
 	}
 
 	// main.go
@@ -87,20 +88,28 @@ func SiteScaffold(mod, dest string, scaffold fs.FS) (files []File, err error) {
 
 // ParseSitePackage will normalize a relative path from a valid Go module and
 // return a golang package import path and directory path relative to the module dir
-func ParseSitePackage(pkg GoModule, name string) (sitePkg string, siteDir string, err error) {
+func ParseSitePackage(mod GoModule, name string) (sitePkg GoPackage, err error) {
+	var (
+		sitePath, siteDir string
+	)
 	if name == "." {
-		sitePkg = pkg.Path
+		sitePath = mod.Path
 		siteDir = ""
-		return
-	} else if strings.HasPrefix(name, pkg.Path) {
+	} else if strings.HasPrefix(name, mod.Path) {
 		err = fmt.Errorf("site package name must be relative to the current module, got %s", name)
 		return
+	} else {
+		// strip relative prefix since being relative is assumed
+		name = strings.TrimPrefix(name, "./")
+		parts := strings.Split(name, "/")
+		sitePath = strings.Join([]string{mod.Path, name}, "/")
+		siteDir = filepath.Join(parts...)
 	}
-	// strip relative prefix since being relative is assumed
-	name = strings.TrimPrefix(name, "./")
-	parts := strings.Split(name, "/")
-	sitePkg = strings.Join([]string{pkg.Path, name}, "/")
-	siteDir = filepath.Join(parts...)
+	sitePkg = GoPackage{
+		Dir:        filepath.Join(mod.Dir, siteDir),
+		ImportPath: sitePath,
+		Module:     mod,
+	}
 	return
 }
 

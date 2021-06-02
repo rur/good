@@ -40,16 +40,11 @@ type PageRoutes struct {
 	URI       string `toml:"_uri"`
 }
 
-// LoadRoutemap will allocate routing data for a page given a TOML
-// encoded string
-func LoadRoutemap(routemap string) (*PageRoutes, error) {
-	tree, err := toml.Load(routemap)
-	if err != nil {
-		return nil, err
-	}
+// GetPageRoutes will attempt to unmarshal routes from a loaded TOML tree
+func GetPageRoutes(tree *toml.Tree) (*PageRoutes, error) {
 	var rts PageRoutes
 
-	err = rts.RouteView.UnmarshalFrom(tree)
+	err := rts.RouteView.UnmarshalFrom(tree)
 	if err != nil {
 		return nil, err
 	}

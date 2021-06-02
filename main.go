@@ -125,23 +125,19 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 
 	pkg, err := generate.GoListPackage(".")
 	mustNot(err)
-	sitePkg, siteDir, err := generate.ParseSitePackage(pkg.Module, os.Args[2])
+	sitePkg, err := generate.ParseSitePackage(pkg.Module, os.Args[2])
 	mustNot(err)
-	err = generate.ValidateScaffoldLocation(filepath.Join(pkg.Dir, siteDir), scaffold)
+	err = generate.ValidateScaffoldLocation(sitePkg.Dir, scaffold)
 	mustNot(err)
-	files, err := generate.SiteScaffold(sitePkg, siteDir, scaffold)
+	files, err := generate.SiteScaffold(sitePkg, scaffold)
 	mustNot(err)
-	pageFile, err := generate.PagesScaffold(generate.GoPackage{
-		Dir:        filepath.Join(pkg.Module.Dir, siteDir),
-		ImportPath: sitePkg,
-		Module:     pkg.Module,
-	}, pages, scaffold)
+	pageFile, err := generate.PagesScaffold(sitePkg, pages, scaffold)
 	mustNot(err)
 	files = append(files, pageFile)
 	for _, page := range pages {
 		err = generate.ValidatePageName(page)
 		mustNot(err)
-		pFiles, err := generate.ScaffoldPage(sitePkg, siteDir, page, scaffold)
+		pFiles, err := generate.ScaffoldPage(sitePkg, page, scaffold)
 		mustNot(err)
 		files = append(files, pFiles...)
 	}
@@ -167,16 +163,16 @@ func pageCmd(sitePkgRel, pageName string) {
 	mustNot(err)
 	pkg, err := generate.GoListPackage("./" + sitePkgRel)
 	mustNot(err)
-	siteImport, siteDir, err := generate.ParseSitePackage(pkg.Module, sitePkgRel)
+	sitePkg, err := generate.ParseSitePackage(pkg.Module, sitePkgRel)
 	mustNot(err)
-	err = generate.ValidatePageLocation(filepath.Join(pkg.Module.Dir, siteDir, "page", pageName), scaffold)
+	err = generate.ValidatePageLocation(filepath.Join(sitePkg.Dir, "page", pageName), scaffold)
 	mustNot(err)
-	files, err := generate.ScaffoldPage(siteImport, siteDir, pageName, scaffold)
+	files, err := generate.ScaffoldPage(sitePkg, pageName, scaffold)
 	mustNot(err)
 	err = generate.FlushFiles(pkg.Module.Dir, files)
 	mustNot(err)
 
-	pageImport := fmt.Sprintf("%s/page/%s", siteImport, pageName)
+	pageImport := fmt.Sprintf("%s/page/%s", sitePkg.ImportPath, pageName)
 	fmt.Printf("Created page at %s\n", pageImport)
 
 	pageList, err := generate.ScanSitemap(pkg)
@@ -202,9 +198,7 @@ func pageCmd(sitePkgRel, pageName string) {
 func pagesCmd(sitePkgRel string) {
 	pkg, err := generate.GoListPackage(".")
 	mustNot(err)
-	siteImport, _, err := generate.ParseSitePackage(pkg.Module, sitePkgRel)
-	mustNot(err)
-	sitePkg, err := generate.GoListPackage(siteImport)
+	sitePkg, err := generate.ParseSitePackage(pkg.Module, sitePkgRel)
 	mustNot(err)
 	pageList, err := generate.ScanSitemap(sitePkg)
 	mustNot(err)
@@ -212,20 +206,23 @@ func pagesCmd(sitePkgRel string) {
 	mustNot(err)
 	err = generate.FlushFiles(pkg.Module.Dir, []generate.File{pages})
 	mustNot(err)
-	stdout, err := generate.GoFormat(siteImport)
+	relPth, err := sitePkg.RelPath()
+	mustNot(err)
+	stdout, err := generate.GoFormat(relPth)
 	if err != nil {
-		log.Fatalf("Pages file for '%s' scaffold was create with formatting error: %s", siteImport, err)
+		log.Fatalf("Pages file for '%s' scaffold was create with formatting error: %s", sitePkg.ImportPath, err)
 	}
 	if len(stdout) > 0 {
 		fmt.Println("Output from go fmt:")
 		fmt.Println(stdout)
 	}
-	fmt.Printf("Updated pages.go for scaffold %s!", siteImport)
+	fmt.Printf("Updated pages.go for scaffold %s!", sitePkg.ImportPath)
 }
 
 // routesCmd will parse a routemap.toml file and generate routes, handlers and templates
 // as needed
 func routesCmd(pagePkgRel string) {
+
 	fmt.Println("Good routes is not implemented yet!")
 }
 

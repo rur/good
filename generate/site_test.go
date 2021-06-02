@@ -67,23 +67,26 @@ func TestParseSitePackage(t *testing.T) {
 		t.Fatal(err)
 	}
 	tests := []struct {
-		name    string
-		input   string
-		wantPkg string
-		wantDir string
-		wantErr string
+		name        string
+		input       string
+		wantPkg     string
+		wantDir     string
+		wantRelPath string
+		wantErr     string
 	}{
 		{
-			name:    "basic",
-			input:   "./admin/site",
-			wantPkg: "github.com/rur/good/admin/site",
-			wantDir: filepath.Join("admin", "site"),
+			name:        "basic",
+			input:       "./admin/site",
+			wantPkg:     "github.com/rur/good/admin/site",
+			wantDir:     filepath.Join(pkg.Module.Dir, "admin", "site"),
+			wantRelPath: "./admin/site",
 		},
 		{
-			name:    "using . as destination",
-			input:   ".",
-			wantPkg: "github.com/rur/good",
-			wantDir: "",
+			name:        "using . as destination",
+			input:       ".",
+			wantPkg:     "github.com/rur/good",
+			wantDir:     pkg.Module.Dir,
+			wantRelPath: ".",
 		},
 		{
 			name:    "embedded import",
@@ -93,7 +96,7 @@ func TestParseSitePackage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotSitePkg, gotSiteDir, err := ParseSitePackage(pkg.Module, tt.input)
+			gotPkg, err := ParseSitePackage(pkg.Module, tt.input)
 			if tt.wantErr != "" {
 				if err == nil {
 					t.Errorf("ParseSitePackage() expecting an error containing message %s", tt.wantErr)
@@ -103,11 +106,15 @@ func TestParseSitePackage(t *testing.T) {
 			} else if err != nil {
 				t.Errorf("ParseSitePackage() unexpected error = %s", err)
 			} else {
-				if gotSitePkg != tt.wantPkg {
-					t.Errorf("ParseSitePackage() gotSitePkg = %v, want %v", gotSitePkg, tt.wantPkg)
+				if gotPkg.ImportPath != tt.wantPkg {
+					t.Errorf("ParseSitePackage() gotSitePkg = %v, want %v", gotPkg.ImportPath, tt.wantPkg)
 				}
-				if gotSiteDir != tt.wantDir {
-					t.Errorf("ParseSitePackage() gotSiteDir = %v, want %v", gotSiteDir, tt.wantDir)
+				if gotPkg.Dir != tt.wantDir {
+					t.Errorf("ParseSitePackage() gotSiteDir = %v, want %v", gotPkg.Dir, tt.wantDir)
+				}
+				rel, _ := gotPkg.RelPath()
+				if rel != tt.wantRelPath {
+					t.Errorf("ParseSitePackage() RelPath() = %v, want %v", rel, tt.wantRelPath)
 				}
 			}
 		})
@@ -117,8 +124,14 @@ func TestParseSitePackage(t *testing.T) {
 func TestSiteScaffold(t *testing.T) {
 	fs := os.DirFS("../")
 	gotFiles, err := SiteScaffold(
-		"github.com/rur/example/admin/site",
-		"admin/site",
+		GoPackage{
+			ImportPath: "github.com/rur/example/admin/site",
+			Dir:        "/some/location/example/admin/site",
+			Module: GoModule{
+				Dir:  "/some/location/example",
+				Path: "github.com/rur/example",
+			},
+		},
 		fs,
 	)
 	if err != nil {
@@ -142,11 +155,11 @@ func TestSiteScaffold(t *testing.T) {
 		}, {
 			"simple /main.go",
 			"admin/site/main.go",
-			`FS: http.Dir("admin/site"), // read templates from file system`,
+			`FS: http.Dir("./admin/site"), // read templates from file system`,
 		}, {
 			"simple /gen.go",
 			"admin/site/gen.go",
-			`//go:generate good pages admin/site`,
+			`//go:generate good pages ./admin/site`,
 		}, {
 			"simple main.css",
 			"admin/site/static/styles/main.css",
@@ -170,11 +183,15 @@ func TestSiteScaffold(t *testing.T) {
 		}, {
 			"content handler for page handlers.go",
 			"admin/site/page/handlers.go",
-			`rsp.HandleSubView("content", req)`,
+			`func SiteNavHandler(env *service.Env, rsp treetop.Response, req *http.Request) interface{} {`,
 		}, {
-			"simple Base HTML",
-			"admin/site/page/templates/base.html.tmpl",
-			`<title>{{ .PageTitle }}</title>`,
+			"common nav template",
+			"admin/site/page/templates/nav.html.tmpl",
+			`{{ range $index, $link := .Links -}}`,
+		}, {
+			"common scripts template",
+			"admin/site/page/templates/scripts.html.tmpl",
+			`<script async src="/js/treetop.js"></script`,
 		},
 	}
 	for _, tt := range tests {

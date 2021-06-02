@@ -5,18 +5,31 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
+	"path/filepath"
 )
 
+// GoModule represents a golang project level module
 type GoModule struct {
 	Path  string `json:"Path"`
 	Dir   string `json:"Dir"`
 	GoMod string `json:"GoMod"`
 }
 
+// GoPackage represents a package with a go module
 type GoPackage struct {
 	Dir        string   `json:"Dir"`
 	ImportPath string   `json:"ImportPath"`
 	Module     GoModule `json:"Module"`
+}
+
+// RelPath gets the relative import path for the package relative
+// to the module, if will return "." if they are the same
+func (pkg *GoPackage) RelPath() (string, error) {
+	if pkg.Dir == pkg.Module.Dir {
+		return ".", nil
+	}
+	path, err := filepath.Rel(pkg.Module.Dir, pkg.Dir)
+	return "./" + path, err
 }
 
 // GoListPackage will get the Go module information for the go path provied

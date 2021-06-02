@@ -4,13 +4,20 @@ import (
 	"io/ioutil"
 	"reflect"
 	"testing"
+
+	"github.com/pelletier/go-toml"
 )
 
-func TestLoadRoutemap(t *testing.T) {
-	toml, err := ioutil.ReadFile("./testdata/routemap.toml")
+func TestGetPageRoutes(t *testing.T) {
+	content, err := ioutil.ReadFile("./testdata/routemap.toml")
 	if err != nil {
 		t.Fatal("failed ot load test data", err)
 	}
+	tree, err := toml.LoadBytes(content)
+	if err != nil {
+		t.Fatal("failed to load TOML tree", err)
+	}
+
 	want := &PageRoutes{
 		Namespace: "github.com/rur/good/admin/site",
 		URI:       "/example",
@@ -90,12 +97,12 @@ func TestLoadRoutemap(t *testing.T) {
 			},
 		},
 	}
-	got, err := LoadRoutemap(string(toml))
+	got, err := GetPageRoutes(tree)
 	if err != nil {
-		t.Errorf("LoadRoutemap() error = %v", err)
+		t.Errorf("GetPageRoutes() error = %v", err)
 		return
 	}
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("LoadRoutemap() = %v, want %v", got, want)
+		t.Errorf("GetPageRoutes() = %v, want %v", got, want)
 	}
 }

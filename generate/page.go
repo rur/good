@@ -49,7 +49,12 @@ type Route struct {
 }
 
 // ScaffoldPage will assemble files for adding a new page to the site scaffold
-func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []File, err error) {
+func ScaffoldPage(sitePkg GoPackage, name string, scaffold fs.FS) (files []File, err error) {
+	relDir, err := sitePkg.RelPath()
+	if err != nil {
+		return
+	}
+
 	// setup page with some placeholder data
 	data := struct {
 		Name       string // Go package name for page
@@ -62,10 +67,10 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 		Templates  string
 		PagePath   string
 	}{
-		PagePath:   strings.Join([]string{siteModule, "page", name}, "/"),
+		PagePath:   strings.Join([]string{sitePkg.ImportPath, "page", name}, "/"),
 		Name:       name,
-		Namespace:  siteModule,
-		SiteDirRel: siteDir,
+		Namespace:  sitePkg.ImportPath,
+		SiteDirRel: relDir,
 		Handlers: []Handler{
 			{
 				Ref:        name,
@@ -123,11 +128,8 @@ func ScaffoldPage(siteModule, siteDir, name string, scaffold fs.FS) (files []Fil
 		}},
 		Templates: filepath.Join("page", name, "templates"),
 	}
-	if siteDir == "" {
-		data.SiteDirRel = "."
-	}
 
-	pageDir := filepath.Join(siteDir, "page", name)
+	pageDir := filepath.Join(relDir, "page", name)
 
 	// page/name/gen.go
 	files = append(files, File{
