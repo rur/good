@@ -34,6 +34,12 @@ func (pkg *GoPackage) RelPath() (string, error) {
 
 // GoListPackage will get the Go module information for the go path provied
 func GoListPackage(path string) (pkg GoPackage, err error) {
+	if path == "" {
+		path = "."
+	} else if path[0] != '.' {
+		path = "./" + path
+	}
+
 	cmd := exec.Command("go", "list", "--json", path)
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout

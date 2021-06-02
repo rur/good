@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/pelletier/go-toml"
 	"github.com/rur/good/generate"
 )
 
@@ -161,7 +162,7 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 func pageCmd(sitePkgRel, pageName string) {
 	err := generate.ValidatePageName(pageName)
 	mustNot(err)
-	pkg, err := generate.GoListPackage("./" + sitePkgRel)
+	pkg, err := generate.GoListPackage(sitePkgRel)
 	mustNot(err)
 	sitePkg, err := generate.ParseSitePackage(pkg.Module, sitePkgRel)
 	mustNot(err)
@@ -222,6 +223,12 @@ func pagesCmd(sitePkgRel string) {
 // routesCmd will parse a routemap.toml file and generate routes, handlers and templates
 // as needed
 func routesCmd(pagePkgRel string) {
+	pkg, err := generate.GoListPackage(pagePkgRel)
+	mustNot(err)
+	tree, err := toml.LoadFile(filepath.Join(pkg.Dir, "routemap.toml"))
+	mustNot(err)
+	_, err = generate.GetPageRoutes(tree)
+	mustNot(err)
 
 	fmt.Println("Good routes is not implemented yet!")
 }

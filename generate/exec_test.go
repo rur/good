@@ -7,8 +7,16 @@ import (
 	"testing"
 )
 
-func TestGoListPackageGenerate(t *testing.T) {
-	// helpers
+func TestGoListPackageError(t *testing.T) {
+	// fs error
+	if _, err := GoListPackage("./fake"); err == nil {
+		t.Error("Expecting error for fake directory")
+	} else if !strings.Contains(err.Error(), "directory not found") {
+		t.Errorf("Expecting reason for failure, got %s", err)
+	}
+}
+
+func TestGoListPackage(t *testing.T) {
 	assertPattern := func(field, got, expected string) bool {
 		if !regexp.MustCompile(expected).MatchString(got) {
 			t.Errorf("GoListPackage pkg.%s, expected pattern %s, got %s", field, expected, got)
@@ -23,41 +31,65 @@ func TestGoListPackageGenerate(t *testing.T) {
 			strings.ReplaceAll(pattern, `/`, string(os.PathSeparator)),
 		)
 	}
-
-	pkg, err := GoListPackage(".")
-
-	if err != nil {
-		t.Errorf("GoListPackage() error %s", err)
-		return
+	tests := []struct {
+		name           string
+		input          string
+		wantDir        string
+		wantImport     string
+		wantModulePath string
+		wantModuleDir  string
+		wantErr        bool
+	}{
+		{
+			name:           "auto dot",
+			input:          "",
+			wantDir:        "^.+/good/generate$",
+			wantImport:     "^github.com/rur/good/generate$",
+			wantModulePath: "^github.com/rur/good$",
+			wantModuleDir:  "^.+/good$",
+		},
+		{
+			name:           "current package",
+			input:          ".",
+			wantDir:        "^.+/good/generate$",
+			wantImport:     "^github.com/rur/good/generate$",
+			wantModulePath: "^github.com/rur/good$",
+			wantModuleDir:  "^.+/good$",
+		},
+		{
+			name:           "current package",
+			input:          "../",
+			wantDir:        "^.+/good$",
+			wantImport:     "^github.com/rur/good$",
+			wantModulePath: "^github.com/rur/good$",
+			wantModuleDir:  "^.+/good$",
+		},
+		{
+			name:    "missing dir",
+			input:   "./fake",
+			wantErr: true,
+		},
 	}
-	if !assertPath("Dir", pkg.Dir, `/good/generate$`) {
-		return
-	}
-	if !assertPattern("ImportPath", pkg.ImportPath, "github.com/rur/good/generate") {
-		return
-	}
-	if !assertPattern("Module.Path", pkg.Module.Path, "^github.com/rur/good$") {
-		return
-	}
-	if !assertPath("Module.Dir", pkg.Module.Dir, "/good$") {
-		return
-	}
-	if !assertPath("Module.GoMod", pkg.Module.GoMod, `go\.mod$`) {
-		return
-	}
-}
-
-func TestGoListPackageError(t *testing.T) {
-	// fs error
-	if _, err := GoListPackage("./fake"); err == nil {
-		t.Error("Expecting error for fake directory")
-	} else if !strings.Contains(err.Error(), "directory not found") {
-		t.Errorf("Expecting reason for failure, got %s", err)
-	}
-	// invoke a go command error
-	if _, err := GoListPackage("__does_not_exist_in_go_root__"); err == nil {
-		t.Error("Expecting error for fake directory")
-	} else if !strings.Contains(err.Error(), "package __does_not_exist_in_go_root__ is not in GOROOT") {
-		t.Errorf("Expecting reason for failure, got %s", err)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pkg, err := GoListPackage(tt.input)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GoListPackage() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			} else {
+				if !assertPath("Dir", pkg.Dir, tt.wantDir) {
+					return
+				}
+				if !assertPattern("ImportPath", pkg.ImportPath, tt.wantImport) {
+					return
+				}
+				if !assertPattern("Module.Path", pkg.Module.Path, tt.wantModulePath) {
+					return
+				}
+				if !assertPath("Module.Dir", pkg.Module.Dir, tt.wantModuleDir) {
+					return
+				}
+			}
+		})
 	}
 }
