@@ -28,6 +28,20 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 							Default:  true,
 							Path:     "/my-page",
 							Method:   "GET",
+							Blocks: []routemap.TemplateBlock{
+								{
+									Name: "form",
+									Views: []routemap.RouteView{
+										{
+											Ref:      "my-form",
+											Template: "page/mypage/templates/content/form/my-form.html.tmpl",
+											Handler:  "myFormHandler",
+											Doc:      "A content form",
+											Path:     "/my-page/form",
+										},
+									},
+								},
+							},
 						},
 						{
 							Ref:      "other-content",
@@ -60,22 +74,25 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 	wantHandlers := []Handler{
 		{
 			Ref:        "mypage",
-			Type:       "PageView",
 			Doc:        "Test page docs",
 			Identifier: "mypageHandler",
 		},
 		{
 			Ref:        "my-content",
 			Extends:    "content",
-			Type:       "DefaultSubView",
 			Method:     "GET",
 			Doc:        "The default content",
 			Identifier: "myContentHandler",
 		},
 		{
+			Ref:        "my-form",
+			Extends:    "form",
+			Doc:        "A content form",
+			Identifier: "myFormHandler",
+		},
+		{
 			Ref:        "other-content",
 			Extends:    "content",
-			Type:       "SubView",
 			Method:     "POST",
 			Doc:        "The other content",
 			Identifier: "otherContentHandler",
@@ -83,7 +100,6 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 		{
 			Ref:        "my-nav",
 			Extends:    "nav",
-			Type:       "DefaultSubView",
 			Doc:        "The default nav",
 			Identifier: "myNavHandler",
 		},

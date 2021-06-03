@@ -41,7 +41,6 @@ func ScaffoldPage(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 		Handlers: []Handler{
 			{
 				Ref:        name,
-				Type:       "DefaultSubView",
 				Extends:    "content",
 				Method:     "GET",
 				Doc:        "Root handler for the " + name + " page",
@@ -54,7 +53,6 @@ func ScaffoldPage(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 			},
 			{
 				Ref:        "placeholder",
-				Type:       "DefaultSubView",
 				Extends:    "content",
 				Method:     "GET",
 				Doc:        "This is placeholder content, add your endpoints to the routemap.toml and run go generate",

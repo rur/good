@@ -9,7 +9,6 @@ import (
 // Handler is data for a handler function which should be created
 type Handler struct {
 	Ref        string
-	Type       string // "Fragment" "Partial"
 	Extends    string
 	Method     string
 	Doc        string
@@ -60,13 +59,6 @@ func TemplateDataFromRoutes(def routemap.PageRoutes) (handlers []Handler, entrie
 			Method:     view.Method,
 			Doc:        view.Doc,
 			Identifier: kebabToCamel(view.Ref) + "Handler",
-		}
-		if len(extends) == 0 {
-			hlr.Type = "PageView"
-		} else if view.Default {
-			hlr.Type = "DefaultSubView"
-		} else {
-			hlr.Type = "SubView"
 		}
 		handlers = append(handlers, hlr)
 
