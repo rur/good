@@ -3,7 +3,7 @@ package newpage
 import (
 	"net/http"
 
-	"github.com/rur/good/_baseline/page/service"
+	"github.com/rur/good/baseline/page/service"
 	"github.com/rur/treetop"
 )
 

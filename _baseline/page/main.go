@@ -10,8 +10,8 @@ import (
 
 	"github.com/rur/treetop"
 
-	"github.com/rur/good/_baseline/page/page"
-	"github.com/rur/good/_baseline/page/service"
+	"github.com/rur/good/baseline/page/page"
+	"github.com/rur/good/baseline/page/service"
 )
 
 var (
@@ -49,7 +49,8 @@ func init() {
 		staticFS = http.Dir("static")
 		exec = &treetop.DeveloperExecutor{ // force templates to be re-parsed for every request
 			ViewExecutor: &treetop.FileSystemExecutor{
-				FS: http.Dir("./_baseline/page"), // read templates from file system
+				// this assumes you are runing the dev server from your project root
+				FS: http.Dir("./baseline/page"),
 			},
 		}
 	} else {
@@ -89,7 +90,7 @@ func main() {
 	// m.Handle("/js/treetop.js", treetop.ServeClientLibrary)
 
 	addr := fmt.Sprintf(":%d", port)
-	fmt.Printf("Starting github.com/rur/good/_baseline/page server at %s\n", addr)
+	fmt.Printf("Starting github.com/rur/good/baseline/page server at %s\n", addr)
 
 	// Bind to an addr and pass our router in
 	log.Fatal(http.ListenAndServe(addr, m))

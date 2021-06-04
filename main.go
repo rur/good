@@ -186,7 +186,7 @@ func pageCmd(sitePkgRel, pageName string) {
 	err = generate.FlushFiles(sitePkg.Dir, []generate.File{pages})
 	mustNot(err)
 
-	stdout, err := generate.GoFormat(fmt.Sprintf("%s/page/%s/...", sitePkg.ImportPath, pageName))
+	stdout, err := generate.GoFormat(sitePkg.ImportPath + "/...")
 	if err != nil {
 		log.Fatalf("Page '%s' scaffold was create with fmt error: %s", pageImport, err)
 	}

@@ -1,7 +1,7 @@
 package example
 
 import (
-	"github.com/rur/good/_baseline/page/page"
+	"github.com/rur/good/baseline/page/page"
 	"github.com/rur/treetop"
 )
 
@@ -21,18 +21,18 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 		hlp.BindEnv(bindResources(placeholderHandler)),
 	)
 
+	// [[nav]]
+	example.NewDefaultSubView(
+		"nav",
+		"page/templates/nav.html.tmpl",
+		hlp.BindEnv(page.SiteNavHandler),
+	)
+
 	// [[scripts]]
 	example.NewDefaultSubView(
 		"scripts",
 		"page/templates/scripts.html.tmpl",
 		treetop.Noop,
-	)
-
-	// [[site-nav]]
-	example.NewDefaultSubView(
-		"site-nav",
-		"page/templates/nav.html.tmpl",
-		hlp.BindEnv(page.SiteNavHandler),
 	)
 
 	hlp.HandleGET("/example",

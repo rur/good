@@ -15,7 +15,7 @@ _uri = "/example"
     _default = true
     _doc = "Placeholder page"
     _path = "/example"
-    _template = "page/example/templates/placedholder.html.tmpl"
+    _template = "page/example/templates/placeholder.html.tmpl"
     _handler = "hlp.BindEnv(bindResources(placeholderHandler))"
 
     [[scripts]]

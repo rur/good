@@ -49,7 +49,8 @@ func init() {
 		staticFS = http.Dir("static")
 		exec = &treetop.DeveloperExecutor{ // force templates to be re-parsed for every request
 			ViewExecutor: &treetop.FileSystemExecutor{
-				FS: http.Dir("./baseline/site"), // read templates from file system
+				// this assumes you are runing the dev server from your project root
+				FS: http.Dir("./baseline/site"),
 			},
 		}
 	} else {
