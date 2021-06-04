@@ -139,16 +139,16 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 	for _, page := range pages {
 		err = generate.ValidatePageName(page)
 		mustNot(err)
-		pFiles, err := generate.ScaffoldPage(sitePkg, page, scaffold)
+		pFiles, err := generate.PageScaffold(sitePkg, page, scaffold)
 		mustNot(err)
 		files = append(files, pFiles...)
 	}
 
 	// FS operations
-	err = generate.FlushFiles(pkg.Module.Dir, files)
+	err = generate.FlushFiles(sitePkg.Dir, files)
 	mustNot(err)
 
-	stdout, err := generate.GoFormat("./" + sitePkgRel + "/...")
+	stdout, err := generate.GoFormat(sitePkg.ImportPath)
 	if err != nil {
 		log.Fatalf("Page '%s' scaffold was create with formatting errors: %s", sitePkg, err)
 	}
@@ -169,7 +169,7 @@ func pageCmd(sitePkgRel, pageName string) {
 	mustNot(err)
 	err = generate.ValidatePageLocation(filepath.Join(sitePkg.Dir, "page", pageName), scaffold)
 	mustNot(err)
-	files, err := generate.ScaffoldPage(sitePkg, pageName, scaffold)
+	files, err := generate.PageScaffold(sitePkg, pageName, scaffold)
 	mustNot(err)
 	err = generate.FlushFiles(pkg.Module.Dir, files)
 	mustNot(err)

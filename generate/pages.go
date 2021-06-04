@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"path"
-	"path/filepath"
 )
 
 // ScanSitemap will scan the site page package and load site routing
@@ -31,10 +30,6 @@ func ScanSitemap(sitePkg GoPackage) (pages []string, err error) {
 // for directories inside the ./page sub-package
 func PagesScaffold(sitePkg GoPackage, pages []string, scaffold fs.FS) (file File, err error) {
 	// treat each dir name as a page
-	file.Dir, err = filepath.Rel(sitePkg.Module.Dir, sitePkg.Dir)
-	if err != nil {
-		return
-	}
 	file.Name = "pages.go"
 	file.Contents = mustExecute("scaffold/pages.go.tmpl", struct {
 		Pages     []string

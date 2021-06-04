@@ -12,8 +12,11 @@ cat <<TESTINFO
 --- testing good scaffold command ---
 TESTINFO
 
-rm -rf _baseline/site/*
-go run . scaffold _baseline/site
+go run . scaffold baseline/site
+
+rm -r _baseline/site
+mv baseline/site _baseline/
+rm -r baseline
 
 diff=$(git diff _baseline/site)
 
