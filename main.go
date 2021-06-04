@@ -125,9 +125,10 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 		pages = []string{"example"}
 	}
 
-	pkg, err := generate.GoListPackage(".")
+	// use current package to find go module
+	curPkg, err := generate.GoListPackage(".")
 	mustNot(err)
-	sitePkg, err := generate.ParseSitePackage(pkg.Module, os.Args[2])
+	sitePkg, err := generate.ParseSitePackage(curPkg.Module, os.Args[2])
 	mustNot(err)
 	err = generate.ValidateScaffoldLocation(sitePkg.Dir, scaffold)
 	mustNot(err)
@@ -163,11 +164,7 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 func pageCmd(sitePkgRel, pageName string) {
 	err := generate.ValidatePageName(pageName)
 	mustNot(err)
-	// currentPkg is whatever package this command was called from
-	currentPkg, err := generate.GoListPackage(".")
-	mustNot(err)
-	// sitePkg is the scaffold site being referenced
-	sitePkg, err := generate.ParseSitePackage(currentPkg.Module, sitePkgRel)
+	sitePkg, err := generate.GoListPackage(sitePkgRel)
 	mustNot(err)
 	err = generate.ValidatePageLocation(filepath.Join(sitePkg.Dir, "page", pageName), scaffold)
 	mustNot(err)
@@ -200,15 +197,13 @@ func pageCmd(sitePkgRel, pageName string) {
 // pagesCmd generates a new pages.go file by scanning the [site]/page/* directory
 // for pages
 func pagesCmd(sitePkgRel string) {
-	pkg, err := generate.GoListPackage(".")
-	mustNot(err)
-	sitePkg, err := generate.ParseSitePackage(pkg.Module, sitePkgRel)
+	sitePkg, err := generate.GoListPackage(sitePkgRel)
 	mustNot(err)
 	pageList, err := generate.ScanSitemap(sitePkg)
 	mustNot(err)
 	pages, err := generate.PagesScaffold(sitePkg, pageList, scaffold)
 	mustNot(err)
-	err = generate.FlushFiles(pkg.Module.Dir, []generate.File{pages})
+	err = generate.FlushFiles(sitePkg.Dir, []generate.File{pages})
 	mustNot(err)
 	stdout, err := generate.GoFormat(sitePkg.ImportPath)
 	if err != nil {
