@@ -29,13 +29,13 @@ func SiteScaffold(pkg GoPackage, scaffold fs.FS) (files []File, err error) {
 
 	// main.go
 	files = append(files, File{
-		Dir:      dest,
+		Dir:      "",
 		Name:     "main.go",
 		Contents: mustExecute("scaffold/main.go.tmpl", data, scaffold),
 	})
 	// gen.go
 	files = append(files, File{
-		Dir:      dest,
+		Dir:      "",
 		Name:     "gen.go",
 		Contents: mustExecute("scaffold/gen.go.tmpl", data, scaffold),
 	})
@@ -46,7 +46,7 @@ func SiteScaffold(pkg GoPackage, scaffold fs.FS) (files []File, err error) {
 		}
 
 		files = append(files, File{
-			Dir:      filepath.Join(dest, strings.TrimPrefix(filepath.Dir(path), "scaffold/")),
+			Dir:      strings.TrimPrefix(filepath.Dir(path), "scaffold"+string(os.PathSeparator)),
 			Name:     strings.TrimSuffix(d.Name(), ".tmpl"),
 			Contents: mustExecute(path, data, scaffold),
 		})
@@ -60,7 +60,7 @@ func SiteScaffold(pkg GoPackage, scaffold fs.FS) (files []File, err error) {
 			return nil
 		}
 		files = append(files, File{
-			Dir:      filepath.Join(dest, strings.TrimPrefix(filepath.Dir(path), "scaffold/")),
+			Dir:      strings.TrimPrefix(filepath.Dir(path), "scaffold"+string(os.PathSeparator)),
 			Name:     strings.TrimSuffix(d.Name(), ".tmpl"),
 			Contents: mustExecute(path, data, scaffold),
 		})
@@ -77,7 +77,7 @@ func SiteScaffold(pkg GoPackage, scaffold fs.FS) (files []File, err error) {
 			return nil
 		}
 		files = append(files, File{
-			Dir:      filepath.Join(dest, strings.TrimPrefix(filepath.Dir(path), "scaffold/")),
+			Dir:      strings.TrimPrefix(filepath.Dir(path), "scaffold"+string(os.PathSeparator)),
 			Name:     strings.TrimSuffix(d.Name(), ".tmpl"),
 			Contents: mustExecute(path, data, scaffold),
 		})

@@ -14,21 +14,21 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 		hlp.BindEnv(bindResources(exampleHandler)),
 	)
 
-	// [content]
-	placeholder := example.NewDefaultSubView(
+	// [[content]]
+	examplePlaceholder := example.NewDefaultSubView(
 		"content",
 		"page/example/templates/content/placeholder.html.tmpl",
 		hlp.BindEnv(bindResources(placeholderHandler)),
 	)
 
-	// [scripts]
+	// [[scripts]]
 	example.NewDefaultSubView(
 		"scripts",
 		"page/templates/scripts.html.tmpl",
 		treetop.Noop,
 	)
 
-	// [site-nav]
+	// [[site-nav]]
 	example.NewDefaultSubView(
 		"site-nav",
 		"page/templates/nav.html.tmpl",
@@ -36,6 +36,6 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 	)
 
 	hlp.HandleGET("/example",
-		exec.NewViewHandler(placeholder))
+		exec.NewViewHandler(examplePlaceholder))
 
 }

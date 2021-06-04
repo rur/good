@@ -9,34 +9,27 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/rur/good/routemap"
 )
 
 var (
 	PageNameRegex = regexp.MustCompile(`^[a-z][a-z]+$`)
 )
 
-// ScaffoldPage will assemble files for adding a new page to the site scaffold
-func ScaffoldPage(sitePkg GoPackage, name string, scaffold fs.FS) (files []File, err error) {
-	relDir, err := sitePkg.RelPath()
-	if err != nil {
-		return
-	}
-
+// PageScaffold will assemble files for adding a new page to the site scaffold
+func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS) (files []File, err error) {
 	// setup page with some placeholder data
 	data := struct {
-		Name       string // Go package name for page
-		Namespace  string
-		SiteDirRel string
-		Handlers   []Handler
-		Entries    []Entry
-		Routes     []Route
-		Templates  string
-		PagePath   string
+		Name      string // Go package name for page
+		Namespace string
+		Handlers  []Handler
+		Templates string
+		PagePath  string
 	}{
-		PagePath:   strings.Join([]string{sitePkg.ImportPath, "page", name}, "/"),
-		Name:       name,
-		Namespace:  sitePkg.ImportPath,
-		SiteDirRel: relDir,
+		PagePath:  strings.Join([]string{sitePkg.ImportPath, "page", name}, "/"),
+		Name:      name,
+		Namespace: sitePkg.ImportPath,
 		Handlers: []Handler{
 			{
 				Ref:        name,
@@ -58,52 +51,10 @@ func ScaffoldPage(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 				Identifier: "placeholderHandler",
 			},
 		},
-		Entries: []Entry{
-			{
-				Assignment: name,
-				Type:       "PageView",
-				Template:   filepath.Join("page", name, "templates", name+".html.tmpl"),
-				Handler:    fmt.Sprintf("hlp.BindEnv(bindResources(%sHandler))", name),
-			}, {
-				Type:    "Spacer",
-				Comment: "[content]",
-			}, {
-				Assignment: "placeholder",
-				Block:      "content",
-				Type:       "DefaultSubView",
-				Extends:    name,
-				Template:   filepath.Join("page", name, "templates", "content", "placeholder.html.tmpl"),
-				Handler:    "hlp.BindEnv(bindResources(placeholderHandler))",
-			}, {
-				Type:    "Spacer",
-				Comment: "[scripts]",
-			}, {
-				Assignment: "",
-				Block:      "scripts",
-				Type:       "DefaultSubView",
-				Extends:    name,
-				Template:   filepath.Join("page", "templates", "scripts.html.tmpl"),
-				Handler:    "treetop.Noop",
-			}, {
-				Type:    "Spacer",
-				Comment: "[site-nav]",
-			}, {
-				Assignment: "",
-				Block:      "site-nav",
-				Type:       "DefaultSubView",
-				Extends:    name,
-				Template:   filepath.Join("page", "templates", "nav.html.tmpl"),
-				Handler:    "hlp.BindEnv(page.SiteNavHandler)",
-			}},
-		Routes: []Route{{
-			Method:    "GET",
-			Path:      "/" + name,
-			Reference: "placeholder",
-		}},
 		Templates: filepath.Join("page", name, "templates"),
 	}
 
-	pageDir := filepath.Join(relDir, "page", name)
+	pageDir := filepath.Join("page", name)
 
 	// page/name/gen.go
 	files = append(files, File{
@@ -129,12 +80,6 @@ func ScaffoldPage(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 		Name:     "routemap.toml",
 		Contents: mustExecute("scaffold/page/name/routemap.toml.tmpl", data, scaffold),
 	})
-	// page/name/routes.go
-	files = append(files, File{
-		Dir:      pageDir,
-		Name:     "routes.go",
-		Contents: mustExecute("scaffold/page/name/routes.go.tmpl", data, scaffold),
-	})
 	// page/name/templates/name.html.tmpl
 	files = append(files, File{
 		Dir:      filepath.Join(pageDir, "templates"),
@@ -147,6 +92,12 @@ func ScaffoldPage(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 		Name:     "placeholder.html.tmpl",
 		Contents: mustExecute("scaffold/page/name/templates/content/placeholder.html.tmpl.tmpl", data, scaffold),
 	})
+
+	routeFiles, err := RoutesScaffold(sitePkg, name, placeholderRoutesConfig(name, data.Templates), scaffold)
+	if err != nil {
+		return
+	}
+	files = append(files, routeFiles...)
 	return
 }
 
@@ -207,18 +158,71 @@ func ValidatePageName(name string) error {
 // site
 func SiteFromPagePackage(pkg GoPackage) (sitePkg GoPackage, err error) {
 	parts := strings.Split(pkg.Dir, string(os.PathSeparator))
-	if len(parts) < 2 || parts[len(parts)-2] != "page" {
-		err = fmt.Errorf("invalid page package path: '%s'", pkg.ImportPath)
+	for parts[len(parts)-1] == "" {
+		// trim trailing slashes
+		parts = parts[:len(parts)-1]
+	}
+	if len(parts) < 3 || parts[len(parts)-2] != "page" {
+		err = fmt.Errorf("unexpected page package path: '%s'", pkg.ImportPath)
 		return
 	}
-	dir := "."
-	if len(parts) > 2 {
-		dir = strings.Join(parts[:len(parts)-2], string(os.PathSeparator))
-	}
+	// drop '/page/name' suffix to get site path
+	dir := strings.Join(parts[:len(parts)-2], string(os.PathSeparator))
 	sitePkg = GoPackage{
 		Dir:        dir,
 		ImportPath: strings.TrimSuffix(pkg.ImportPath, "/page/"+parts[len(parts)-1]),
 		Module:     pkg.Module,
 	}
 	return
+}
+
+// placeholderRoutesConfig will return the default built in routes scaffold for new pages
+func placeholderRoutesConfig(name, templatePath string) routemap.PageRoutes {
+	return routemap.PageRoutes{
+		URI: "/example",
+		RouteView: routemap.RouteView{
+			Ref:      name,
+			Doc:      fmt.Sprintf("Base HTML template for %s page", name),
+			Template: filepath.Join(templatePath, name+".html.tmpl"),
+			Handler:  fmt.Sprintf("hlp.BindEnv(bindResources(%sHandler))", name),
+			Blocks: []routemap.TemplateBlock{
+				{
+					Name: "content",
+					Views: []routemap.RouteView{
+						{
+							Ref:      name + "-placeholder",
+							Default:  true,
+							Method:   "GET",
+							Doc:      "Placeholder page",
+							Path:     "/" + name,
+							Template: filepath.Join(templatePath, "content", "placedholder.html.tmpl"),
+							Handler:  "hlp.BindEnv(bindResources(placedholderHandler))",
+						},
+					},
+				},
+				{
+					Name: "nav",
+					Views: []routemap.RouteView{
+						{
+							Ref:      "site-nav",
+							Default:  true,
+							Template: "page/templates/nav.html.tmpl",
+							Handler:  "hlp.BindEnv(page.SiteNavHandler)",
+						},
+					},
+				},
+				{
+					Name: "scripts",
+					Views: []routemap.RouteView{
+						{
+							Ref:      "site-script",
+							Default:  true,
+							Template: "page/templates/scripts.html.tmpl",
+							Handler:  "treetop.Noop",
+						},
+					},
+				},
+			},
+		},
+	}
 }
