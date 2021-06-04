@@ -72,7 +72,7 @@ func main() {
 	m := &http.ServeMux{}
 
 	// see ./pages.go
-	registerPages(&page.DefaultHelper{
+	registerPages(page.Helper{
 		Env: env,
 		Mux: m,
 	}, exec)
