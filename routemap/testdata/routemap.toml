@@ -22,6 +22,7 @@ _uri = "/example"
     _includes = ["page-nav"]
     _doc = "Placeholder page"
     _path = "/example"
+    _partial = true
     _template = "page/example/templates/content/placeholder.html.tmpl"
     _handler = "env.Bind(bindResources(placeholderHandler))"
 
@@ -44,7 +45,6 @@ _uri = "/example"
     [[content]]
     _ref = "example-submit-endpoint"
     _method = "POST"
-    _page = true
     _doc = "Some form post endpoint"
     _path = "/example/submit"
     _template = "page/example/templates/content/submit.html.tmpl"

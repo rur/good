@@ -27,7 +27,7 @@ type RouteView struct {
 	Handler  string   `toml:"_handler"`
 	Method   string   `toml:"_method"`
 	Fragment bool     `toml:"_fragment"`
-	Page     bool     `toml:"_page"`
+	Partial  bool     `toml:"_partial"`
 	Includes []string `toml:"_includes"`
 	Blocks   []TemplateBlock
 }

@@ -104,7 +104,7 @@ func TemplateDataFromRoutes(def routemap.PageRoutes) (entries []Entry, routes []
 				Reference:    entry.Assignment,
 				Path:         view.Path,
 				Method:       view.Method,
-				PageOnly:     view.Page,
+				PageOnly:     !view.Fragment && !view.Partial,
 				FragmentOnly: view.Fragment,
 			}
 			for _, incl := range view.Includes {

@@ -32,6 +32,7 @@ func TestGetFrom(t *testing.T) {
 						{
 							Ref:      "example-placeholder",
 							Default:  true,
+							Partial:  true,
 							Doc:      "Placeholder page",
 							Path:     "/example",
 							Template: "page/example/templates/content/placeholder.html.tmpl",
@@ -63,7 +64,6 @@ func TestGetFrom(t *testing.T) {
 						{
 							Ref:      "example-submit-endpoint",
 							Method:   "POST",
-							Page:     true,
 							Doc:      "Some form post endpoint",
 							Path:     "/example/submit",
 							Template: "page/example/templates/content/submit.html.tmpl",
