@@ -28,6 +28,7 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 							Default:  true,
 							Path:     "/my-page",
 							Method:   "GET",
+							Includes: []string{"my-nav"},
 							Blocks: []routemap.TemplateBlock{
 								{
 									Name: "form",
@@ -129,7 +130,23 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 			Type:       "DefaultSubView",
 		},
 	}
-	wantRoutes := []Route{}
+	wantRoutes := []Route{
+		{
+			Method:    "GET",
+			Path:      "/my-page",
+			Includes:  []string{"myNav"},
+			Reference: "myContent",
+		},
+		{
+			Path:      "/my-page/form",
+			Reference: "myForm",
+		},
+		{
+			Method:    "POST",
+			Path:      "/my-page/other",
+			Reference: "otherContent",
+		},
+	}
 
 	if err != nil {
 		t.Errorf("TemlateDataFromRoutes() error = %v", err)
@@ -137,9 +154,9 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(gotEntries, wantEntries) {
-		t.Errorf("TemlateDataFromRoutes() gotEntries = %v,\n\n want %v", gotEntries, wantEntries)
+		t.Errorf("TemlateDataFromRoutes() gotEntries = %v,\n\n want %v\n\n", gotEntries, wantEntries)
 	}
 	if !reflect.DeepEqual(gotRoutes, wantRoutes) {
-		t.Errorf("TemlateDataFromRoutes() gotRoutes = %v,\n\n want %v", gotRoutes, wantRoutes)
+		t.Errorf("TemlateDataFromRoutes() gotRoutes = %v,\n\n want %v\n\n", gotRoutes, wantRoutes)
 	}
 }
