@@ -15,10 +15,10 @@ TESTINFO
 echo "clearly any previously failed run data"
 rm -rf baseline
 
-go run . scaffold baseline/site
+go run . scaffold baseline/scaffold_test
 
 echo "---- run new server and ping /example endpoint ---"
-go run ./baseline/site > testing_stdout.log 2> testing_stderr.log &
+go run ./baseline/scaffold_test > testing_stdout.log 2> testing_stderr.log &
 serverPID=$!
 function killserver() {
     echo "Kill test server at PID $serverPID"
@@ -30,11 +30,11 @@ curl :8000/example
 
 echo "---- Feched example page successfully ---"
 
-rm -r _baseline/site
-mv baseline/site _baseline/
-rm -r baseline
+rm -rf _baseline/scaffold_test
+mv baseline/scaffold_test _baseline/
+rm -rf baseline
 
-diff=$(git diff _baseline/site)
+diff=$(git diff _baseline/scaffold_test)
 
 if [[ ! -z $diff ]]; then
     echo "WARNING: Check baseline"

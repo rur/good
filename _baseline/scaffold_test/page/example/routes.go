@@ -1,7 +1,7 @@
 package example
 
 import (
-	"github.com/rur/good/baseline/site/page"
+	"github.com/rur/good/baseline/scaffold_test/page"
 	"github.com/rur/treetop"
 )
 

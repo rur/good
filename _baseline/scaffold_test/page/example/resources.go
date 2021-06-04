@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/rur/good/baseline/site/page"
-	"github.com/rur/good/baseline/site/service"
+	"github.com/rur/good/baseline/scaffold_test/page"
+	"github.com/rur/good/baseline/scaffold_test/service"
 	"github.com/rur/treetop"
 )
 
