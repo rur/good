@@ -17,8 +17,8 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 	// [[content]]
 	examplePlaceholder := example.NewDefaultSubView(
 		"content",
-		"page/example/templates/content/placedholder.html.tmpl",
-		hlp.BindEnv(bindResources(placedholderHandler)),
+		"page/example/templates/content/placeholder.html.tmpl",
+		hlp.BindEnv(bindResources(placeholderHandler)),
 	)
 
 	// [[nav]]

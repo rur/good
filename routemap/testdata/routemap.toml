@@ -22,15 +22,15 @@ _uri = "/example"
     _includes = ["page-nav"]
     _doc = "Placeholder page"
     _path = "/example"
-    _template = "page/example/templates/content/placedholder.html.tmpl"
-    _handler = "env.Bind(bindResources(placedholderHandler))"
+    _template = "page/example/templates/content/placeholder.html.tmpl"
+    _handler = "env.Bind(bindResources(placeholderHandler))"
 
         [[content.form]]
         _ref = "placeholder-form"
         _default = true
         _doc = "embedded HTML form"
         _template = "page/example/templates/content/form/placeholderForm.html.tmpl"
-        _handler = "env.Bind(bindResources(placedholderFormHandler))"
+        _handler = "env.Bind(bindResources(placeholderFormHandler))"
 
         [[content.form]]
         _ref = "placeholder-form-preview"
@@ -39,7 +39,7 @@ _uri = "/example"
         _path = "/example/preview"
         _doc = "Preview data for submit endpoint"
         _template = "page/example/templates/content/form/placeholderFormPreview.html.tmpl"
-        _handler = "env.Bind(bindResources(placedholderFormPreviewHandler))"
+        _handler = "env.Bind(bindResources(placeholderFormPreviewHandler))"
 
     [[content]]
     _ref = "example-submit-endpoint"

@@ -34,8 +34,8 @@ func TestGetFrom(t *testing.T) {
 							Default:  true,
 							Doc:      "Placeholder page",
 							Path:     "/example",
-							Template: "page/example/templates/content/placedholder.html.tmpl",
-							Handler:  "env.Bind(bindResources(placedholderHandler))",
+							Template: "page/example/templates/content/placeholder.html.tmpl",
+							Handler:  "env.Bind(bindResources(placeholderHandler))",
 							Includes: []string{"page-nav"},
 							Blocks: []TemplateBlock{
 								{
@@ -46,7 +46,7 @@ func TestGetFrom(t *testing.T) {
 											Default:  true,
 											Doc:      "embedded HTML form",
 											Template: "page/example/templates/content/form/placeholderForm.html.tmpl",
-											Handler:  "env.Bind(bindResources(placedholderFormHandler))",
+											Handler:  "env.Bind(bindResources(placeholderFormHandler))",
 										}, {
 											Ref:      "placeholder-form-preview",
 											Fragment: true,
@@ -54,7 +54,7 @@ func TestGetFrom(t *testing.T) {
 											Path:     "/example/preview",
 											Doc:      "Preview data for submit endpoint",
 											Template: "page/example/templates/content/form/placeholderFormPreview.html.tmpl",
-											Handler:  "env.Bind(bindResources(placedholderFormPreviewHandler))",
+											Handler:  "env.Bind(bindResources(placeholderFormPreviewHandler))",
 										},
 									},
 								},

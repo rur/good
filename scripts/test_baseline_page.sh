@@ -12,9 +12,15 @@ cat <<TESTINFO
 --- testing good page command ---
 TESTINFO
 
-rm -rf _baseline/page/*
-go run . scaffold _baseline/page
-go run . page _baseline/page newpage
+echo "clearing any previously failed run data"
+rm -rf baseline
+
+go run . scaffold baseline/page
+go run . page baseline/page newpage
+
+rm -r _baseline/page
+mv baseline/page _baseline/
+rm -r baseline
 
 diff=$(git diff _baseline/page)
 

@@ -12,6 +12,9 @@ cat <<TESTINFO
 --- testing good scaffold command ---
 TESTINFO
 
+echo "clearly any previously failed run data"
+rm -rf baseline
+
 go run . scaffold baseline/site
 
 rm -r _baseline/site
