@@ -159,7 +159,7 @@ func TestSiteScaffold(t *testing.T) {
 		}, {
 			"simple /gen.go",
 			"admin/site/gen.go",
-			`//go:generate good pages ./admin/site`,
+			`//go:generate good pages .`,
 		}, {
 			"simple main.css",
 			"admin/site/static/styles/main.css",
