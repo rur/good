@@ -14,6 +14,7 @@ _uri = "/example"
     _ref = "example-placeholder"
     _default = true
     _doc = "Placeholder page"
+    _partial = true
     _path = "/example"
     _template = "page/example/templates/content/placeholder.html.tmpl"
     _handler = "hlp.BindEnv(bindResources(placeholderHandler))"
@@ -30,7 +31,6 @@ _uri = "/example"
 
     [[content]]
     _ref = "alternative-content"
-    _page= true
     _doc = "Alaternative Content Page"
     _path = "/example/alt"
     _template = "page/example/templates/content/placeholder.html.tmpl"

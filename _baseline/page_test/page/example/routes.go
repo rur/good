@@ -36,6 +36,6 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 	)
 
 	hlp.HandleGET("/example",
-		exec.NewViewHandler(examplePlaceholder))
+		exec.NewViewHandler(examplePlaceholder).PageOnly())
 
 }
