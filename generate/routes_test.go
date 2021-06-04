@@ -14,7 +14,7 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 		RouteView: routemap.RouteView{
 			Ref:      "mypage",
 			Template: "page/mypage/templates/mypage.html.tmpl",
-			Handler:  "hlp.BindEnv(bindResources(mypageHandler))",
+			Handler:  "mypageHandler",
 			Doc:      "Test page docs",
 			Blocks: []routemap.TemplateBlock{
 				{
@@ -69,42 +69,66 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 		},
 	}
 
-	gotHandlers, gotEntries, gotRoutes, err := TemplateDataFromRoutes(def)
+	gotEntries, gotRoutes, err := TemplateDataFromRoutes(def)
 
-	wantHandlers := []Handler{
+	wantEntries := []Entry{
 		{
-			Ref:        "mypage",
-			Doc:        "Test page docs",
-			Identifier: "mypageHandler",
+			Assignment: "mypage",
+			Block:      "",
+			Extends:    "",
+			Template:   "page/mypage/templates/mypage.html.tmpl",
+			Handler:    "mypageHandler",
+			Type:       "PageView",
 		},
 		{
-			Ref:        "my-content",
-			Extends:    "content",
-			Method:     "GET",
-			Doc:        "The default content",
-			Identifier: "myContentHandler",
+			Type:    "Spacer",
+			Comment: "[[content]]",
 		},
 		{
-			Ref:        "my-form",
-			Extends:    "form",
-			Doc:        "A content form",
-			Identifier: "myFormHandler",
+			Assignment: "myContent",
+			Extends:    "mypage",
+			Block:      "content",
+			Template:   "page/mypage/templates/content/my-content.html.tmpl",
+			Handler:    "myContentHandler",
+			Type:       "DefaultSubView",
 		},
 		{
-			Ref:        "other-content",
-			Extends:    "content",
-			Method:     "POST",
-			Doc:        "The other content",
-			Identifier: "otherContentHandler",
+			Type:    "Spacer",
+			Comment: "[[content.form]]",
 		},
 		{
-			Ref:        "my-nav",
-			Extends:    "nav",
-			Doc:        "The default nav",
-			Identifier: "myNavHandler",
+			Assignment: "myForm",
+			Extends:    "myContent",
+			Block:      "form",
+			Template:   "page/mypage/templates/content/form/my-form.html.tmpl",
+			Handler:    "myFormHandler",
+			Type:       "SubView",
+		},
+		{
+			Type:    "Spacer",
+			Comment: "[[content]]",
+		},
+		{
+			Assignment: "otherContent",
+			Extends:    "mypage",
+			Block:      "content",
+			Template:   "page/mypage/templates/content/other-content.html.tmpl",
+			Handler:    "otherContentHandler",
+			Type:       "SubView",
+		},
+		{
+			Type:    "Spacer",
+			Comment: "[[nav]]",
+		},
+		{
+			Assignment: "",
+			Extends:    "mypage",
+			Block:      "nav",
+			Template:   "page/mypage/templates/nav/my-nav.html.tmpl",
+			Handler:    "myNavHandler",
+			Type:       "DefaultSubView",
 		},
 	}
-	wantEntries := []Entry{}
 	wantRoutes := []Route{}
 
 	if err != nil {
@@ -112,13 +136,10 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 		return
 	}
 
-	if !reflect.DeepEqual(gotHandlers, wantHandlers) {
-		t.Errorf("TemlateDataFromRoutes() gotHandlers = %v, want %v", gotHandlers, wantHandlers)
-	}
 	if !reflect.DeepEqual(gotEntries, wantEntries) {
-		t.Errorf("TemlateDataFromRoutes() gotEntries = %v, want %v", gotEntries, wantEntries)
+		t.Errorf("TemlateDataFromRoutes() gotEntries = %v,\n\n want %v", gotEntries, wantEntries)
 	}
 	if !reflect.DeepEqual(gotRoutes, wantRoutes) {
-		t.Errorf("TemlateDataFromRoutes() gotRoutes = %v, want %v", gotRoutes, wantRoutes)
+		t.Errorf("TemlateDataFromRoutes() gotRoutes = %v,\n\n want %v", gotRoutes, wantRoutes)
 	}
 }

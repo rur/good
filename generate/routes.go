@@ -1,6 +1,7 @@
 package generate
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/rur/good/routemap"
@@ -31,63 +32,111 @@ type Entry struct {
 	Block      string
 	Template   string
 	Handler    string
-	Name       string
+	Comment    string
 }
 
 // Route is a path mapped to a view definition
 type Route struct {
-	Method    string
-	Path      string
-	Includes  []string
-	Reference string
-	Type      string // "Page" "Fragment" ""
+	Method       string
+	Path         string
+	Includes     []string
+	Reference    string
+	PageOnly     bool
+	FragmentOnly bool
+}
+
+type stackData struct {
+	view      routemap.RouteView
+	extends   string
+	blockPath []string
+}
+
+func popStack(stack *[]stackData) stackData {
+	sLen := len(*stack)
+	d := (*stack)[sLen-1]
+	*stack = (*stack)[:sLen-1]
+	return d
 }
 
 // TemplateDataFromRoutes will take hierarchical definition of views and flatten to
 // data for rendering in the templates
-func TemplateDataFromRoutes(def routemap.PageRoutes) (handlers []Handler, entries []Entry, routes []Route, err error) {
-	viewStack := []routemap.RouteView{def.RouteView}
-	extendsStack := [][]string{nil}
+func TemplateDataFromRoutes(def routemap.PageRoutes) (entries []Entry, routes []Route, err error) {
+	stack := []stackData{
+		{view: def.RouteView},
+	}
+	var spacer string
 
-	// traverse route definitions using a pre-order traversal
-	for len(viewStack) > 0 {
-		view := popView(&viewStack)
-		extends := popStr(&extendsStack)
-		hlr := Handler{
-			Ref:        view.Ref,
-			Extends:    safeLast(extends),
-			Method:     view.Method,
-			Doc:        view.Doc,
-			Identifier: kebabToCamel(view.Ref) + "Handler",
+	// emitting entries using a pre-order traversal will ensure that all view variable are declared
+	// before they are used to create sub views
+	for len(stack) > 0 {
+		sData := popStack(&stack)
+		view := sData.view
+
+		if sp := fmtSpacer(sData.blockPath); sp != "" && sp != spacer {
+			// add a separator to make the routemap code easier to follow
+			spacer = sp
+			entries = append(entries, Entry{
+				Type:    "Spacer",
+				Comment: spacer,
+			})
 		}
-		handlers = append(handlers, hlr)
 
-		for i := len(view.Blocks) - 1; i >= 0; i-- {
-			// Note: we can add a sentinel value to the extends stack for spacer entries
-			nExt := append(extends, view.Blocks[i].Name)
-			for j := len(view.Blocks[i].Views) - 1; j >= 0; j-- {
-				viewStack = append(viewStack, view.Blocks[i].Views[j])
-				extendsStack = append(extendsStack, nExt)
+		entry := Entry{
+			Block:    safeLast(sData.blockPath),
+			Extends:  sData.extends,
+			Template: view.Template,
+			Handler:  view.Handler,
+		}
+
+		if len(sData.blockPath) == 0 {
+			entry.Type = "PageView"
+		} else if view.Default {
+			entry.Type = "DefaultSubView"
+		} else {
+			entry.Type = "SubView"
+		}
+
+		if view.Path != "" {
+			entry.Assignment = kebabToCamel(view.Ref)
+			route := Route{
+				Reference:    entry.Assignment,
+				Path:         view.Path,
+				Method:       view.Method,
+				PageOnly:     view.Page,
+				FragmentOnly: view.Fragment,
+			}
+			for _, incl := range view.Includes {
+				route.Includes = append(route.Includes, kebabToCamel(incl))
+			}
+			routes = append(routes, route)
+		}
+
+		if len(view.Blocks) > 0 {
+			entry.Assignment = kebabToCamel(view.Ref)
+
+			for i := len(view.Blocks) - 1; i >= 0; i-- {
+				blockName := view.Blocks[i].Name
+				nBlock := append(sData.blockPath, blockName)
+
+				for j := len(view.Blocks[i].Views) - 1; j >= 0; j-- {
+					stack = append(stack, stackData{
+						view:      view.Blocks[i].Views[j],
+						extends:   entry.Assignment,
+						blockPath: nBlock,
+					})
+				}
 			}
 		}
+		entries = append(entries, entry)
 	}
 	return
 }
 
-// popStr will return the last element of the slice and shorten it by one
-func popStr(stack *[][]string) []string {
-	len := len(*stack)
-	str := (*stack)[len-1]
-	*stack = (*stack)[:len-1]
-	return str
-}
-
-// popView will return the last element of the slice and shorten it by one
-func popView(stack *[]routemap.RouteView) routemap.RouteView {
-	len := len(*stack)
-	view := (*stack)[len-1]
-	*stack = (*stack)[:len-1]
-	return view
+func fmtSpacer(blocks []string) string {
+	if len(blocks) == 0 {
+		return ""
+	}
+	return fmt.Sprintf("[[%s]]", strings.Join(blocks, "."))
 }
 
 // kebabToCamel coverts an kebab-case string to camelCase
