@@ -232,7 +232,7 @@ func routesCmd(pagePkgRel string) {
 	mustNot(err)
 	pageRoutes, err := routemap.GetFrom(tree)
 	mustNot(err)
-	files, err := generate.RoutesScaffold(pkg.Name(), *pageRoutes, scaffold)
+	files, err := generate.RoutesScaffold(sitePkg, pkg.Name(), *pageRoutes, scaffold)
 	mustNot(err)
 	err = generate.FlushFiles(sitePkg.Dir, files)
 	mustNot(err)

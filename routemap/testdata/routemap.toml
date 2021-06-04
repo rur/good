@@ -1,4 +1,3 @@
-_namespace = "github.com/rur/good/admin/site"
 _ref = "example"
 _template = "page/templates/base.html.tmpl"
 _handler = "hlp.BindEnv(page.BaseHandler)"

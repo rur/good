@@ -36,8 +36,7 @@ type RouteView struct {
 // a URI and golang package namespace
 type PageRoutes struct {
 	RouteView
-	Namespace string `toml:"_namespace"`
-	URI       string `toml:"_uri"`
+	URI string `toml:"_uri"`
 }
 
 // GetFrom will attempt to unmarshal routes from a loaded TOML tree
@@ -49,9 +48,6 @@ func GetFrom(tree *toml.Tree) (*PageRoutes, error) {
 		return nil, err
 	}
 
-	if ns, ok := tree.Get("_namespace").(string); ok {
-		rts.Namespace = ns
-	}
 	if uri, ok := tree.Get("_uri").(string); ok {
 		rts.URI = uri
 	}

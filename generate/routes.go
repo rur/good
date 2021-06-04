@@ -160,7 +160,7 @@ func safeLast(arr []string) string {
 }
 
 // RoutesScaffold will generate all files for the good routes command
-func RoutesScaffold(pageName string, config routemap.PageRoutes, scaffold fs.FS) (files []File, err error) {
+func RoutesScaffold(sitePkg GoPackage, pageName string, config routemap.PageRoutes, scaffold fs.FS) (files []File, err error) {
 	entries, routes, err := TemplateDataFromRoutes(config)
 	if err != nil {
 		return
@@ -172,7 +172,7 @@ func RoutesScaffold(pageName string, config routemap.PageRoutes, scaffold fs.FS)
 		Routes    []Route
 	}{
 		Name:      pageName,
-		Namespace: config.Namespace,
+		Namespace: sitePkg.ImportPath,
 		Entries:   entries,
 		Routes:    routes,
 	}
