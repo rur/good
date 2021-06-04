@@ -15,7 +15,7 @@ _uri = "/newpage"
     _default = true
     _doc = "Placeholder page"
     _path = "/newpage"
-    _template = "page/newpage/templates/placeholder.html.tmpl"
+    _template = "page/newpage/templates/content/placeholder.html.tmpl"
     _handler = "hlp.BindEnv(bindResources(placeholderHandler))"
 
     [[scripts]]

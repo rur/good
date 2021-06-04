@@ -21,9 +21,9 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 		hlp.BindEnv(bindResources(placeholderHandler)),
 	)
 
-	// [[nav]]
+	// [[site-nav]]
 	newpage.NewDefaultSubView(
-		"nav",
+		"site-nav",
 		"page/templates/nav.html.tmpl",
 		hlp.BindEnv(page.SiteNavHandler),
 	)
