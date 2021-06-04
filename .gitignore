@@ -3,6 +3,8 @@ good
 
 # Test binary, built with `go test -c`
 *.test
+*.log
+baseline
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out

@@ -17,6 +17,19 @@ rm -rf baseline
 
 go run . scaffold baseline/site
 
+echo "---- run new server and ping /example endpoint ---"
+go run ./baseline/site > testing_stdout.log 2> testing_stderr.log &
+serverPID=$!
+function killserver() {
+    echo "Kill test server at PID $serverPID"
+    pkill -P $serverPID
+}
+trap killserver EXIT
+sleep 1 # plenty of time to start up
+curl :8000/example
+
+echo "---- Feched example page successfully ---"
+
 rm -r _baseline/site
 mv baseline/site _baseline/
 rm -r baseline

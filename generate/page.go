@@ -201,7 +201,7 @@ func placeholderRoutesConfig(name, templatePath string) routemap.PageRoutes {
 					},
 				},
 				{
-					Name: "nav",
+					Name: "site-nav",
 					Views: []routemap.RouteView{
 						{
 							Ref:      "site-nav",
