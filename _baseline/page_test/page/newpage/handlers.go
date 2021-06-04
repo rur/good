@@ -1,28 +1,28 @@
-package example
+package newpage
 
 import (
 	"net/http"
 
-	"github.com/rur/good/baseline/page/service"
+	"github.com/rur/good/baseline/page_test/service"
 	"github.com/rur/treetop"
 )
 
 // -------------------------
-// example Handlers
+// newpage Handlers
 // -------------------------
 
-// Ref: example
+// Ref: newpage
 // Extends: content
 // Method: GET
-// Doc: Root handler for the example page
-func exampleHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+// Doc: Root handler for the newpage page
+func newpageHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 		SiteNav     interface{}
 		Content     interface{}
 		Scripts     interface{}
 	}{
-		HandlerInfo: "example Page exampleHandler",
+		HandlerInfo: "newpage Page newpageHandler",
 		SiteNav:     rsp.HandleSubView("site-nav", req),
 		Content:     rsp.HandleSubView("content", req),
 		Scripts:     rsp.HandleSubView("scripts", req),
@@ -38,7 +38,7 @@ func placeholderHandler(rsc *resources, env *service.Env, rsp treetop.Response, 
 	data := struct {
 		HandlerInfo string
 	}{
-		HandlerInfo: "example Page placeholderHandler",
+		HandlerInfo: "newpage Page placeholderHandler",
 	}
 	return data
 }

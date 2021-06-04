@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/rur/good/baseline/page/service"
+	"github.com/rur/good/baseline/page_test/service"
 	"github.com/rur/treetop"
 )
 
