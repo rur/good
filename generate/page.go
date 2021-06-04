@@ -28,7 +28,6 @@ func ScaffoldPage(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 		Namespace  string
 		SiteDirRel string
 		Handlers   []Handler
-		PageEntry  Entry
 		Entries    []Entry
 		Routes     []Route
 		Templates  string
@@ -59,33 +58,34 @@ func ScaffoldPage(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 				Identifier: "placeholderHandler",
 			},
 		},
-		PageEntry: Entry{
-			Assignment: name,
-			Template:   filepath.Join("page", name, "templates", name+".html.tmpl"),
-			Handler:    fmt.Sprintf("hlp.BindEnv(bindResources(%sHandler))", name),
-		},
-		Entries: []Entry{{
-			Assignment: "",
-			Block:      "site-nav",
-			Type:       "DefaultSubView",
-			Extends:    name,
-			Template:   filepath.Join("page", "templates", "nav.html.tmpl"),
-			Handler:    "hlp.BindEnv(page.SiteNavHandler)",
-		}, {
-			Assignment: "placeholder",
-			Block:      "content",
-			Type:       "DefaultSubView",
-			Extends:    name,
-			Template:   filepath.Join("page", name, "templates", "content", "placeholder.html.tmpl"),
-			Handler:    "hlp.BindEnv(bindResources(placeholderHandler))",
-		}, {
-			Assignment: "",
-			Block:      "scripts",
-			Type:       "DefaultSubView",
-			Extends:    name,
-			Template:   filepath.Join("page", "templates", "scripts.html.tmpl"),
-			Handler:    "treetop.Noop",
-		}},
+		Entries: []Entry{
+			{
+				Assignment: name,
+				Type:       "PageView",
+				Template:   filepath.Join("page", name, "templates", name+".html.tmpl"),
+				Handler:    fmt.Sprintf("hlp.BindEnv(bindResources(%sHandler))", name),
+			}, {
+				Assignment: "",
+				Block:      "site-nav",
+				Type:       "DefaultSubView",
+				Extends:    name,
+				Template:   filepath.Join("page", "templates", "nav.html.tmpl"),
+				Handler:    "hlp.BindEnv(page.SiteNavHandler)",
+			}, {
+				Assignment: "placeholder",
+				Block:      "content",
+				Type:       "DefaultSubView",
+				Extends:    name,
+				Template:   filepath.Join("page", name, "templates", "content", "placeholder.html.tmpl"),
+				Handler:    "hlp.BindEnv(bindResources(placeholderHandler))",
+			}, {
+				Assignment: "",
+				Block:      "scripts",
+				Type:       "DefaultSubView",
+				Extends:    name,
+				Template:   filepath.Join("page", "templates", "scripts.html.tmpl"),
+				Handler:    "treetop.Noop",
+			}},
 		Routes: []Route{{
 			Method:    "GET",
 			Path:      "/" + name,

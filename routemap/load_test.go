@@ -19,8 +19,7 @@ func TestGetFrom(t *testing.T) {
 	}
 
 	want := &PageRoutes{
-		Namespace: "github.com/rur/good/admin/site",
-		URI:       "/example",
+		URI: "/example",
 		RouteView: RouteView{
 			Ref:      "example",
 			Doc:      "Base HTML template for example page",

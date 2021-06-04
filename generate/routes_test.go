@@ -9,8 +9,7 @@ import (
 
 func TestTemplateDataFromRoutes(t *testing.T) {
 	def := routemap.PageRoutes{
-		Namespace: "github.com/rur/example/site/page/mypage",
-		URI:       "/my-page",
+		URI: "/my-page",
 		RouteView: routemap.RouteView{
 			Ref:      "mypage",
 			Template: "page/mypage/templates/mypage.html.tmpl",

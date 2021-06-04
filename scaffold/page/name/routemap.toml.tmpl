@@ -1,6 +1,6 @@
 _ref = "[# .Name #]"
-_template = "[# .PageEntry.Template #]"
-_handler = "[# .PageEntry.Handler #]"
+_template = "[# .Templates #]/[# .Name #].html.tmpl"
+_handler = "hlp.BindEnv(bindResources([# .Name #]Handler))"
 _doc = "Base HTML template for [# .Name #] page"
 _uri = "/[# .Name #]"
 
@@ -8,7 +8,7 @@ _uri = "/[# .Name #]"
     _ref = "main-nav"
     _default = true
     _template = "page/templates/nav.html.tmpl"
-    _handler = "env.Bind(page.SiteNavHandler)"
+    _handler = "hlp.BindEnv(page.SiteNavHandler)"
 
     [[content]]
     _ref = "[# .Name #]-placeholder"
@@ -16,7 +16,7 @@ _uri = "/[# .Name #]"
     _doc = "Placeholder page"
     _path = "/[# .Name #]"
     _template = "[# .Templates #]/placedholder.html.tmpl"
-    _handler = "env.Bind(bindResources(placedholderHandler))"
+    _handler = "hlp.BindEnv(bindResources(placedholderHandler))"
 
     [[scripts]]
     _ref = "site-scripts"

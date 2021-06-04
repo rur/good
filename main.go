@@ -208,9 +208,7 @@ func pagesCmd(sitePkgRel string) {
 	mustNot(err)
 	err = generate.FlushFiles(pkg.Module.Dir, []generate.File{pages})
 	mustNot(err)
-	relPth, err := sitePkg.RelPath()
-	mustNot(err)
-	stdout, err := generate.GoFormat(relPth)
+	stdout, err := generate.GoFormat(sitePkg.ImportPath)
 	if err != nil {
 		log.Fatalf("Pages file for '%s' scaffold was create with formatting error: %s", sitePkg.ImportPath, err)
 	}
@@ -236,9 +234,7 @@ func routesCmd(pagePkgRel string) {
 	mustNot(err)
 	err = generate.FlushFiles(sitePkg.Dir, files)
 	mustNot(err)
-	relPth, err := pkg.RelPath()
-	mustNot(err)
-	stdout, err := generate.GoFormat(relPth)
+	stdout, err := generate.GoFormat(pkg.ImportPath)
 	if err != nil {
 		log.Fatalf("Routes for '%s' page were create with formatting error: %s", pkg.ImportPath, err)
 	}
