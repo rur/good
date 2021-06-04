@@ -2,6 +2,8 @@ package generate
 
 import (
 	"fmt"
+	"io/fs"
+	"path/filepath"
 	"strings"
 
 	"github.com/rur/good/routemap"
@@ -155,4 +157,30 @@ func safeLast(arr []string) string {
 		return ""
 	}
 	return arr[len(arr)-1]
+}
+
+// RoutesScaffold will generate all files for the good routes command
+func RoutesScaffold(pageName string, config routemap.PageRoutes, scaffold fs.FS) (files []File, err error) {
+	entries, routes, err := TemplateDataFromRoutes(config)
+	if err != nil {
+		return
+	}
+	data := struct {
+		Name      string
+		Namespace string
+		Entries   []Entry
+		Routes    []Route
+	}{
+		Name:      pageName,
+		Namespace: config.Namespace,
+		Entries:   entries,
+		Routes:    routes,
+	}
+	// page/name/routes.go
+	files = append(files, File{
+		Dir:      filepath.Join("page", pageName),
+		Name:     "routes.go",
+		Contents: mustExecute("scaffold/page/name/routes.go.tmpl", data, scaffold),
+	})
+	return
 }

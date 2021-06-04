@@ -226,12 +226,27 @@ func pagesCmd(sitePkgRel string) {
 func routesCmd(pagePkgRel string) {
 	pkg, err := generate.GoListPackage(pagePkgRel)
 	mustNot(err)
+	sitePkg, err := generate.SiteFromPagePackage(pkg)
+	mustNot(err)
 	tree, err := toml.LoadFile(filepath.Join(pkg.Dir, "routemap.toml"))
 	mustNot(err)
-	_, err = routemap.GetFrom(tree)
+	pageRoutes, err := routemap.GetFrom(tree)
 	mustNot(err)
-
-	fmt.Println("Good routes is not implemented yet!")
+	files, err := generate.RoutesScaffold(pkg.Name(), *pageRoutes, scaffold)
+	mustNot(err)
+	err = generate.FlushFiles(sitePkg.Dir, files)
+	mustNot(err)
+	relPth, err := pkg.RelPath()
+	mustNot(err)
+	stdout, err := generate.GoFormat(relPth)
+	if err != nil {
+		log.Fatalf("Routes for '%s' page were create with formatting error: %s", pkg.ImportPath, err)
+	}
+	if len(stdout) > 0 {
+		fmt.Println("Output from go fmt:")
+		fmt.Println(stdout)
+	}
+	fmt.Printf("Updated routes.go for scaffold page %s!", pkg.ImportPath)
 }
 
 func mustNot(err error) {

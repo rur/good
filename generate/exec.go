@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 // GoModule represents a golang project level module
@@ -30,6 +31,12 @@ func (pkg *GoPackage) RelPath() (string, error) {
 	}
 	path, err := filepath.Rel(pkg.Module.Dir, pkg.Dir)
 	return "./" + path, err
+}
+
+// Name will return the name of the package based on the import path
+func (pkg *GoPackage) Name() string {
+	ind := strings.LastIndex(pkg.ImportPath, "/")
+	return pkg.ImportPath[ind+1:]
 }
 
 // GoListPackage will get the Go module information for the go path provied

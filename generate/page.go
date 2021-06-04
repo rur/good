@@ -193,3 +193,23 @@ func ValidatePageName(name string) error {
 	}
 	return nil
 }
+
+// SiteFromPagePackage will construct a site go package given one that refers to a page in that
+// site
+func SiteFromPagePackage(pkg GoPackage) (sitePkg GoPackage, err error) {
+	parts := strings.Split(pkg.Dir, string(os.PathSeparator))
+	if len(parts) < 2 || parts[len(parts)-2] != "page" {
+		err = fmt.Errorf("invalid page package path: '%s'", pkg.ImportPath)
+		return
+	}
+	dir := "."
+	if len(parts) > 2 {
+		dir = strings.Join(parts[:len(parts)-2], string(os.PathSeparator))
+	}
+	sitePkg = GoPackage{
+		Dir:        dir,
+		ImportPath: strings.TrimSuffix(pkg.ImportPath, "/page/"+parts[len(parts)-1]),
+		Module:     pkg.Module,
+	}
+	return
+}
