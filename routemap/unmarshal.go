@@ -40,7 +40,7 @@ type PageRoutes struct {
 }
 
 // GetFrom will attempt to unmarshal routes from a loaded TOML tree
-func GetFrom(tree *toml.Tree) (*PageRoutes, error) {
+func UnmarshalFrom(tree *toml.Tree) (*PageRoutes, error) {
 	var rts PageRoutes
 
 	err := rts.RouteView.UnmarshalFrom(tree)

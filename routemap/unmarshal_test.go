@@ -96,7 +96,7 @@ func TestGetFrom(t *testing.T) {
 			},
 		},
 	}
-	got, err := GetFrom(tree)
+	got, err := UnmarshalFrom(tree)
 	if err != nil {
 		t.Errorf("GetPageRoutes() error = %v", err)
 		return
