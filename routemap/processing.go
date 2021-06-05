@@ -112,7 +112,7 @@ func (parser *routeParser) unmarshalView(tree *toml.Tree) (view RouteView, err e
 	if !refRegex.MatchString(view.Ref) {
 		pos := tree.Position()
 		err = fmt.Errorf(
-			":%d:%d: Unknown or invlaid _ref '%s', references be lowercase joined by a dash '-'",
+			":%d:%d: Unknown or invalid _ref '%s', references be all lowercase joined by a dash '-'",
 			pos.Line, pos.Col, view.Ref,
 		)
 		return
@@ -124,6 +124,9 @@ func (parser *routeParser) unmarshalView(tree *toml.Tree) (view RouteView, err e
 			pos.Line, pos.Col, view.Ref, usePos.Line, usePos.Col,
 		)
 		return
+	} else {
+		// stash the location in the input file where this reference name appears
+		parser.usedRefs[view.Ref] = tree.GetPosition("_ref")
 	}
 	// fill template field if missing
 	if view.Template == "" {
@@ -154,7 +157,7 @@ func (parser *routeParser) unmarshalView(tree *toml.Tree) (view RouteView, err e
 		// this is a block name, validate format
 		if !refRegex.MatchString(key) {
 			err = fmt.Errorf(
-				":%d:%d: Unknown or invlaid key '%s', block names must be lowercase joined by a dash '-'",
+				":%d:%d: Unknown or invalid key '%s', block names must be all lowercase joined by a dash '-'",
 				pos.Line, pos.Col, key,
 			)
 			return
@@ -176,7 +179,7 @@ func (parser *routeParser) unmarshalView(tree *toml.Tree) (view RouteView, err e
 			}
 		} else {
 			err = fmt.Errorf(
-				":%d:%d: invalid value for key '%s', expecting an array of tables, got %v",
+				":%d:%d: invalid value for key '%s', expecting an array of tables, got %#v",
 				pos.Line, pos.Col, key, val,
 			)
 			return

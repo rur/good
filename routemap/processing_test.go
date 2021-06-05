@@ -2,9 +2,10 @@ package routemap
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 
-	"github.com/pelletier/go-toml"
+	toml "github.com/pelletier/go-toml"
 )
 
 func TestProcessRoutemapBasic(t *testing.T) {
@@ -106,5 +107,87 @@ func TestProcessRoutemapBasic(t *testing.T) {
 	}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("GetPageRoutes() = %v, want %v", got, want)
+	}
+}
+
+func TestProcessRoutemapErrors(t *testing.T) {
+	type args struct {
+		toml         string
+		templatePath string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr string
+	}{
+		{
+			name: "bad ref",
+			args: args{
+				toml: `
+_ref = "invalid ref"
+				`,
+			},
+			wantErr: ":1:1: Unknown or invalid _ref 'invalid ref', references be all lowercase joined by a dash '-'",
+		},
+		{
+			name: "bad ref 2",
+			args: args{
+				toml: `
+_ref = "invalidREF"
+				`,
+			},
+			wantErr: ":1:1: Unknown or invalid _ref 'invalidREF', references be all lowercase joined by a dash '-'",
+		},
+		{
+			name: "bad block name",
+			args: args{
+				toml: `
+_ref = "okref"
+	[[testing_fail]]
+	 _ref = "testing-block"
+				`,
+			},
+			wantErr: ":3:2: Unknown or invalid key 'testing_fail', block names must be all lowercase joined by a dash '-'",
+		},
+		{
+			name: "duplicate ref",
+			args: args{
+				toml: `
+_ref = "my-ref"
+	[[testing]]
+	 _ref = "my-ref"
+				`,
+			},
+			wantErr: ":3:2: duplicate _ref 'my-ref', already used in routemap file at line 2, column 1",
+		},
+		{
+			name: "duplicate ref",
+			args: args{
+				toml: `
+_ref = "mypage"
+	[[testing]]
+	 _ref = "my-sub-view"
+
+	 unknown = "something wrong here"
+				`,
+			},
+			wantErr: `:6:3: invalid value for key 'unknown', expecting an array of tables, got "something wrong here"`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tree, err := toml.Load(tt.args.toml)
+			if err != nil {
+				t.Fatal("Bad toml string", tt.name, err.Error())
+			}
+			_, _, _, err = ProcessRoutemap(tree, tt.args.templatePath)
+			if err == nil {
+				t.Error("ProcessRoutemap() error handling, expecting an error, got none")
+				return
+			}
+			if !strings.Contains(err.Error(), tt.wantErr) {
+				t.Errorf("ProcessRoutemap() expecting error to contain %v, got %v", tt.wantErr, err.Error())
+			}
+		})
 	}
 }
