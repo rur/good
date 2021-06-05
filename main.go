@@ -170,6 +170,12 @@ func pageCmd(sitePkgRel, pageName string) {
 	mustNot(err)
 	files, err := generate.PageScaffold(sitePkg, pageName, scaffold)
 	mustNot(err)
+	entries, routes := routemap.PlaceholderRoutesConfig(pageName, filepath.Join("page", pageName, "templates"))
+	routeFiles, err := generate.RoutesScaffold(sitePkg, pageName, entries, routes, scaffold)
+	if err != nil {
+		return
+	}
+	files = append(files, routeFiles...)
 	err = generate.FlushFiles(sitePkg.Dir, files)
 	mustNot(err)
 
@@ -225,9 +231,11 @@ func routesCmd(pagePkgRel string) {
 	mustNot(err)
 	tree, err := toml.LoadFile(filepath.Join(pkg.Dir, "routemap.toml"))
 	mustNot(err)
-	pageRoutes, err := routemap.GetFrom(tree)
+	pageRoutes, err := routemap.UnmarshalFrom(tree)
 	mustNot(err)
-	files, err := generate.RoutesScaffold(sitePkg, pkg.Name(), *pageRoutes, scaffold)
+	entries, routes, err := routemap.TemplateDataFromRoutes(*pageRoutes)
+	mustNot(err)
+	files, err := generate.RoutesScaffold(sitePkg, pkg.Name(), entries, routes, scaffold)
 	mustNot(err)
 	err = generate.FlushFiles(sitePkg.Dir, files)
 	mustNot(err)

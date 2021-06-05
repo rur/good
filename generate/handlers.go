@@ -3,7 +3,7 @@ package generate
 // Handler is data for a handler function which should be created
 type Handler struct {
 	Ref        string
-	Extends    string
+	Block      string
 	Method     string
 	Doc        string
 	Identifier string

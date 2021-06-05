@@ -1,6 +1,6 @@
 package generate
 
 type HTMLTemplate struct {
-	Ref    int
+	Path   string
 	Blocks []HandleBlock
 }

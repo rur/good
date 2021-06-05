@@ -13,8 +13,8 @@ import (
 // -------------------------
 [# end #]
 [# range $index, $handler := .Handlers #]
-// Ref: [# $handler.Ref #][# if $handler.Extends #]
-// Extends: [# $handler.Extends #][# end #]
+// Ref: [# $handler.Ref #][# if $handler.Block #]
+// Block: [# $handler.Block #][# end #]
 // Method: [# $handler.Method #][# if $handler.Doc #]
 // Doc: [# $handler.Doc #]
 [#- end #]

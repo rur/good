@@ -9,8 +9,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-
-	"github.com/rur/good/routemap"
 )
 
 var (
@@ -33,7 +31,7 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 		Handlers: []Handler{
 			{
 				Ref:        name,
-				Extends:    "content",
+				Block:      "content",
 				Method:     "GET",
 				Doc:        "Root handler for the " + name + " page",
 				Identifier: name + "Handler",
@@ -45,7 +43,7 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 			},
 			{
 				Ref:        "placeholder",
-				Extends:    "content",
+				Block:      "content",
 				Method:     "GET",
 				Doc:        "This is placeholder content, add your endpoints to the routemap.toml and run go generate",
 				Identifier: "placeholderHandler",
@@ -93,11 +91,6 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 		Contents: mustExecute("scaffold/page/name/templates/content/placeholder.html.tmpl.tmpl", data, scaffold),
 	})
 
-	routeFiles, err := RoutesScaffold(sitePkg, name, placeholderRoutesConfig(name, data.Templates), scaffold)
-	if err != nil {
-		return
-	}
-	files = append(files, routeFiles...)
 	return
 }
 
@@ -174,55 +167,4 @@ func SiteFromPagePackage(pkg GoPackage) (sitePkg GoPackage, err error) {
 		Module:     pkg.Module,
 	}
 	return
-}
-
-// placeholderRoutesConfig will return the default built in routes scaffold for new pages
-func placeholderRoutesConfig(name, templatePath string) routemap.PageRoutes {
-	return routemap.PageRoutes{
-		URI: "/example",
-		RouteView: routemap.RouteView{
-			Ref:      name,
-			Doc:      fmt.Sprintf("Base HTML template for %s page", name),
-			Template: filepath.Join(templatePath, name+".html.tmpl"),
-			Handler:  fmt.Sprintf("hlp.BindEnv(bindResources(%sHandler))", name),
-			Blocks: []routemap.TemplateBlock{
-				{
-					Name: "content",
-					Views: []routemap.RouteView{
-						{
-							Ref:      name + "-placeholder",
-							Default:  true,
-							Method:   "GET",
-							Doc:      "Placeholder page",
-							Path:     "/" + name,
-							Template: filepath.Join(templatePath, "content", "placeholder.html.tmpl"),
-							Handler:  "hlp.BindEnv(bindResources(placeholderHandler))",
-						},
-					},
-				},
-				{
-					Name: "site-nav",
-					Views: []routemap.RouteView{
-						{
-							Ref:      "site-nav",
-							Default:  true,
-							Template: "page/templates/nav.html.tmpl",
-							Handler:  "hlp.BindEnv(page.SiteNavHandler)",
-						},
-					},
-				},
-				{
-					Name: "scripts",
-					Views: []routemap.RouteView{
-						{
-							Ref:      "site-script",
-							Default:  true,
-							Template: "page/templates/scripts.html.tmpl",
-							Handler:  "treetop.Noop",
-						},
-					},
-				},
-			},
-		},
-	}
 }
