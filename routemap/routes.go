@@ -20,11 +20,17 @@ func popStack(stack *[]stackData) stackData {
 	return d
 }
 
-// TemplateDataFromRoutes will take hierarchical definition of views and flatten to
+// TemplateDataForRoutes will take hierarchical definition of views and flatten to
 // data for rendering in the templates
-func TemplateDataFromRoutes(def PageRoutes) (entries []generate.Entry, routes []generate.Route, err error) {
+func TemplateDataForRoutes(page PageRoutes, missTpl []Missing, missHlr []Missing) (
+	entries []generate.Entry,
+	routes []generate.Route,
+	templates []generate.HTMLTemplate,
+	handlers []generate.Handler,
+	err error,
+) {
 	stack := []stackData{
-		{view: def.RouteView},
+		{view: page.RouteView},
 	}
 	var spacer string
 

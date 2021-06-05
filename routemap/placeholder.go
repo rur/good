@@ -57,7 +57,8 @@ func PlaceholderRoutesConfig(name, templatePath string) (entries []generate.Entr
 			},
 		},
 	}
-	entries, routes, err = TemplateDataFromRoutes(config)
+	// TODO: add templates and routes for placeholder
+	entries, routes, _, _, err = TemplateDataForRoutes(config, nil, nil)
 	if err != nil {
 		panic(err)
 	}

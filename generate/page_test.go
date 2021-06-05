@@ -84,10 +84,6 @@ func TestPageScaffold(t *testing.T) {
 		"page/testing/templates/content/placeholder.html.tmpl": {
 			"<h1>Run go generate command for page testing</h1>",
 		},
-		"page/testing/routes.go": {
-			`hlp.HandleGET("/testing"`,
-			`testingPlaceholder := testing.NewDefaultSubView(`,
-		},
 		"page/testing/gen.go": {
 			"//go:generate good routes .",
 		},

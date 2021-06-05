@@ -2,9 +2,32 @@ package routemap
 
 import (
 	"fmt"
+	"path"
+	"regexp"
 	"sort"
 
 	toml "github.com/pelletier/go-toml"
+)
+
+var (
+	// view '_ref' must be strictly lower, kebab-case string
+	refRegex = regexp.MustCompile("^[a-z][a-z0-9]*(-[a-z][a-z0-9]*)*$")
+
+	// TODO: consider making the values regexp for validation purposes
+	knownKeys = map[string]bool{
+		"_ref":      true,
+		"_uri":      true,
+		"_default":  true,
+		"_doc":      true,
+		"_path":     true,
+		"_template": true,
+		"_handler":  true,
+		"_method":   true,
+		"_fragment": true,
+		"_partial":  true,
+		"_merge":    true,
+		"_includes": true,
+	}
 )
 
 // TemplateBlock is a named child template slot within in a
@@ -13,6 +36,8 @@ import (
 type TemplateBlock struct {
 	Name  string
 	Views []RouteView
+
+	// TODO: byRef map[string]*RouteView
 }
 
 // RouteView is a handler + template pair corresponding to a single
@@ -39,35 +64,102 @@ type PageRoutes struct {
 	URI string `toml:"_uri"`
 }
 
-// GetFrom will attempt to unmarshal routes from a loaded TOML tree
-func UnmarshalFrom(tree *toml.Tree) (*PageRoutes, error) {
-	var rts PageRoutes
-
-	err := rts.RouteView.UnmarshalFrom(tree)
-	if err != nil {
-		return nil, err
-	}
-
-	if uri, ok := tree.Get("_uri").(string); ok {
-		rts.URI = uri
-	}
-	return &rts, nil
+// Missing is a missing value in the TOML file tree, it pairs the route view data
+// with the position reference in the source TOML file
+type Missing struct {
+	Ref      string
+	Position toml.Position
 }
 
-// UnmarshalFrom will populate the view definition recursively from a
-// loaded toml Tree
-func (rv *RouteView) UnmarshalFrom(tree *toml.Tree) error {
-	err := tree.Unmarshal(rv)
+// ProcessRoutemap will unmarshal and validate a TOML routemap.
+// This will keep track of missing template and handler values.
+func ProcessRoutemap(tree *toml.Tree, templatePath string) (routes PageRoutes, templates []Missing, handlers []Missing, err error) {
+	parser := routeParser{
+		usedRefs:     make(map[string]toml.Position),
+		templateBase: templatePath,
+	}
+	routes.RouteView, err = parser.unmarshalView(tree)
 	if err != nil {
-		return err
+		return
+	}
+	if uri, ok := tree.Get("_uri").(string); ok {
+		routes.URI = uri
+	}
+	templates = parser.missingTemplates
+	handlers = parser.missingHandlers
+	return
+}
+
+// parser state during unmarshal/validate process
+type routeParser struct {
+	usedRefs         map[string]toml.Position
+	missingTemplates []Missing
+	missingHandlers  []Missing
+	blockPath        []string
+	templateBase     string
+}
+
+// unmarshalView will parse fields, validate and descend to unmarshal sub views routes
+func (parser *routeParser) unmarshalView(tree *toml.Tree) (view RouteView, err error) {
+	// Popupate struct with known '_*' properties
+	err = tree.Unmarshal(&view)
+	if err != nil {
+		pos := tree.Position()
+		err = fmt.Errorf(":%d:%d: unmarshal error, %s", pos.Line, pos.Col, err)
+		return
+	}
+	// validate reference value and check for uniqueness
+	if !refRegex.MatchString(view.Ref) {
+		pos := tree.Position()
+		err = fmt.Errorf(
+			":%d:%d: Unknown or invlaid _ref '%s', references be lowercase joined by a dash '-'",
+			pos.Line, pos.Col, view.Ref,
+		)
+		return
+	}
+	if usePos, ok := parser.usedRefs[view.Ref]; ok {
+		pos := tree.Position()
+		err = fmt.Errorf(
+			":%d:%d: duplicate _ref '%s', already used in routemap file at line %d, column %d",
+			pos.Line, pos.Col, view.Ref, usePos.Line, usePos.Col,
+		)
+		return
+	}
+	// fill template field if missing
+	if view.Template == "" {
+		view.Template = path.Join(append(append([]string{parser.templateBase}, parser.blockPath...), view.Ref+".html.tmpl")...)
+		parser.missingTemplates = append(parser.missingTemplates, Missing{
+			Position: tree.Position(),
+			Ref:      view.Ref,
+		})
+	}
+	// fill handler field if missing
+	if view.Handler == "" {
+		view.Handler = fmt.Sprintf("%sHandler", kebabToCamel(view.Ref))
+		parser.missingHandlers = append(parser.missingTemplates, Missing{
+			Position: tree.Position(),
+			Ref:      view.Ref,
+		})
 	}
 
+	// Now descend into sub view blocks by scanning for non-underscore keys
 	keys := tree.Keys()
-	sort.Strings(keys)
+	sort.Strings(keys) // make output stable (we don't care about the original order)
+	currentBlockPath := parser.blockPath
 	for _, key := range keys {
-		if key[0] == '_' {
+		if knownKeys[key] {
 			continue
 		}
+		pos := tree.GetPositionPath([]string{key})
+		// this is a block name, validate format
+		if !refRegex.MatchString(key) {
+			err = fmt.Errorf(
+				":%d:%d: Unknown or invlaid key '%s', block names must be lowercase joined by a dash '-'",
+				pos.Line, pos.Col, key,
+			)
+			return
+		}
+		parser.blockPath = append(currentBlockPath, key)
 		block := TemplateBlock{
 			Name: key,
 		}
@@ -76,16 +168,21 @@ func (rv *RouteView) UnmarshalFrom(tree *toml.Tree) error {
 			for _, sTree := range subtrees {
 				var sView RouteView
 				// recursive call
-				err := sView.UnmarshalFrom(sTree)
+				sView, err = parser.unmarshalView(sTree)
 				if err != nil {
-					return err
+					return
 				}
 				block.Views = append(block.Views, sView)
 			}
 		} else {
-			return fmt.Errorf("unknown value: %#v", val)
+			err = fmt.Errorf(
+				":%d:%d: invalid value for key '%s', expecting an array of tables, got %v",
+				pos.Line, pos.Col, key, val,
+			)
+			return
 		}
-		rv.Blocks = append(rv.Blocks, block)
+		view.Blocks = append(view.Blocks, block)
 	}
-	return nil
+	parser.blockPath = currentBlockPath
+	return
 }

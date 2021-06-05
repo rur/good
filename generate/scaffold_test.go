@@ -146,51 +146,51 @@ func TestSiteScaffold(t *testing.T) {
 	}{
 		{
 			"simple /service/user.go",
-			"admin/site/service/user.go",
+			"service/user.go",
 			"type User struct {",
 		}, {
 			"simple /page/helper.go",
-			"admin/site/page/helper.go",
+			"page/helper.go",
 			`"github.com/rur/example/admin/site/service"`,
 		}, {
 			"simple /main.go",
-			"admin/site/main.go",
-			`FS: http.Dir("./admin/site"), // read templates from file system`,
+			"main.go",
+			`FS: http.Dir("./admin/site"),`,
 		}, {
 			"simple /gen.go",
-			"admin/site/gen.go",
+			"gen.go",
 			`//go:generate good pages .`,
 		}, {
 			"simple main.css",
-			"admin/site/static/styles/main.css",
+			"static/styles/main.css",
 			"background-color: red",
 		}, {
 			"simple service env.go",
-			"admin/site/service/env.go",
+			"service/env.go",
 			"type Env struct {",
 		}, {
 			"simple main.js",
-			"admin/site/static/js/main.js",
+			"static/js/main.js",
 			"function hello(name) {",
 		}, {
 			"simple test.txt",
-			"admin/site/static/public/test.txt",
+			"static/public/test.txt",
 			"hello world",
 		}, {
 			"import for page handlers.go",
-			"admin/site/page/handlers.go",
+			"page/handlers.go",
 			`"github.com/rur/example/admin/site/service"`,
 		}, {
 			"content handler for page handlers.go",
-			"admin/site/page/handlers.go",
+			"page/handlers.go",
 			`func SiteNavHandler(env *service.Env, rsp treetop.Response, req *http.Request) interface{} {`,
 		}, {
 			"common nav template",
-			"admin/site/page/templates/nav.html.tmpl",
+			"page/templates/nav.html.tmpl",
 			`{{ range $index, $link := .Links -}}`,
 		}, {
 			"common scripts template",
-			"admin/site/page/templates/scripts.html.tmpl",
+			"page/templates/scripts.html.tmpl",
 			`<script async src="/js/treetop.js"></script`,
 		},
 	}

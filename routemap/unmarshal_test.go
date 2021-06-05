@@ -1,24 +1,19 @@
 package routemap
 
 import (
-	"io/ioutil"
 	"reflect"
 	"testing"
 
 	"github.com/pelletier/go-toml"
 )
 
-func TestGetFrom(t *testing.T) {
-	content, err := ioutil.ReadFile("./testdata/routemap.toml")
-	if err != nil {
-		t.Fatal("failed ot load test data", err)
-	}
-	tree, err := toml.LoadBytes(content)
+func TestProcessRoutemapBasic(t *testing.T) {
+	tree, err := toml.LoadFile("./testdata/routemap.toml")
 	if err != nil {
 		t.Fatal("failed to load TOML tree", err)
 	}
 
-	want := &PageRoutes{
+	want := PageRoutes{
 		URI: "/example",
 		RouteView: RouteView{
 			Ref:      "example",
@@ -96,9 +91,17 @@ func TestGetFrom(t *testing.T) {
 			},
 		},
 	}
-	got, err := UnmarshalFrom(tree)
+	got, missT, missH, err := ProcessRoutemap(tree, "page/example")
 	if err != nil {
 		t.Errorf("GetPageRoutes() error = %v", err)
+		return
+	}
+	if len(missT) > 0 {
+		t.Errorf("Unexpected missing templates %v", missT)
+		return
+	}
+	if len(missH) > 0 {
+		t.Errorf("Unexpected missing handlers %v", missH)
 		return
 	}
 	if !reflect.DeepEqual(got, want) {

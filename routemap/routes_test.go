@@ -26,6 +26,7 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 							Doc:      "The default content",
 							Default:  true,
 							Path:     "/my-page",
+							Partial:  true,
 							Method:   "GET",
 							Includes: []string{"my-nav"},
 							Blocks: []TemplateBlock{
@@ -38,6 +39,7 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 											Handler:  "myFormHandler",
 											Doc:      "A content form",
 											Path:     "/my-page/form",
+											Fragment: true,
 										},
 									},
 								},
@@ -69,7 +71,8 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 		},
 	}
 
-	gotEntries, gotRoutes, err := TemplateDataFromRoutes(def)
+	// TODO: test missing templates and handlers
+	gotEntries, gotRoutes, _, _, err := TemplateDataForRoutes(def, nil, nil)
 
 	wantEntries := []generate.Entry{
 		{
@@ -137,13 +140,15 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 			Reference: "myContent",
 		},
 		{
-			Path:      "/my-page/form",
-			Reference: "myForm",
+			Path:         "/my-page/form",
+			Reference:    "myForm",
+			FragmentOnly: true,
 		},
 		{
 			Method:    "POST",
 			Path:      "/my-page/other",
 			Reference: "otherContent",
+			PageOnly:  true,
 		},
 	}
 
