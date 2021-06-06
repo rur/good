@@ -142,7 +142,11 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 		mustNot(err)
 		pFiles, err := generate.PageScaffold(sitePkg, page, scaffold)
 		mustNot(err)
+		entries, routes := routemap.PlaceholderRoutesConfig(page, filepath.Join("page", page, "templates"))
+		rFiles, err := generate.RoutesScaffold(sitePkg, page, entries, routes, nil, nil, scaffold)
+		mustNot(err)
 		files = append(files, pFiles...)
+		files = append(files, rFiles...)
 	}
 
 	// FS operations
