@@ -86,11 +86,13 @@ func RoutesScaffold(
 		Namespace string
 		Entries   []Entry
 		Routes    []Route
+		Handlers  []Handler
 	}{
 		Name:      pageName,
 		Namespace: sitePkg.ImportPath,
 		Entries:   entries,
 		Routes:    routes,
+		Handlers:  handlers,
 	}
 	// page/name/routes.go
 	files = append(files, File{

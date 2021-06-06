@@ -41,9 +41,13 @@ curl -X POST -H "Accept: application/x.treetop-html-template+xml" :8000/example/
 echo
 echo "---- Feched example page successfully ---"
 
+
 rm -rf _baseline/routes_test
 mv baseline/routes_test _baseline/
 rm -r baseline
+
+# normalize name of generated handlers file for comparison against baseline
+mv _baseline/routes_test/page/example/handlers_* _baseline/routes_test/page/example/handlers_gen.go
 
 diff=$(git diff _baseline/routes_test)
 

@@ -36,6 +36,11 @@ _uri = "/example"
     _template = "page/example/templates/content/placeholder.html.tmpl"
     _handler = "hlp.BindEnv(bindResources(placeholderHandler))"
 
+    [[content]]
+    _ref = "other-content"
+    _doc = "other Content Page"
+    _path = "/example/other"
+
     [[scripts]]
     _ref = "site-scripts"
     _default = true

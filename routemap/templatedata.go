@@ -51,9 +51,9 @@ func TemplateDataForRoutes(page PageRoutes, missTpl []Missing, missHlr []Missing
 		if _, ok := tmplRef[view.Ref]; ok {
 			templates = append(templates, createTemplate(&view))
 		}
-		// if _, ok := hlrRef[view.Ref]; ok {
-		// 	handlers = append(handlers, createHandler(&view))
-		// }
+		if _, ok := hlrRef[view.Ref]; ok {
+			handlers = append(handlers, createHandler(&view))
+		}
 
 		if sp := fmtSpacer(sData.blockPath); sp != "" && sp != spacer {
 			// add a separator to make the routemap code easier to follow
@@ -132,6 +132,16 @@ func kebabToCamel(str string) string {
 	return string(out)
 }
 
+// kebabToPublicField coverts an kebab-case string to camelCase
+func kebabToPublicField(str string) string {
+	parts := strings.Split(str, "-")
+	var out []byte
+	for i := 0; i < len(parts); i++ {
+		out = append(out, strings.Title(parts[i])...)
+	}
+	return string(out)
+}
+
 // safeLast returns the last string in a slice or empty string if the slice is empty
 func safeLast(arr []string) string {
 	if len(arr) == 0 {
@@ -152,13 +162,13 @@ func createTemplate(view *RouteView) generate.HTMLTemplate {
 	for _, block := range view.Blocks {
 		vBlock := generate.TemplateBlock{
 			Name:      block.Name,
-			FieldName: kebabToCamel("-" + block.Name),
+			FieldName: kebabToPublicField(block.Name),
 		}
 		for _, subView := range block.Views {
 			vBlock.Views = append(vBlock.Views, generate.TemplateSubView{
 				Ref:          subView.Ref,
 				Path:         subView.Path,
-				POSTOnly:     subView.Method == "POST",
+				POSTOnly:     strings.ToUpper(subView.Method) == "POST",
 				Default:      subView.Default,
 				FragmentOnly: subView.Fragment,
 				PageOnly:     !subView.Fragment && !subView.Partial,
@@ -175,13 +185,13 @@ func createHandler(view *RouteView) generate.Handler {
 		Block:      view.Block,
 		Method:     view.Method,
 		Doc:        view.Doc,
-		Identifier: view.Handler,
+		Identifier: kebabToCamel(view.Ref) + "Handler",
 	}
 	for i := range view.Blocks {
 		block := view.Blocks[i]
 		tmpl.Blocks = append(tmpl.Blocks, generate.HandleBlock{
 			Name:      block.Name,
-			FieldName: kebabToCamel("-" + block.Name),
+			FieldName: kebabToPublicField(block.Name),
 		})
 	}
 	return tmpl

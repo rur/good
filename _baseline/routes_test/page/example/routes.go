@@ -34,6 +34,11 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 		"page/example/templates/content/placeholder.html.tmpl",
 		hlp.BindEnv(bindResources(placeholderHandler)),
 	)
+	otherContent := example.NewSubView(
+		"content",
+		"page/example/templates/content/other-content.html.tmpl",
+		hlp.BindEnv(bindResources(otherContentHandler)),
+	)
 
 	// [[scripts]]
 	example.NewDefaultSubView(
@@ -55,5 +60,7 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 		exec.NewViewHandler(placeholderForm).FragmentOnly())
 	hlp.Handle("/example/alt",
 		exec.NewViewHandler(alternativeContent).PageOnly())
+	hlp.Handle("/example/other",
+		exec.NewViewHandler(otherContent).PageOnly())
 
 }

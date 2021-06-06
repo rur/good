@@ -34,6 +34,7 @@ func TestProcessRoutemapBasic(t *testing.T) {
 							Template: "page/example/templates/content/placeholder.html.tmpl",
 							Handler:  "env.Bind(bindResources(placeholderHandler))",
 							Includes: []string{"page-nav"},
+							Block:    "content",
 							Blocks: []TemplateBlock{
 								{
 									Name: "form",
@@ -44,6 +45,7 @@ func TestProcessRoutemapBasic(t *testing.T) {
 											Doc:      "embedded HTML form",
 											Template: "page/example/templates/content/form/placeholderForm.html.tmpl",
 											Handler:  "env.Bind(bindResources(placeholderFormHandler))",
+											Block:    "form",
 										}, {
 											Ref:      "placeholder-form-preview",
 											Fragment: true,
@@ -52,6 +54,7 @@ func TestProcessRoutemapBasic(t *testing.T) {
 											Doc:      "Preview data for submit endpoint",
 											Template: "page/example/templates/content/form/placeholderFormPreview.html.tmpl",
 											Handler:  "env.Bind(bindResources(placeholderFormPreviewHandler))",
+											Block:    "form",
 										},
 									},
 								},
@@ -64,6 +67,7 @@ func TestProcessRoutemapBasic(t *testing.T) {
 							Path:     "/example/submit",
 							Template: "page/example/templates/content/submit.html.tmpl",
 							Handler:  "env.Bind(bindResources(submitHandler))",
+							Block:    "content",
 						},
 					},
 				},
@@ -75,6 +79,7 @@ func TestProcessRoutemapBasic(t *testing.T) {
 							Default:  true,
 							Template: "page/example/templates/nav/page-nav.html.tmpl",
 							Handler:  "env.Bind(bindResources(pageNavHandler))",
+							Block:    "nav",
 						},
 					},
 				},
@@ -86,6 +91,7 @@ func TestProcessRoutemapBasic(t *testing.T) {
 							Default:  true,
 							Template: "page/templates/scripts.html.tmpl",
 							Handler:  "treetop.Noop",
+							Block:    "scripts",
 						},
 					},
 				},
