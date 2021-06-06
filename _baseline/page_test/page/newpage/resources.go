@@ -3,6 +3,7 @@ package newpage
 import (
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/rur/good/baseline/page_test/page"
 	"github.com/rur/good/baseline/page_test/service"
@@ -17,13 +18,13 @@ type resources struct {
 
 // loadResources constructs a resources struct for use by the request handlers of this page
 //
-// If an error or failure occurs this function is responsible for responding  directly to the client.
+// If an error or failure occurs, this function is responsible for responding to the client using the ResponseWriter.
 func loadResources(env *service.Env, w http.ResponseWriter, req *http.Request) (rsc *resources, ok bool) {
 	// EDITME: setup your handler resources here
 	ok = true
 	rsc = &resources{
 		user: service.User{
-			Name: "test",
+			Name: "!unauthenticated!",
 		},
 	}
 	return
@@ -69,14 +70,25 @@ func bindResources(f handlerWithResources) page.ViewHandlerWithEnv {
 		rscCache[key] = rsc
 		rscCacheLock.Unlock()
 		go func() {
-			// wait until the response is concluded and clear the rscCache entry
-			<-rsp.Context().Done()
-			rscCacheLock.Lock()
-			rsc, ok := rscCache[key]
-			delete(rscCache, key)
-			rscCacheLock.Unlock() // release lock before attempting teardown
-			if ok {
-				teardownResources(rsc, env)
+			defer func() {
+				rscCacheLock.Lock()
+				rsc, ok := rscCache[key]
+				delete(rscCache, key)
+				rscCacheLock.Unlock() // release lock *before* attempting teardown
+				if ok {
+					teardownResources(rsc, env)
+				}
+			}()
+
+			// block until the response is concluded, defer will clear the rscCache entry
+			select {
+			case <-time.After(10 * time.Minute): // failsafe timeout to protect shared resources
+				if env.ErrorLog != nil {
+					env.ErrorLog.Println("failsafe request timeout expired after 10min for newpage page")
+				}
+				// since rsp Context is bound to the HTTP request, I assume that this is safe to do
+				http.Error(rsp, http.StatusText(http.StatusRequestTimeout), http.StatusRequestTimeout)
+			case <-rsp.Context().Done():
 			}
 		}()
 		return f(rsc, env, rsp, req)
