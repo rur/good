@@ -53,8 +53,10 @@ type RouteView struct {
 	Method   string   `toml:"_method"`
 	Fragment bool     `toml:"_fragment"`
 	Partial  bool     `toml:"_partial"`
+	Merge    string   `toml:"_merge"`
 	Includes []string `toml:"_includes"`
 	Blocks   []TemplateBlock
+	Block    string
 }
 
 // PageRoutes is the top level view for a site page, it includes
@@ -144,6 +146,7 @@ func (parser *routeParser) unmarshalView(tree *toml.Tree) (view RouteView, err e
 			Ref:      view.Ref,
 		})
 	}
+	view.Block = safeLast(parser.blockPath)
 
 	// Now descend into sub view blocks by scanning for non-underscore keys
 	keys := tree.Keys()

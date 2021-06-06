@@ -33,12 +33,27 @@ func TemplateDataForRoutes(page PageRoutes, missTpl []Missing, missHlr []Missing
 		{view: page.RouteView},
 	}
 	var spacer string
+	tmplRef := make(map[string]bool)
+	for i := range missTpl {
+		tmplRef[missTpl[i].Ref] = true
+	}
+	hlrRef := make(map[string]bool)
+	for i := range missHlr {
+		hlrRef[missHlr[i].Ref] = true
+	}
 
 	// emitting entries using a pre-order traversal will ensure that all view variable are declared
 	// before they are used to create sub views
 	for len(stack) > 0 {
 		sData := popStack(&stack)
 		view := sData.view
+
+		if _, ok := tmplRef[view.Ref]; ok {
+			templates = append(templates, createTemplate(&view))
+		}
+		// if _, ok := hlrRef[view.Ref]; ok {
+		// 	handlers = append(handlers, createHandler(&view))
+		// }
 
 		if sp := fmtSpacer(sData.blockPath); sp != "" && sp != spacer {
 			// add a separator to make the routemap code easier to follow
@@ -123,4 +138,51 @@ func safeLast(arr []string) string {
 		return ""
 	}
 	return arr[len(arr)-1]
+}
+
+func createTemplate(view *RouteView) generate.HTMLTemplate {
+	tmpl := generate.HTMLTemplate{
+		Filepath: view.Template,
+		Path:     view.Path,
+		Block:    view.Block,
+		Merge:    view.Merge,
+		Fragment: view.Fragment,
+		Name:     view.Ref,
+	}
+	for _, block := range view.Blocks {
+		vBlock := generate.TemplateBlock{
+			Name:      block.Name,
+			FieldName: kebabToCamel("-" + block.Name),
+		}
+		for _, subView := range block.Views {
+			vBlock.Views = append(vBlock.Views, generate.TemplateSubView{
+				Ref:          subView.Ref,
+				Path:         subView.Path,
+				POSTOnly:     subView.Method == "POST",
+				Default:      subView.Default,
+				FragmentOnly: subView.Fragment,
+				PageOnly:     !subView.Fragment && !subView.Partial,
+			})
+		}
+		tmpl.Blocks = append(tmpl.Blocks, vBlock)
+	}
+	return tmpl
+}
+
+func createHandler(view *RouteView) generate.Handler {
+	tmpl := generate.Handler{
+		Ref:        view.Ref,
+		Block:      view.Block,
+		Method:     view.Method,
+		Doc:        view.Doc,
+		Identifier: view.Handler,
+	}
+	for i := range view.Blocks {
+		block := view.Blocks[i]
+		tmpl.Blocks = append(tmpl.Blocks, generate.HandleBlock{
+			Name:      block.Name,
+			FieldName: kebabToCamel("-" + block.Name),
+		})
+	}
+	return tmpl
 }

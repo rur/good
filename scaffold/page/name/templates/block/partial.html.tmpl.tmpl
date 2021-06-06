@@ -1,4 +1,4 @@
-<div id="[# .Extends #]"[# if .Merge #] treetop-merge="[# .Merge #]"[# end #]>
+<div id="[# .Block #]"[# if .Merge #] treetop-merge="[# .Merge #]"[# end #]>
     [# if .Fragment #]Fragment view named [#.Name#]
     [#- else #]Partial view named [#.Name#][# end #]
     [#- range $index, $block := .Blocks #]
@@ -7,11 +7,11 @@
         [# range $partial := $block.Partials #]
         [#- if $partial.Path -#]
             [#- if $partial.POSTOnly -#]
-            <li><form action="[# $partial.Path #]" method="POST" treetop><button>[# $partial.Name #][# if $partial.Default #]*[#end#]</button></form></li>
+            <li><form action="[# $partial.Path #]" method="POST" treetop><button>[# $partial.Ref #][# if $partial.Default #]*[#end#]</button></form></li>
             [#- else -#][#- if $partial.Fragment -#]
-            <li><button treetop-link="[# $partial.Path #]">[# $partial.Name #][# if $partial.Default #]*[#end#]</button></li>
+            <li><button treetop-link="[# $partial.Path #]">[# $partial.Ref #][# if $partial.Default #]*[#end#]</button></li>
             [#- else -#]
-            <li><a href="[# $partial.Path #]" treetop>[# $partial.Name #][# if $partial.Default #]*[#end#]</a></li>
+            <li><a href="[# $partial.Path #]" treetop>[# $partial.Ref #][# if $partial.Default #]*[#end#]</a></li>
             [#- end -#][#- end -#]
         [#- end #]
         [# end #]

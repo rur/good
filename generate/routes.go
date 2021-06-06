@@ -30,8 +30,28 @@ type Route struct {
 
 // HTMLTemplate is data for a page template document
 type HTMLTemplate struct {
-	Path   string
-	Blocks []HandleBlock
+	Filepath string
+	Path     string
+	Blocks   []TemplateBlock
+	Block    string
+	Merge    string
+	Fragment bool
+	Name     string
+}
+
+type TemplateBlock struct {
+	FieldName string
+	Name      string
+	Views     []TemplateSubView
+}
+
+type TemplateSubView struct {
+	Ref          string
+	Path         string
+	POSTOnly     bool
+	Default      bool
+	FragmentOnly bool
+	PageOnly     bool
 }
 
 // Handler is data for a handler function which should be created
@@ -89,9 +109,9 @@ func RoutesScaffold(
 	for i := 0; i < len(templates); i++ {
 		tmpl := templates[i]
 		files = append(files, File{
-			Dir:      filepath.Dir(tmpl.Path),
-			Name:     filepath.Base(tmpl.Path),
-			Contents: mustExecute("scaffold/page/name/templates/block/partial.go.tmpl", data, scaffold),
+			Dir:      filepath.Dir(tmpl.Filepath),
+			Name:     filepath.Base(tmpl.Filepath),
+			Contents: mustExecute("scaffold/page/name/templates/block/partial.html.tmpl.tmpl", tmpl, scaffold),
 		})
 	}
 	return
