@@ -82,13 +82,13 @@ func bindResources(f handlerWithResources) page.ViewHandlerWithEnv {
 
 			// block until the response is concluded, defer will clear the rscCache entry
 			select {
+			case <-rsp.Context().Done():
 			case <-time.After(10 * time.Minute): // failsafe timeout to protect shared resources
 				if env.ErrorLog != nil {
 					env.ErrorLog.Println("failsafe request timeout expired after 10min for [# .Name #] page")
 				}
 				// since rsp Context is bound to the HTTP request, I assume that this is safe to do
 				http.Error(rsp, http.StatusText(http.StatusRequestTimeout), http.StatusRequestTimeout)
-			case <-rsp.Context().Done():
 			}
 		}()
 		return f(rsc, env, rsp, req)
