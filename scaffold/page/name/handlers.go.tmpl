@@ -14,8 +14,8 @@ import (
 [# end #]
 [# range $index, $handler := .Handlers #]
 // Ref: [# $handler.Ref #][# if $handler.Block #]
-// Block: [# $handler.Block #][# end #]
-// Method: [# $handler.Method #][# if $handler.Doc #]
+// Block: [# $handler.Block #][# end #][# if $handler.Method #]
+// Method: [# $handler.Method #][# end #][# if $handler.Doc #]
 // Doc: [# $handler.Doc #]
 [#- end #]
 func [# $handler.Identifier #](rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {

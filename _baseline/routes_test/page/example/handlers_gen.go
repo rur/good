@@ -13,7 +13,6 @@ import (
 
 // Ref: settings-layout
 // Block: content
-// Method:
 // Doc: Settings page layout
 func settingsLayoutHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
@@ -30,7 +29,6 @@ func settingsLayoutHandler(rsc *resources, env *service.Env, rsp treetop.Respons
 
 // Ref: general-settings
 // Block: settings
-// Method:
 // Doc: General settings area
 func generalSettingsHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
@@ -43,26 +41,27 @@ func generalSettingsHandler(rsc *resources, env *service.Env, rsp treetop.Respon
 
 // Ref: advanced-settings
 // Block: settings
-// Method:
 // Doc: Advanced settings area
 func advancedSettingsHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
-		HandlerInfo string
+		HandlerInfo  string
+		SettingsForm interface{}
 	}{
-		HandlerInfo: "example Page advancedSettingsHandler",
+		HandlerInfo:  "example Page advancedSettingsHandler",
+		SettingsForm: rsp.HandleSubView("settings-form", req),
 	}
 	return data
 }
 
-// Ref: settings-tabs
-// Block: tabs
-// Method:
-// Doc: Tabs for the settings page content
-func settingsTabsHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+// Ref: update-advanced-settings
+// Block: settings-form
+// Method: POST
+// Doc: Accept update to advanced settings and show result
+func updateAdvancedSettingsHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{
-		HandlerInfo: "example Page settingsTabsHandler",
+		HandlerInfo: "example Page updateAdvancedSettingsHandler",
 	}
 	return data
 }

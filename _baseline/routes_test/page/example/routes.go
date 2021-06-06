@@ -52,6 +52,13 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 		hlp.BindEnv(bindResources(advancedSettingsHandler)),
 	)
 
+	// [[content.settings.settings-form]]
+	updateAdvancedSettings := advancedSettings.NewSubView(
+		"settings-form",
+		"page/example/templates/content/settings/settings-form/update-advanced-settings.html.tmpl",
+		hlp.BindEnv(bindResources(updateAdvancedSettingsHandler)),
+	)
+
 	// [[content.tabs]]
 	settingsLayout.NewDefaultSubView(
 		"tabs",
@@ -83,5 +90,7 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 		exec.NewViewHandler(generalSettings))
 	hlp.Handle("/example/advanced-settings",
 		exec.NewViewHandler(advancedSettings))
+	hlp.HandlePOST("/example/advanced-settings/submit",
+		exec.NewViewHandler(updateAdvancedSettings).FragmentOnly())
 
 }

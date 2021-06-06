@@ -7,7 +7,7 @@
         [# range $subView := $block.Views #]
         [#- if $subView.Path -#]
             [#- if $subView.POSTOnly -#]
-            <li><form action="[# $subView.Path #]" method="POST" treetop><button>[# $subView.Ref #][# if $subView.Default #]*[#end#]</button></form></li>
+            <li><form action="[# $subView.Path #]" method="POST"[# if not $subView.PageOnly #] treetop[# end #]><button>[# $subView.Ref #][# if $subView.Default #]*[#end#]</button></form></li>
             [#- else -#][#- if $subView.FragmentOnly -#]
             <li><button treetop-link="[# $subView.Path #]">[# $subView.Ref #][# if $subView.Default #]*[#end#]</button></li>
             [#- end -#][#- if $subView.PageOnly -#]

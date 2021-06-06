@@ -58,6 +58,13 @@ _uri = "/example"
         _path = "/example/advanced-settings"
         _partial = true
 
+            [[content.settings.settings-form]]
+            _ref = "update-advanced-settings"
+            _doc = "Accept update to advanced settings and show result"
+            _path = "/example/advanced-settings/submit"
+            _fragment = true
+            _method = "POST"
+
     [[scripts]]
     _ref = "site-scripts"
     _default = true
