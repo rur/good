@@ -12,7 +12,7 @@ import (
 // -------------------------
 
 // Ref: example
-// Extends: content
+// Block: content
 // Method: GET
 // Doc: Root handler for the example page
 func exampleHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
@@ -31,7 +31,7 @@ func exampleHandler(rsc *resources, env *service.Env, rsp treetop.Response, req 
 }
 
 // Ref: placeholder
-// Extends: content
+// Block: content
 // Method: GET
 // Doc: This is placeholder content, add your endpoints to the routemap.toml and run go generate
 func placeholderHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
