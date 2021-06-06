@@ -37,23 +37,23 @@ _uri = "/example"
     _handler = "hlp.BindEnv(bindResources(placeholderHandler))"
 
     [[content]]
-    _ref = "settings"
-    _doc = "other Content Page"
+    _ref = "settings-layout"
+    _doc = "Settings page layout"
 
         [[content.tabs]]
-        _ref = "other-tabs"
-        _doc = "Tabs for the contentent in the content page"
+        _ref = "settings-tabs"
+        _doc = "Tabs for the settings page content"
         _default = true
         _handler = 'treetop.Constant("Hello World")'
 
         [[content.settings]]
-        _ref = "general-settings-tab"
+        _ref = "general-settings"
         _doc = "General settings area"
         _path = "/example/settings"
         _partial = true
 
         [[content.settings]]
-        _ref = "advanced-settings-tab"
+        _ref = "advanced-settings"
         _doc = "Advanced settings area"
         _path = "/example/advanced-settings"
         _partial = true

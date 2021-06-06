@@ -34,28 +34,28 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 		"page/example/templates/content/placeholder.html.tmpl",
 		hlp.BindEnv(bindResources(placeholderHandler)),
 	)
-	settings := example.NewSubView(
+	settingsLayout := example.NewSubView(
 		"content",
-		"page/example/templates/content/settings.html.tmpl",
-		hlp.BindEnv(bindResources(settingsHandler)),
+		"page/example/templates/content/settings-layout.html.tmpl",
+		hlp.BindEnv(bindResources(settingsLayoutHandler)),
 	)
 
 	// [[content.settings]]
-	generalSettingsTab := settings.NewSubView(
+	generalSettings := settingsLayout.NewSubView(
 		"settings",
-		"page/example/templates/content/settings/general-settings-tab.html.tmpl",
-		hlp.BindEnv(bindResources(generalSettingsTabHandler)),
+		"page/example/templates/content/settings/general-settings.html.tmpl",
+		hlp.BindEnv(bindResources(generalSettingsHandler)),
 	)
-	advancedSettingsTab := settings.NewSubView(
+	advancedSettings := settingsLayout.NewSubView(
 		"settings",
-		"page/example/templates/content/settings/advanced-settings-tab.html.tmpl",
-		hlp.BindEnv(bindResources(advancedSettingsTabHandler)),
+		"page/example/templates/content/settings/advanced-settings.html.tmpl",
+		hlp.BindEnv(bindResources(advancedSettingsHandler)),
 	)
 
 	// [[content.tabs]]
-	settings.NewDefaultSubView(
+	settingsLayout.NewDefaultSubView(
 		"tabs",
-		"page/example/templates/content/tabs/other-tabs.html.tmpl",
+		"page/example/templates/content/tabs/settings-tabs.html.tmpl",
 		treetop.Constant("Hello World"),
 	)
 
@@ -80,8 +80,8 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 	hlp.Handle("/example/alt",
 		exec.NewViewHandler(alternativeContent).PageOnly())
 	hlp.Handle("/example/settings",
-		exec.NewViewHandler(generalSettingsTab))
+		exec.NewViewHandler(generalSettings))
 	hlp.Handle("/example/advanced-settings",
-		exec.NewViewHandler(advancedSettingsTab))
+		exec.NewViewHandler(advancedSettings))
 
 }

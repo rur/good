@@ -11,58 +11,58 @@ import (
 // example Handlers
 // -------------------------
 
-// Ref: settings
+// Ref: settings-layout
 // Block: content
 // Method:
-// Doc: other Content Page
-func settingsHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+// Doc: Settings page layout
+func settingsLayoutHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 		Settings    interface{}
 		Tabs        interface{}
 	}{
-		HandlerInfo: "example Page settingsHandler",
+		HandlerInfo: "example Page settingsLayoutHandler",
 		Settings:    rsp.HandleSubView("settings", req),
 		Tabs:        rsp.HandleSubView("tabs", req),
 	}
 	return data
 }
 
-// Ref: general-settings-tab
+// Ref: general-settings
 // Block: settings
 // Method:
 // Doc: General settings area
-func generalSettingsTabHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func generalSettingsHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{
-		HandlerInfo: "example Page generalSettingsTabHandler",
+		HandlerInfo: "example Page generalSettingsHandler",
 	}
 	return data
 }
 
-// Ref: advanced-settings-tab
+// Ref: advanced-settings
 // Block: settings
 // Method:
 // Doc: Advanced settings area
-func advancedSettingsTabHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func advancedSettingsHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{
-		HandlerInfo: "example Page advancedSettingsTabHandler",
+		HandlerInfo: "example Page advancedSettingsHandler",
 	}
 	return data
 }
 
-// Ref: other-tabs
+// Ref: settings-tabs
 // Block: tabs
 // Method:
-// Doc: Tabs for the contentent in the content page
-func otherTabsHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+// Doc: Tabs for the settings page content
+func settingsTabsHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{
-		HandlerInfo: "example Page otherTabsHandler",
+		HandlerInfo: "example Page settingsTabsHandler",
 	}
 	return data
 }
