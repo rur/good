@@ -5,14 +5,18 @@ import (
 	"path/filepath"
 )
 
-const FILE_PERMS = 0755
+const (
+	FOLDER_PERMS = 0755
+	FILE_PERMS   = 0644
+)
 
 // File description and contents that will later be
 // flushed to disk
 type File struct {
-	Dir      string
-	Name     string
-	Contents []byte
+	Dir       string
+	Name      string
+	Contents  []byte
+	Overwrite bool
 }
 
 // Path will return the dir+name for this file
@@ -34,12 +38,16 @@ func FlushFiles(modDir string, files []File) error {
 
 // flushFile will attempt to build the necessary folder
 // structure and write content bytes to disk
-func flushFile(tmp string, file File) error {
-	err := os.MkdirAll(filepath.Join(tmp, file.Dir), FILE_PERMS)
+func flushFile(dir string, file File) error {
+	err := os.MkdirAll(filepath.Join(dir, file.Dir), FOLDER_PERMS)
 	if err != nil {
 		return err
 	}
-	fh, err := os.Create(filepath.Join(tmp, file.Path()))
+	mode := os.O_RDWR | os.O_CREATE
+	if file.Overwrite {
+		mode = mode | os.O_TRUNC
+	}
+	fh, err := os.OpenFile(filepath.Join(dir, file.Path()), mode, FILE_PERMS)
 	if err != nil {
 		return err
 	}

@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"embed"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -232,7 +234,9 @@ func pagesCmd(sitePkgRel string) {
 func routesCmd(pagePkgRel string) {
 	pkg, err := generate.GoListPackage(pagePkgRel)
 	mustNot(err)
-	tree, err := toml.LoadFile(filepath.Join(pkg.Dir, "routemap.toml"))
+	routemapContent, err := ioutil.ReadFile(filepath.Join(pkg.Dir, "routemap.toml"))
+	mustNot(err)
+	tree, err := toml.LoadBytes(routemapContent)
 	mustNot(err)
 	pageName := pkg.Name()
 	sitePkg, err := generate.SiteFromPagePackage(pkg)
@@ -254,6 +258,17 @@ func routesCmd(pagePkgRel string) {
 		scaffold,
 	)
 	mustNot(err)
+	if len(missHlr)+len(missTpl) > 0 {
+		modifiedContent, err := routemap.ModifiedRoutemap(bytes.NewReader(routemapContent), missTpl, missHlr)
+		mustNot(err)
+		files = append(files, generate.File{
+			Dir:       filepath.Join("page", pageName),
+			Name:      "routemap.toml",
+			Contents:  modifiedContent,
+			Overwrite: true,
+		})
+	}
+
 	// write files to disk
 	err = generate.FlushFiles(sitePkg.Dir, files)
 	mustNot(err)

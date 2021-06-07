@@ -69,8 +69,9 @@ type PageRoutes struct {
 // Missing is a missing value in the TOML file tree, it pairs the route view data
 // with the position reference in the source TOML file
 type Missing struct {
-	Ref      string
-	Position toml.Position
+	Ref           string
+	Position      toml.Position
+	InsertContent string
 }
 
 // ProcessRoutemap will unmarshal and validate a TOML routemap.
@@ -134,16 +135,18 @@ func (parser *routeParser) unmarshalView(tree *toml.Tree) (view RouteView, err e
 	if view.Template == "" {
 		view.Template = path.Join(append(append([]string{parser.templateBase}, parser.blockPath...), view.Ref+".html.tmpl")...)
 		parser.missingTemplates = append(parser.missingTemplates, Missing{
-			Position: tree.Position(),
-			Ref:      view.Ref,
+			Position:      tree.GetPosition("_ref"),
+			Ref:           view.Ref,
+			InsertContent: view.Template,
 		})
 	}
 	// fill handler field if missing
 	if view.Handler == "" {
 		view.Handler = fmt.Sprintf("hlp.BindEnv(bindResources(%sHandler))", kebabToCamel(view.Ref))
 		parser.missingHandlers = append(parser.missingTemplates, Missing{
-			Position: tree.Position(),
-			Ref:      view.Ref,
+			Position:      tree.GetPosition("_ref"),
+			Ref:           view.Ref,
+			InsertContent: view.Handler,
 		})
 	}
 	view.Block = safeLast(parser.blockPath)

@@ -38,28 +38,37 @@ _uri = "/example"
 
     [[content]]
     _ref = "settings-layout"
+    _template = "page/example/templates/content/settings-layout.html.tmpl"
+    _handler = "page/example/templates/content/settings-layout.html.tmpl"
     _doc = "Settings page layout"
 
         [[content.tabs]]
         _ref = "settings-tabs"
+        _template = "page/example/templates/content/tabs/settings-tabs.html.tmpl"
         _doc = "Tabs for the settings page content"
         _default = true
         _handler = 'treetop.Constant("Hello World")'
 
         [[content.settings]]
         _ref = "general-settings"
+        _template = "page/example/templates/content/settings/general-settings.html.tmpl"
+        _handler = "page/example/templates/content/settings/general-settings.html.tmpl"
         _doc = "General settings area"
         _path = "/example/settings"
         _partial = true
 
         [[content.settings]]
         _ref = "advanced-settings"
+        _template = "page/example/templates/content/settings/advanced-settings.html.tmpl"
+        _handler = "page/example/templates/content/settings/advanced-settings.html.tmpl"
         _doc = "Advanced settings area"
         _path = "/example/advanced-settings"
         _partial = true
 
             [[content.settings.settings-form]]
             _ref = "update-advanced-settings"
+            _template = "page/example/templates/content/settings/settings-form/update-advanced-settings.html.tmpl"
+            _handler = "hlp.BindEnv(bindResources(updateAdvancedSettingsHandler))"
             _doc = "Accept update to advanced settings and show result"
             _path = "/example/advanced-settings/submit"
             _fragment = true
