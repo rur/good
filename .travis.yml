@@ -1,6 +1,6 @@
 lineTextlanguage: go
 go:
-  - 1.16
+  - 1.16.x
 script:
   - go test ./...
   - ./scripts/test_baseline_scaffold.sh
