@@ -43,7 +43,7 @@ echo "---"
 curl http://localhost:8000/example/advanced-settings
 echo
 echo "---"
-curl -X POST -H "Accept: application/x.treetop-html-template+xml" :8000/example/form
+curl -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/form
 echo
 echo "---- Feched example page successfully ---"
 
