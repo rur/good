@@ -143,7 +143,7 @@ func (parser *routeParser) unmarshalView(tree *toml.Tree) (view RouteView, err e
 	// fill handler field if missing
 	if view.Handler == "" {
 		view.Handler = fmt.Sprintf("hlp.BindEnv(bindResources(%sHandler))", kebabToCamel(view.Ref))
-		parser.missingHandlers = append(parser.missingTemplates, Missing{
+		parser.missingHandlers = append(parser.missingHandlers, Missing{
 			Position:      tree.GetPosition("_ref"),
 			Ref:           view.Ref,
 			InsertContent: view.Handler,
