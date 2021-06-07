@@ -1,0 +1,33 @@
+package [# .Name #]
+
+import (
+	"net/http"
+
+	"github.com/rur/treetop"
+	"[# .Namespace #]/service"
+)
+
+[# if .Handlers -#]
+// -------------------------
+// [#.Name#] Handlers
+// -------------------------
+[# end #]
+[# range $index, $handler := .Handlers #]
+// Ref: [# $handler.Ref #][# if $handler.Block #]
+// Block: [# $handler.Block #][# end #][# if $handler.Method #]
+// Method: [# $handler.Method #][# end #][# if $handler.Doc #]
+// Doc: [# $handler.Doc #]
+[#- end #]
+func [# $handler.Identifier #](rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data :=  struct {
+		HandlerInfo string[# range $index, $block := .Blocks #]
+		[# $block.FieldName #] interface{}
+		[#- end #]
+	}{
+		HandlerInfo: "[# $.Name #] Page [# $handler.Identifier #]",[# range $index, $block := .Blocks #]
+		[# $block.FieldName #]: rsp.HandleSubView("[# $block.Name #]", req),
+		[#- end #]
+	}
+	return data
+}
+[# end #]

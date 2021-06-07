@@ -4,19 +4,19 @@
 
 1. Generate obvious, grok-able code
 1. Only basic dependencies
-1. Embedded in the binary
+1. Embed in your binary
 1. Easy to secure
 1. No surprises
 
-`good` is a code-gen tool for embedding a web GUI in a Golang application. 
-It outputs a hard-coded scaffold for a serverside app, with the aim of being
-general purpose and low maintenance over time. The examples are geared towards intetgrated apps
-like a service dashboard or admin tools. 
+`good` is a code-gen tool for embedding a web GUI in a Golang application.
+It outputs a hard-coded scaffold for a server side app, with the aim of being
+low maintenance over time. The examples are geared towards integrated apps like
+a service dashboard or admin tools but this it is a general purpose setup.
 
 ### CLI Overview
 
-The CLI workflow involves generating static code and refactoring to suit your needs, taking advantage of the
-Go development tooling.
+The CLI workflow involves generating static code and refactoring to suit your needs,
+taking advantage of the Go development tooling.
 
 #### Good Scaffold
 
@@ -82,7 +82,6 @@ TODO: ...
 
 #### The generator creates lots of handlers, why so much bloat?
 
-I take the view that DRY code ariases from repeated refactoring (see TDD). 
+I take the view that DRY code ariases from repeated refactoring (see TDD).
 Generating a bunch of simple working code is a nice way to start the refactoring process,
 but the rest is up to the programmer.
-

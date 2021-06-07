@@ -1,0 +1,25 @@
+_ref = "[# .Name #]"
+_template = "[# .Templates #]/[# .Name #].html.tmpl"
+_handler = "hlp.BindEnv(bindResources([# .Name #]Handler))"
+_doc = "Base HTML template for [# .Name #] page"
+_uri = "/[# .Name #]"
+
+    [[site-nav]]
+    _ref = "main-nav"
+    _default = true
+    _template = "page/templates/nav.html.tmpl"
+    _handler = "hlp.BindEnv(page.SiteNavHandler)"
+
+    [[content]]
+    _ref = "[# .Name #]-placeholder"
+    _default = true
+    _doc = "Placeholder page"
+    _path = "/[# .Name #]"
+    _template = "[# .Templates #]/content/placeholder.html.tmpl"
+    _handler = "hlp.BindEnv(bindResources(placeholderHandler))"
+
+    [[scripts]]
+    _ref = "site-scripts"
+    _default = true
+    _template = "page/templates/scripts.html.tmpl"
+    _handler = "treetop.Noop"

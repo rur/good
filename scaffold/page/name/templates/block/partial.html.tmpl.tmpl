@@ -1,0 +1,25 @@
+<div id="[# .Block #]"[# if .Merge #] treetop-merge="[# .Merge #]"[# end #]>
+    [# if .Fragment #]Fragment view named [#.Name#]
+    [#- else #]Partial view named [#.Name#][# end #]
+    [#- range $index, $block := .Blocks #]
+    <h3>Block [# $block.Name #]</h3>
+    <ul>
+        [# range $subView := $block.Views #]
+        [#- if $subView.Path -#]
+            [#- if $subView.POSTOnly -#]
+            <li><form action="[# $subView.Path #]" method="POST"[# if not $subView.PageOnly #] treetop[# end #]><button>[# $subView.Ref #][# if $subView.Default #]*[#end#]</button></form></li>
+            [#- else -#][#- if $subView.FragmentOnly -#]
+            <li><button treetop-link="[# $subView.Path #]">[# $subView.Ref #][# if $subView.Default #]*[#end#]</button></li>
+            [#- end -#][#- if $subView.PageOnly -#]
+            <li><a href="[# $subView.Path #]">[# $subView.Ref #][# if $subView.Default #]*[#end#]</a></li>
+            [#- end -#][#- if and (not $subView.PageOnly) (not $subView.FragmentOnly) -#]
+            <li><a href="[# $subView.Path #]" treetop>[# $subView.Ref #][# if $subView.Default #]*[#end#]</a></li>
+            [#- end -#][#- end -#]
+        [#- end #]
+        [# end #]
+    </ul>
+    {{ block "[# $block.Name #]" .[# $block.FieldName #] }}
+    <div id="[# $block.Name  #]"> default for block named [# $block.Name #] </div>
+    {{ end }}
+    [# end #]
+</div>

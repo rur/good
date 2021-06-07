@@ -1,0 +1,25 @@
+_ref = "newpage"
+_template = "page/newpage/templates/newpage.html.tmpl"
+_handler = "hlp.BindEnv(bindResources(newpageHandler))"
+_doc = "Base HTML template for newpage page"
+_uri = "/newpage"
+
+    [[site-nav]]
+    _ref = "main-nav"
+    _default = true
+    _template = "page/templates/nav.html.tmpl"
+    _handler = "hlp.BindEnv(page.SiteNavHandler)"
+
+    [[content]]
+    _ref = "newpage-placeholder"
+    _default = true
+    _doc = "Placeholder page"
+    _path = "/newpage"
+    _template = "page/newpage/templates/content/placeholder.html.tmpl"
+    _handler = "hlp.BindEnv(bindResources(placeholderHandler))"
+
+    [[scripts]]
+    _ref = "site-scripts"
+    _default = true
+    _template = "page/templates/scripts.html.tmpl"
+    _handler = "treetop.Noop"

@@ -1,0 +1,51 @@
+_ref = "example"
+_template = "page/templates/base.html.tmpl"
+_handler = "hlp.BindEnv(page.BaseHandler)"
+_doc = "Base HTML template for example page"
+_uri = "/example"
+
+    [[scripts]]
+    _ref = "site-wide-script"
+    _default = true
+    _template = "page/templates/scripts.html.tmpl"
+    _handler = "treetop.Noop"
+
+    [[nav]]
+    _ref = "page-nav"
+    _default = true
+    _template = "page/example/templates/nav/page-nav.html.tmpl"
+    _handler = "env.Bind(bindResources(pageNavHandler))"
+
+    [[content]]
+    _ref = "example-placeholder"
+    _default = true
+    _includes = ["page-nav"]
+    _doc = "Placeholder page"
+    _path = "/example"
+    _partial = true
+    _template = "page/example/templates/content/placeholder.html.tmpl"
+    _handler = "env.Bind(bindResources(placeholderHandler))"
+
+        [[content.form]]
+        _ref = "placeholder-form"
+        _default = true
+        _doc = "embedded HTML form"
+        _template = "page/example/templates/content/form/placeholderForm.html.tmpl"
+        _handler = "env.Bind(bindResources(placeholderFormHandler))"
+
+        [[content.form]]
+        _ref = "placeholder-form-preview"
+        _fragment = true
+        _method = "POST"
+        _path = "/example/preview"
+        _doc = "Preview data for submit endpoint"
+        _template = "page/example/templates/content/form/placeholderFormPreview.html.tmpl"
+        _handler = "env.Bind(bindResources(placeholderFormPreviewHandler))"
+
+    [[content]]
+    _ref = "example-submit-endpoint"
+    _method = "POST"
+    _doc = "Some form post endpoint"
+    _path = "/example/submit"
+    _template = "page/example/templates/content/submit.html.tmpl"
+    _handler = "env.Bind(bindResources(submitHandler))"

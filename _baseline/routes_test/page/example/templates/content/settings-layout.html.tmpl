@@ -1,0 +1,22 @@
+<div id="content">
+    Partial view named settings-layout
+    <h3>Block settings</h3>
+    <ul>
+        <li><a href="/example/settings" treetop>general-settings</a></li>
+        <li><a href="/example/advanced-settings" treetop>advanced-settings</a></li>
+        
+    </ul>
+    {{ block "settings" .Settings }}
+    <div id="settings"> default for block named settings </div>
+    {{ end }}
+    
+    <h3>Block tabs</h3>
+    <ul>
+        
+        
+    </ul>
+    {{ block "tabs" .Tabs }}
+    <div id="tabs"> default for block named tabs </div>
+    {{ end }}
+    
+</div>
