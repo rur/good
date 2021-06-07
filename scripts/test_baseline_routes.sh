@@ -31,16 +31,16 @@ function killserver() {
 }
 trap killserver EXIT
 sleep 1 # plenty of time to start up
-curl :8000/example
+curl http://localhost:8000/example
 echo
 echo "---"
-curl :8000/example/alt
+curl http://localhost:8000/example/alt
 echo
 echo "---"
-curl :8000/example/settings
+curl http://localhost:8000/example/settings
 echo
 echo "---"
-curl :8000/example/advanced-settings
+curl http://localhost:8000/example/advanced-settings
 echo
 echo "---"
 curl -X POST -H "Accept: application/x.treetop-html-template+xml" :8000/example/form
