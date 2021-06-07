@@ -1,0 +1,8 @@
+lineTextlanguage: go
+go:
+  - 1.16
+script:
+  - go test ./...
+  - ./scripts/test_baseline_scaffold.sh
+  - ./scripts/test_baseline_page.sh
+  - ./scripts/test_baseline_routes.sh
