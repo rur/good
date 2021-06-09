@@ -15,12 +15,15 @@ TESTINFO
 echo "clearly any previously failed run data"
 rm -rf baseline
 
-go run . scaffold baseline/routes_test
+go run . scaffold baseline/routes_test example trivial
 
 rm baseline/routes_test/page/example/routemap.toml
 cp _baseline/testfixtures/routemap.toml baseline/routes_test/page/example/routemap.toml
+rm baseline/routes_test/page/trivial/routemap.toml
+cp _baseline/testfixtures/routemap_trivial.toml baseline/routes_test/page/trivial/routemap.toml
 
 go run . routes ./baseline/routes_test/page/example
+go run . routes ./baseline/routes_test/page/trivial
 
 echo "---- run new server and ping /example endpoint ---"
 go run ./baseline/routes_test > testing_stdout.log 2> testing_stderr.log &
@@ -31,6 +34,9 @@ function killserver() {
 }
 trap killserver EXIT
 sleep 1 # plenty of time to start up
+curl http://localhost:8000/trivial
+echo
+echo "---"
 curl http://localhost:8000/example
 echo
 echo "---"
@@ -54,6 +60,7 @@ rm -r baseline
 
 # normalize name of generated handlers file for comparison against baseline
 mv _baseline/routes_test/page/example/handlers_* _baseline/routes_test/page/example/handlers_gen.go
+mv _baseline/routes_test/page/trivial/handlers_* _baseline/routes_test/page/trivial/handlers_gen.go
 
 diff=$(git diff _baseline/routes_test)
 

@@ -1,0 +1,5 @@
+_ref = "trivial-page"
+_template = "page/trivial/templates/trivial-page.html.tmpl"
+_handler = "hlp.BindEnv(bindResources(trivialPageHandler))"
+_doc = "Just a single HTML page"
+_path = "/trivial"
