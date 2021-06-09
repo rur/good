@@ -52,6 +52,8 @@ func flushFile(dir string, file File) error {
 		return err
 	}
 	defer fh.Close()
+	fh.Truncate(0)
+	fh.Seek(0, 0)
 	_, err = fh.Write(file.Contents)
 	return err
 }
