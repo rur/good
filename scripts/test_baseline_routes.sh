@@ -52,6 +52,9 @@ echo "---"
 curl -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/form
 echo
 echo "---- Feched example page successfully ---"
+curl -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/advanced-settings/submit
+echo
+echo "---- Feched example page successfully ---"
 
 
 rm -rf _baseline/routes_test

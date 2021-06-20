@@ -3,6 +3,7 @@
     [#- else #]Partial view named [#.Name#][# end #]
     [#- range $index, $block := .Blocks #]
     <h3>Block [# $block.Name #]</h3>
+    [#- if $block.Views #]
     <ul>
         [# range $subView := $block.Views #]
         [#- if $subView.Path -#]
@@ -18,6 +19,7 @@
         [#- end #]
         [# end #]
     </ul>
+    [#- end #]
     {{ block "[# $block.Name #]" .[# $block.FieldName #] }}
     <div id="[# $block.Name  #]"> default for block named [# $block.Name #] </div>
     {{ end }}
