@@ -1,6 +1,7 @@
 package routemap
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -111,6 +112,10 @@ func TemplateDataForRoutes(page PageRoutes, missTpl []Missing, missHlr []Missing
 			}
 		}
 		entries = append(entries, entry)
+	}
+
+	if len(routes) == 0 {
+		err = errors.New("no paths were found in this routemap")
 	}
 	return
 }

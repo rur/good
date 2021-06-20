@@ -2,6 +2,7 @@ package routemap
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/rur/good/generate"
@@ -162,5 +163,42 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 	}
 	if !reflect.DeepEqual(gotRoutes, wantRoutes) {
 		t.Errorf("TemlateDataFromRoutes() gotRoutes = %v,\n\n want %v\n\n", gotRoutes, wantRoutes)
+	}
+}
+
+func TestTemplateDataFromRoutesValidation(t *testing.T) {
+	def := PageRoutes{
+		URI: "/my-page",
+		RouteView: RouteView{
+			Ref:      "mypage",
+			Template: "page/mypage/templates/mypage.html.tmpl",
+			Handler:  "mypageHandler",
+			Doc:      "Test page docs",
+			Blocks: []TemplateBlock{
+				{
+					Name: "content",
+					Views: []RouteView{
+						{
+							Ref:      "my-content",
+							Template: "page/mypage/templates/content/my-content.html.tmpl",
+							Handler:  "myContentHandler",
+							Doc:      "The default content",
+							Includes: []string{"my-nav"},
+						},
+						{
+							Ref:      "other-content",
+							Template: "page/mypage/templates/content/other-content.html.tmpl",
+							Handler:  "otherContentHandler",
+							Doc:      "The other content",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	_, _, _, _, err := TemplateDataForRoutes(def, nil, nil)
+	if err == nil || !strings.Contains(err.Error(), "no paths were found in this routemap") {
+		t.Errorf("TemplateDataForRoutes() expecting to complain about zero routes, got: %s", err)
 	}
 }
