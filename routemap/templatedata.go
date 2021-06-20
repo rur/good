@@ -30,6 +30,8 @@ func TemplateDataForRoutes(page PageRoutes, missTpl []Missing, missHlr []Missing
 	handlers []generate.Handler,
 	err error,
 ) {
+	refCount := make(map[string]int)
+
 	stack := []stackData{
 		{view: page.RouteView},
 	}
@@ -66,10 +68,11 @@ func TemplateDataForRoutes(page PageRoutes, missTpl []Missing, missHlr []Missing
 		}
 
 		entry := generate.Entry{
-			Block:    safeLast(sData.blockPath),
-			Extends:  sData.extends,
-			Template: view.Template,
-			Handler:  view.Handler,
+			Assignment: kebabToCamel(view.Ref),
+			Block:      safeLast(sData.blockPath),
+			Extends:    sData.extends,
+			Template:   view.Template,
+			Handler:    view.Handler,
 		}
 
 		if len(sData.blockPath) == 0 {
@@ -79,9 +82,10 @@ func TemplateDataForRoutes(page PageRoutes, missTpl []Missing, missHlr []Missing
 		} else {
 			entry.Type = "SubView"
 		}
+		entries = append(entries, entry)
 
 		if view.Path != "" {
-			entry.Assignment = kebabToCamel(view.Ref)
+			refCount[entry.Assignment]++
 			route := generate.Route{
 				Reference:    entry.Assignment,
 				Path:         view.Path,
@@ -90,33 +94,52 @@ func TemplateDataForRoutes(page PageRoutes, missTpl []Missing, missHlr []Missing
 				FragmentOnly: view.Fragment,
 			}
 			for _, incl := range view.Includes {
-				route.Includes = append(route.Includes, kebabToCamel(incl))
+				ref := kebabToCamel(incl)
+				refCount[ref]++
+				route.Includes = append(route.Includes, ref)
 			}
 			routes = append(routes, route)
 		}
 
-		if len(view.Blocks) > 0 {
-			entry.Assignment = kebabToCamel(view.Ref)
+		for i := len(view.Blocks) - 1; i >= 0; i-- {
+			blockName := view.Blocks[i].Name
+			bPath := append(sData.blockPath, blockName)
 
-			for i := len(view.Blocks) - 1; i >= 0; i-- {
-				blockName := view.Blocks[i].Name
-				nBlock := append(sData.blockPath, blockName)
-
-				for j := len(view.Blocks[i].Views) - 1; j >= 0; j-- {
-					stack = append(stack, stackData{
-						view:      view.Blocks[i].Views[j],
-						extends:   entry.Assignment,
-						blockPath: nBlock,
-					})
-				}
+			if len(view.Blocks[i].Views) == 0 {
+				refCount[entry.Assignment]++
+				// add subview assertion directly after the view is declared
+				entries = append(entries, generate.Entry{
+					Type:    "HasSubView",
+					Extends: entry.Assignment,
+					Block:   blockName,
+				})
+				continue
+			}
+			for j := len(view.Blocks[i].Views) - 1; j >= 0; j-- {
+				refCount[entry.Assignment]++
+				// add subview to BFS stack
+				stack = append(stack, stackData{
+					view:      view.Blocks[i].Views[j],
+					extends:   entry.Assignment,
+					blockPath: bPath,
+				})
 			}
 		}
-		entries = append(entries, entry)
 	}
 
 	if len(routes) == 0 {
 		err = errors.New("no paths were found in this routemap")
 	}
+	for i := range entries {
+		if entries[i].Assignment != "" {
+			if refCount[entries[i].Assignment] == 0 {
+				// delete assignments that have zero references (as per golang rules)
+				// this will prevent the output of a LHS for this entry
+				entries[i].Assignment = ""
+			}
+		}
+	}
+
 	return
 }
 

@@ -27,6 +27,8 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 		"[# $entry.Template #]",
 		[# $entry.Handler #],
 	)
+	[#- else if eq $entry.Type "HasSubView" -#]
+	[# $entry.Extends #].HasSubView("[# $entry.Block #]")
 	[#- else if eq $entry.Type "Spacer" #]
 	// [# $entry.Comment #]
 	[#- else -#]

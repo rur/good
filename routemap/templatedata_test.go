@@ -125,7 +125,7 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 			Comment: "[[nav]]",
 		},
 		{
-			Assignment: "",
+			Assignment: "myNav",
 			Extends:    "mypage",
 			Block:      "nav",
 			Template:   "page/mypage/templates/nav/my-nav.html.tmpl",
@@ -200,5 +200,61 @@ func TestTemplateDataFromRoutesValidation(t *testing.T) {
 	_, _, _, _, err := TemplateDataForRoutes(def, nil, nil)
 	if err == nil || !strings.Contains(err.Error(), "no paths were found in this routemap") {
 		t.Errorf("TemplateDataForRoutes() expecting to complain about zero routes, got: %s", err)
+	}
+}
+
+func TestTemplateDataFromRoutes_EmptyBlock(t *testing.T) {
+	def := PageRoutes{
+		URI: "/my-page",
+		RouteView: RouteView{
+			Ref:      "mypage",
+			Template: "page/mypage/templates/mypage.html.tmpl",
+			Handler:  "mypageHandler",
+			Path:     "/my-page",
+			Doc:      "Test page docs",
+			Blocks: []TemplateBlock{
+				{
+					Name:  "content",
+					Views: nil,
+				},
+			},
+		},
+	}
+	// TODO: test missing templates and handlers
+	gotEntries, gotRoutes, _, _, err := TemplateDataForRoutes(def, nil, nil)
+	wantEntries := []generate.Entry{
+		{
+			Assignment: "mypage",
+			Block:      "",
+			Extends:    "",
+			Template:   "page/mypage/templates/mypage.html.tmpl",
+			Handler:    "mypageHandler",
+			Type:       "PageView",
+		},
+		{
+			Type:    "HasSubView",
+			Extends: "mypage",
+			Block:   "content",
+		},
+	}
+	wantRoutes := []generate.Route{
+		{
+			Path:      "/my-page",
+			Reference: "mypage",
+			PageOnly:  true,
+		},
+	}
+
+	if err != nil {
+		t.Errorf("TemlateDataFromRoutes() unexpected error = %v", err)
+		return
+	}
+
+	if !reflect.DeepEqual(gotEntries, wantEntries) {
+		t.Errorf("TemlateDataFromRoutes() gotEntries = %v,\n\n want %v\n\n", gotEntries, wantEntries)
+	}
+
+	if !reflect.DeepEqual(gotRoutes, wantRoutes) {
+		t.Errorf("TemlateDataFromRoutes() gotRoutes = %v,\n\n want %v\n\n", gotRoutes, wantRoutes)
 	}
 }
