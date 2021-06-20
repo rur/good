@@ -28,6 +28,13 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 		hlp.BindEnv(bindResources(placeholderFormHandler)),
 	)
 
+	// [[content.form.form-error]]
+	basicFormError := placeholderForm.NewDefaultSubView(
+		"form-error",
+		"page/example/templates/content/form/form-error/basic-form-error.html.tmpl",
+		hlp.BindEnv(bindResources(basicFormErrorHandler)),
+	)
+
 	// [[content]]
 	alternativeContent := example.NewSubView(
 		"content",
@@ -58,6 +65,7 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 		"page/example/templates/content/settings/settings-form/update-advanced-settings.html.tmpl",
 		hlp.BindEnv(bindResources(updateAdvancedSettingsHandler)),
 	)
+	updateAdvancedSettings.HasSubView("form-error")
 
 	// [[content.tabs]]
 	settingsLayout.NewDefaultSubView(
@@ -91,6 +99,9 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 	hlp.Handle("/example/advanced-settings",
 		exec.NewViewHandler(advancedSettings))
 	hlp.HandlePOST("/example/advanced-settings/submit",
-		exec.NewViewHandler(updateAdvancedSettings).FragmentOnly())
+		exec.NewViewHandler(
+			updateAdvancedSettings,
+			basicFormError,
+		).FragmentOnly())
 
 }

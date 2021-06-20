@@ -18,8 +18,22 @@ import (
 func placeholderFormHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
+		FormError   interface{}
 	}{
 		HandlerInfo: "example Page placeholderFormHandler",
+		FormError:   rsp.HandleSubView("form-error", req),
+	}
+	return data
+}
+
+// Ref: basic-form-error
+// Block: form-error
+// Doc: Format and display a form error message
+func basicFormErrorHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data := struct {
+		HandlerInfo string
+	}{
+		HandlerInfo: "example Page basicFormErrorHandler",
 	}
 	return data
 }
@@ -85,8 +99,10 @@ func advancedSettingsHandler(rsc *resources, env *service.Env, rsp treetop.Respo
 func updateAdvancedSettingsHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
+		FormError   interface{}
 	}{
 		HandlerInfo: "example Page updateAdvancedSettingsHandler",
+		FormError:   rsp.HandleSubView("form-error", req),
 	}
 	return data
 }

@@ -29,6 +29,13 @@ _uri = "/example"
         _method = "POST"
         _path = "/example/form"
 
+            [[content.form.form-error]]
+            _ref = "basic-form-error"
+            _template = "page/example/templates/content/form/form-error/basic-form-error.html.tmpl"
+            _handler = "hlp.BindEnv(bindResources(basicFormErrorHandler))"
+            _doc = "Format and display a form error message"
+            _default = true
+
     [[content]]
     _ref = "alternative-content"
     _template = "page/example/templates/content/alternative-content.html.tmpl"
@@ -71,8 +78,11 @@ _uri = "/example"
             _handler = "hlp.BindEnv(bindResources(updateAdvancedSettingsHandler))"
             _doc = "Accept update to advanced settings and show result"
             _path = "/example/advanced-settings/submit"
+            _includes = ["basic-form-error"]
             _fragment = true
             _method = "POST"
+
+                [[content.settings.settings-form.form-error]]
 
     [[scripts]]
     _ref = "site-scripts"
