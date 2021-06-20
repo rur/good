@@ -26,6 +26,11 @@ _uri = "/example"
         _method = "POST"
         _path = "/example/form"
 
+            [[content.form.form-error]]
+            _ref = "basic-form-error"
+            _doc = "Format and display a form error message"
+            _default = true
+
     [[content]]
     _ref = "alternative-content"
     _doc = "Alaternative Content Page"
@@ -57,8 +62,11 @@ _uri = "/example"
             _ref = "update-advanced-settings"
             _doc = "Accept update to advanced settings and show result"
             _path = "/example/advanced-settings/submit"
+            _includes = ["basic-form-error"]
             _fragment = true
             _method = "POST"
+
+                [[content.settings.settings-form.form-error]]
 
     [[scripts]]
     _ref = "site-scripts"

@@ -68,6 +68,12 @@ func TestProcessRoutemapBasic(t *testing.T) {
 							Template: "page/example/templates/content/submit.html.tmpl",
 							Handler:  "env.Bind(bindResources(submitHandler))",
 							Block:    "content",
+							Blocks: []TemplateBlock{
+								{
+									Name:  "form",
+									Views: nil,
+								},
+							},
 						},
 					},
 				},

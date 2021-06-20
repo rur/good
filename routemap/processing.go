@@ -174,6 +174,13 @@ func (parser *routeParser) unmarshalView(tree *toml.Tree) (view RouteView, err e
 		}
 		val := tree.GetArray(key)
 		if subtrees, ok := val.([]*toml.Tree); ok {
+			if len(subtrees) == 1 {
+				if len(subtrees[0].Keys()) == 0 {
+					// This is an array with a single empty object `[{}]`
+					// For our purposes, treat this as equivalent to an empty array
+					goto APPEND_BLOCK
+				}
+			}
 			for _, sTree := range subtrees {
 				var sView RouteView
 				// recursive call
@@ -190,6 +197,7 @@ func (parser *routeParser) unmarshalView(tree *toml.Tree) (view RouteView, err e
 			)
 			return
 		}
+	APPEND_BLOCK:
 		view.Blocks = append(view.Blocks, block)
 	}
 	parser.blockPath = currentBlockPath
