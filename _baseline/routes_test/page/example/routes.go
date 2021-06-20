@@ -17,22 +17,22 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 	// [[content]]
 	examplePlaceholder := example.NewDefaultSubView(
 		"content",
-		"page/example/templates/content/placeholder.html.tmpl",
-		hlp.BindEnv(bindResources(placeholderHandler)),
+		"page/example/templates/content/example-placeholder.html.tmpl",
+		treetop.Delegate("form"),
 	)
 
 	// [[content.form]]
 	placeholderForm := examplePlaceholder.NewDefaultSubView(
 		"form",
-		"page/example/templates/content/placeholder.html.tmpl",
-		treetop.Constant("TODO"),
+		"page/example/templates/content/form/placeholder-form.html.tmpl",
+		hlp.BindEnv(bindResources(placeholderFormHandler)),
 	)
 
 	// [[content]]
 	alternativeContent := example.NewSubView(
 		"content",
-		"page/example/templates/content/placeholder.html.tmpl",
-		hlp.BindEnv(bindResources(placeholderHandler)),
+		"page/example/templates/content/alternative-content.html.tmpl",
+		hlp.BindEnv(bindResources(alternativeContentHandler)),
 	)
 	settingsLayout := example.NewSubView(
 		"content",

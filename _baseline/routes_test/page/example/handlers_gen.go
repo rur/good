@@ -11,6 +11,31 @@ import (
 // example Handlers
 // -------------------------
 
+// Ref: placeholder-form
+// Block: form
+// Method: POST
+// Doc: Placeholder form
+func placeholderFormHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data := struct {
+		HandlerInfo string
+	}{
+		HandlerInfo: "example Page placeholderFormHandler",
+	}
+	return data
+}
+
+// Ref: alternative-content
+// Block: content
+// Doc: Alaternative Content Page
+func alternativeContentHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data := struct {
+		HandlerInfo string
+	}{
+		HandlerInfo: "example Page alternativeContentHandler",
+	}
+	return data
+}
+
 // Ref: settings-layout
 // Block: content
 // Doc: Settings page layout

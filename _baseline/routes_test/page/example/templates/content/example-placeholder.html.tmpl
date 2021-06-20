@@ -1,0 +1,12 @@
+<div id="content">
+    Partial view named example-placeholder
+    <h3>Block form</h3>
+    <ul>
+        <li><form action="/example/form" method="POST" treetop><button>placeholder-form*</button></form></li>
+        
+    </ul>
+    {{ block "form" .Form }}
+    <div id="form"> default for block named form </div>
+    {{ end }}
+    
+</div>

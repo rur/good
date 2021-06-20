@@ -12,29 +12,29 @@ _uri = "/example"
 
     [[content]]
     _ref = "example-placeholder"
+    _template = "page/example/templates/content/example-placeholder.html.tmpl"
     _default = true
     _doc = "Placeholder page"
     _partial = true
     _path = "/example"
-    _template = "page/example/templates/content/placeholder.html.tmpl"
-    _handler = "hlp.BindEnv(bindResources(placeholderHandler))"
+    _handler = 'treetop.Delegate("form")'
 
         [[content.form]]
         _ref = "placeholder-form"
+        _template = "page/example/templates/content/form/placeholder-form.html.tmpl"
+        _handler = "hlp.BindEnv(bindResources(placeholderFormHandler))"
         _default = true
         _doc = "Placeholder form"
         _fragment = true
         _method = "POST"
         _path = "/example/form"
-        _template = "page/example/templates/content/placeholder.html.tmpl"
-        _handler = "treetop.Constant(\"TODO\")"
 
     [[content]]
     _ref = "alternative-content"
+    _template = "page/example/templates/content/alternative-content.html.tmpl"
+    _handler = "hlp.BindEnv(bindResources(alternativeContentHandler))"
     _doc = "Alaternative Content Page"
     _path = "/example/alt"
-    _template = "page/example/templates/content/placeholder.html.tmpl"
-    _handler = "hlp.BindEnv(bindResources(placeholderHandler))"
 
     [[content]]
     _ref = "settings-layout"
