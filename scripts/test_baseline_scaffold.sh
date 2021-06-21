@@ -28,7 +28,19 @@ trap killserver EXIT
 sleep 1 # plenty of time to start up
 curl http://localhost:8000/example
 
-echo "---- Feched example page successfully ---"
+echo
+echo "---- Fetched example page successfully ---"
+
+echo
+curl --fail http://localhost:8000/public/test.txt
+echo
+curl --fail http://localhost:8000/styles/app.css
+echo
+curl --fail http://localhost:8000/js/app.js
+
+echo
+echo "---- Fetched example static files successfully ---"
+
 
 rm -rf _baseline/scaffold_test
 mv baseline/scaffold_test _baseline/

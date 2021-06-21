@@ -27,8 +27,11 @@ function killserver() {
 }
 trap killserver EXIT
 sleep 1 # plenty of time to start up
-curl http://localhost:8000/example
-curl http://localhost:8000/newpage
+
+echo
+curl --fail http://localhost:8000/example
+echo
+curl --fail http://localhost:8000/newpage
 
 echo "---- Feched example and newpage page successfully ---"
 
