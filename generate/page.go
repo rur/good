@@ -30,23 +30,11 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 		Namespace: sitePkg.ImportPath,
 		Handlers: []Handler{
 			{
-				Ref:        name,
+				Ref:        "example-dummy",
 				Block:      "content",
 				Method:     "GET",
-				Doc:        "Root handler for the " + name + " page",
-				Identifier: name + "Handler",
-				Blocks: []HandleBlock{
-					{FieldName: "SiteNav", Name: "site-nav"},
-					{FieldName: "Content", Name: "content"},
-					{FieldName: "Scripts", Name: "scripts"},
-				},
-			},
-			{
-				Ref:        "placeholder",
-				Block:      "content",
-				Method:     "GET",
-				Doc:        "This is placeholder content, add your endpoints to the routemap.toml and run go generate",
-				Identifier: "placeholderHandler",
+				Doc:        "This is an unused handler for the sake of example",
+				Identifier: "exampleDummyHandler",
 			},
 		},
 		Templates: filepath.Join("page", name, "templates"),
@@ -78,17 +66,11 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 		Name:     "routemap.toml",
 		Contents: mustExecute("scaffold/page/name/routemap.toml.tmpl", data, scaffold),
 	})
-	// page/name/templates/name.html.tmpl
+	// page/name/templates/placeholder.html.tmpl
 	files = append(files, File{
 		Dir:      filepath.Join(pageDir, "templates"),
-		Name:     name + ".html.tmpl",
-		Contents: mustExecute("scaffold/page/name/templates/name.html.tmpl.tmpl", data, scaffold),
-	})
-	// page/name/templates/content/placeholder.html.tmpl
-	files = append(files, File{
-		Dir:      filepath.Join(pageDir, "templates", "content"),
 		Name:     "placeholder.html.tmpl",
-		Contents: mustExecute("scaffold/page/name/templates/content/placeholder.html.tmpl.tmpl", data, scaffold),
+		Contents: mustExecute("scaffold/page/name/templates/placeholder.html.tmpl.tmpl", data, scaffold),
 	})
 
 	return

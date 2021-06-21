@@ -163,7 +163,7 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 		fmt.Println("Output from go fmt:")
 		fmt.Println(stdout)
 	}
-	fmt.Printf("Created good scaffold for %s!", sitePkg)
+	fmt.Printf("Created good scaffold for %s!", sitePkg.ImportPath)
 }
 
 // pageCmd attempts to add a new page to an existing scaffold site

@@ -1,25 +1,23 @@
 _ref = "[# .Name #]"
-_template = "[# .Templates #]/[# .Name #].html.tmpl"
-_handler = "hlp.BindEnv(bindResources([# .Name #]Handler))"
+_template = "page/templates/base.html.tmpl"
 _doc = "Base HTML template for [# .Name #] page"
 _uri = "/[# .Name #]"
+_handler = 'hlp.BindEnv(page.GetBaseHandler("[# .Name #] Page"))'
 
-    [[site-nav]]
-    _ref = "main-nav"
+    [[nav]]
+    _ref = "[# .Name #]-nav"
     _default = true
-    _template = "page/templates/nav.html.tmpl"
-    _handler = "hlp.BindEnv(page.SiteNavHandler)"
 
     [[content]]
-    _ref = "[# .Name #]-placeholder"
+    _ref = "[# .Name #]-landing"
     _default = true
-    _doc = "Placeholder page"
+    _doc = "Landing content view for the [# .Name #] page URI"
+    _method = "GET"
     _path = "/[# .Name #]"
-    _template = "[# .Templates #]/content/placeholder.html.tmpl"
-    _handler = "hlp.BindEnv(bindResources(placeholderHandler))"
 
     [[scripts]]
     _ref = "site-scripts"
     _default = true
+    _doc = "Include sitewide script footer"
     _template = "page/templates/scripts.html.tmpl"
     _handler = "treetop.Noop"

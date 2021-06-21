@@ -15,8 +15,8 @@ func PlaceholderRoutesConfig(name, templatePath string) (entries []generate.Entr
 		RouteView: RouteView{
 			Ref:      name,
 			Doc:      fmt.Sprintf("Base HTML template for %s page", name),
-			Template: filepath.Join(templatePath, name+".html.tmpl"),
-			Handler:  fmt.Sprintf("hlp.BindEnv(bindResources(%sHandler))", name),
+			Template: filepath.Join("page", "templates", "base.html.tmpl"),
+			Handler:  fmt.Sprintf("hlp.BindEnv(page.GetBaseHandler(%#v))", name+" Page"),
 			Blocks: []TemplateBlock{
 				{
 					Name: "content",
@@ -27,19 +27,19 @@ func PlaceholderRoutesConfig(name, templatePath string) (entries []generate.Entr
 							Method:   "GET",
 							Doc:      "Placeholder page",
 							Path:     "/" + name,
-							Template: filepath.Join(templatePath, "content", "placeholder.html.tmpl"),
-							Handler:  "hlp.BindEnv(bindResources(placeholderHandler))",
+							Template: filepath.Join(templatePath, "placeholder.html.tmpl"),
+							Handler:  fmt.Sprintf("treetop.Constant(%#v)", name),
 						},
 					},
 				},
 				{
-					Name: "site-nav",
+					Name: "nav",
 					Views: []RouteView{
 						{
-							Ref:      "site-nav",
+							Ref:      "page-nav",
 							Default:  true,
-							Template: "page/templates/nav.html.tmpl",
-							Handler:  "hlp.BindEnv(page.SiteNavHandler)",
+							Template: "::empty::",
+							Handler:  "treetop.Noop",
 						},
 					},
 				},
@@ -49,7 +49,7 @@ func PlaceholderRoutesConfig(name, templatePath string) (entries []generate.Entr
 						{
 							Ref:      "site-script",
 							Default:  true,
-							Template: "page/templates/scripts.html.tmpl",
+							Template: "::empty::",
 							Handler:  "treetop.Noop",
 						},
 					},
