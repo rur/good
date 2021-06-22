@@ -11,15 +11,16 @@
 - No surprises
 
 `good` is a code-gen tool for embedding a web GUI in an existing Golang application.
-It outputs a self-contained scaffold for a modern server side app, with the aim of being
-straightforward to setup and manage over time.
+It outputs a self-contained scaffold for a modern server-side app with the aim of
+being straightforward to setup and maintain over time.
 
-The general setup is geared towards: service consoles, admin workflows
-and user controls with direct server integration.
+This is a general purpose setup that is particularly well suited to user workflows
+involving direct server integration like admin tools and service controls.
 
 ### CLI Overview
 
-Commands that generate HTML and Golang files to be modified & refactored to suit your needs.
+The CLI tool will generate HTML and Golang files in your project
+for you to modify & refactor to suit your needs.
 
 #### TLDR; quickstart
 
@@ -41,7 +42,7 @@ Create a new app at `[current_go_mod]/portal` with a single page named _dashboar
 
     $ good page ./portal settings
 
-Add a new 'settings' page to the existing portal scaffold.
+Add a new 'settings' page to an existing scaffold path.
 
 #### Good Routes ...
 
@@ -50,25 +51,20 @@ Add a new 'settings' page to the existing portal scaffold.
 Re-generate the routing code for the portal settings page based on the
 `./portal/settings/routemap.toml` file.
 
-## Folder Structure
+### Intro
 
-### Routemap TOML
-
-Routing is b
-
-## Intro
-
-#### 1. Generate obvious, grok-able code
+#### 1. Generate clear, grok-able code
 
 The output is mostly vanilla Golang and HTML. We embrace a little redundancy
-so that the code will be more static, easier to customize and more obvious. This works
-well with the Golang tooling, which makes refactoring a cinch.
+so that the code will be more static and so easier to customize.
+This works very well with the Golang tooling, making refactoring a cinch.
 
-#### 2. Only Basic Dependencies
+#### 2. Basic Dependencies
 
-It is simpler to add the libraries you need, if there are fewer there to begin with.
-We use a library for managing handlers ([treetop](https://github.com/rur/treetop)), and the go
-standard library for the rest.
+We take full advantage of the standard _html/template_ and _net/http_
+libraries to avoid many dependencies. The scaffold code is clearly commented
+to make it easy for you to integrate the dependencies you wish to use in
+your project.
 
 #### 3. Binary Embedded
 
@@ -76,31 +72,12 @@ The `//go:embed ` directive is configured so that the web server is fully embedd
 
 #### 4. Classic template composition
 
-Only one way in or out; uniform endpoints greatly reduce the surface area you need to think about.
+Nested HTML template composition is a tried a true approach for building
+web GUI that has excellent support in Golang. With the addition of fragment
+hot-swapping, nested templates are capable of delivering a modern web experience
+from a server-side app.
 
 #### 5. No Surprises
 
-If a framework might be overkill for your project, this bootstrap is a pretty good alternative.
-
-## QnA
-
-#### Is this a framework or a static site generator?
-
-Neither, it's just a scaffold. Once the code is generated it's yours, adapt it to your needs.
-Routing is the only untouchable code, mostly because it is tedious and not very interesting.
-
-#### Why use a special library to manage handlers?
-
-Basically, I don't want to live without plumbing! The coordination of handlers and templates with
-request routing needs to be declarative (otherwise 🤯). [Treetop](https://github.com/rur/treetop)
-does this without transitive dependencies.
-
-#### Where does the frontend go?
-
-TODO: ...
-
-#### The generator creates lots of handlers, why so much bloat?
-
-I take the view that DRY code ariases from repeated refactoring (see TDD).
-Generating a bunch of simple working code is a nice way to start the refactoring process,
-but the rest is up to the programmer.
+If a framework might be overkill for your project, and you need more than static
+content pages, this scaffold is probably a reasonable option.
