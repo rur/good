@@ -4,40 +4,57 @@
 
 ## A pretty good web scaffold for Golang
 
-1. Generate obvious, grok-able code
-1. Only basic dependencies
-1. Embed in your binary
-1. Easy to secure
-1. No surprises
+- Clear, grok-able code
+- Basic dependencies
+- Embed within your binary
+- Classic template composition
+- No surprises
 
-`good` is a code-gen tool for embedding a web GUI in a Golang application.
-It outputs a hard-coded scaffold for a server side app, with the aim of being
-low maintenance over time. The examples are geared towards integrated apps like
-a service dashboard or admin tools but this it is a general purpose setup.
+`good` is a code-gen tool for embedding a web GUI in an existing Golang application.
+It outputs a self-contained scaffold for a modern server side app, with the aim of being
+straightforward to setup and manage over time.
+
+The general setup is geared towards: service consoles, admin workflows
+and user controls with direct server integration.
 
 ### CLI Overview
 
-The CLI workflow involves generating static code and refactoring to suit your needs,
-taking advantage of the Go development tooling.
+Commands that generate HTML and Golang files to be modified & refactored to suit your needs.
 
-#### Good Scaffold
+#### TLDR; quickstart
 
-    $ good scaffold portal home settings
+    $ go get github.com/rur/good
+    $ cd ~/path/to/mygoproject
+    [mygoproject]$ good scaffold ./myportal
+    [mygoproject]$ go generate ./myportal/...
+    [mygoproject]$ go run ./myportal
 
-Create a new app at `[pkg]/portal` with two pages: home and settings. The namespace is read from `./go.mod`.
+Visit localhost:8000 and take it from there.
 
-#### Good Page
+#### Good Scaffold ...
 
-    $ good page ./portal mypage
+    $ good scaffold ./portal dashboard
 
-Add a new page 'mypage' to the portal (contains its own route config).
+Create a new app at `[current_go_mod]/portal` with a single page named _dashboard_.
 
-#### Good Routes
+#### Good Page ...
 
-    $ good routes ./portal/settings/routemap.toml
+    $ good page ./portal settings
 
-(Re)generate the routing code from a config file. This will overwrite `./portal/settings/routemap.go`
-and output any handler functions that are missing.
+Add a new 'settings' page to the existing portal scaffold.
+
+#### Good Routes ...
+
+    $ good routes ./portal/settings
+
+Re-generate the routing code for the portal settings page based on the
+`./portal/settings/routemap.toml` file.
+
+## Folder Structure
+
+### Routemap TOML
+
+Routing is b
 
 ## Intro
 
@@ -57,7 +74,7 @@ standard library for the rest.
 
 The `//go:embed ` directive is configured so that the web server is fully embedded at compile time.
 
-#### 4. Easy to Secure
+#### 4. Classic template composition
 
 Only one way in or out; uniform endpoints greatly reduce the surface area you need to think about.
 
