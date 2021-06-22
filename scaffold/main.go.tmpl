@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"path/filepath"
 
 	"github.com/rur/treetop"
 
@@ -46,7 +47,7 @@ func init() {
 	if devMode {
 		// all static assets and templates should be read from disk at runtime
 		fmt.Println("Server running in DEVELOPMENT MODE")
-		staticFS = http.Dir("static")
+		staticFS = http.Dir(filepath.Join("[# .SiteDirRel #]", "static"))
 		exec = &treetop.DeveloperExecutor{ // force templates to be re-parsed for every request
 			ViewExecutor: &treetop.FileSystemExecutor{
 				// this assumes you are runing the dev server from your project root

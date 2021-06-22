@@ -49,3 +49,5 @@ _uri = "/example"
     _path = "/example/submit"
     _template = "page/example/templates/content/submit.html.tmpl"
     _handler = "env.Bind(bindResources(submitHandler))"
+
+        [[content.form]]
