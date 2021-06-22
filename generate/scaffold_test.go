@@ -161,16 +161,16 @@ func TestSiteScaffold(t *testing.T) {
 			"gen.go",
 			`//go:generate good pages .`,
 		}, {
-			"simple main.css",
-			"static/styles/main.css",
+			"simple app.css",
+			"static/styles/app.css",
 			"background-color: red",
 		}, {
 			"simple service env.go",
 			"service/env.go",
 			"type Env struct {",
 		}, {
-			"simple main.js",
-			"static/js/main.js",
+			"simple app.js",
+			"static/js/app.js",
 			"function hello(name) {",
 		}, {
 			"simple test.txt",
