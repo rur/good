@@ -2,6 +2,7 @@ package generate
 
 import (
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -49,7 +50,9 @@ func TestSiteFromPagePackage(t *testing.T) {
 }
 
 func TestPageScaffold(t *testing.T) {
-	fs := os.DirFS("../")
+	scaffold := os.DirFS("..")
+	bootstrap := os.DirFS(filepath.Join("testdata", "bootstrap"))
+
 	gotFiles, err := PageScaffold(
 		GoPackage{
 			ImportPath: "github.com/rur/example/admin/site",
@@ -60,7 +63,8 @@ func TestPageScaffold(t *testing.T) {
 			},
 		},
 		"testing",
-		fs,
+		scaffold,
+		bootstrap,
 	)
 	if err != nil {
 		t.Errorf("PageScaffold() error = %v", err)

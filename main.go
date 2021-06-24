@@ -139,16 +139,15 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 	pageFile, err := generate.PagesScaffold(sitePkg, pages, scaffold)
 	mustNot(err)
 	files = append(files, pageFile)
+
+	welcome := os.DirFS(filepath.Join("bootstrap", "welcome"))
+
 	for _, page := range pages {
 		err = generate.ValidatePageName(page)
 		mustNot(err)
-		pFiles, err := generate.PageScaffold(sitePkg, page, scaffold)
-		mustNot(err)
-		entries, routes := routemap.PlaceholderRoutesConfig(page, filepath.Join("page", page, "templates"))
-		rFiles, err := generate.RoutesScaffold(sitePkg, page, entries, routes, nil, nil, scaffold)
+		pFiles, err := generate.PageScaffold(sitePkg, page, scaffold, welcome)
 		mustNot(err)
 		files = append(files, pFiles...)
-		files = append(files, rFiles...)
 	}
 
 	// FS operations
@@ -174,15 +173,9 @@ func pageCmd(sitePkgRel, pageName string) {
 	mustNot(err)
 	err = generate.ValidatePageLocation(filepath.Join(sitePkg.Dir, "page", pageName), scaffold)
 	mustNot(err)
-	files, err := generate.PageScaffold(sitePkg, pageName, scaffold)
+	welcome := os.DirFS(filepath.Join("bootstrap", "welcome"))
+	files, err := generate.PageScaffold(sitePkg, pageName, scaffold, welcome)
 	mustNot(err)
-	entries, routes := routemap.PlaceholderRoutesConfig(pageName, filepath.Join("page", pageName, "templates"))
-	// TODO: add handlers and templates to placeholder output
-	routeFiles, err := generate.RoutesScaffold(sitePkg, pageName, entries, routes, nil, nil, scaffold)
-	if err != nil {
-		return
-	}
-	files = append(files, routeFiles...)
 	err = generate.FlushFiles(sitePkg.Dir, files)
 	mustNot(err)
 

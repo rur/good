@@ -13,10 +13,17 @@ import (
 
 var (
 	PageNameRegex = regexp.MustCompile(`^[a-z][a-z]+$`)
+
+	tracked = []string{
+		"handlers.go",
+		"resources.go",
+		"routemap.toml",
+		"routes.go",
+	}
 )
 
 // PageScaffold will assemble files for adding a new page to the site scaffold
-func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS) (files []File, err error) {
+func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, bootstrap fs.FS) (files []File, err error) {
 	// setup page with some placeholder data
 	data := struct {
 		Name      string // Go package name for page
@@ -42,36 +49,89 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 
 	pageDir := filepath.Join("page", name)
 
+	found := make(map[string]bool)
+
+	for _, name := range tracked {
+		// check if a tracked file exists in the bootstrap
+		if tmp, err := bootstrap.Open(name + ".tmpl"); err != nil {
+			if err == os.ErrNotExist {
+				continue
+			}
+			return nil, err
+		} else {
+			tmp.Close()
+		}
+		found[name] = true
+
+		var content []byte
+		content, err = tryExecute(name+".tmpl", data, bootstrap)
+		if err != nil {
+			err = fmt.Errorf("failed to exec bootstrap template for file '%s.tmpl': %s", name, err)
+			return
+		}
+		files = append(files, File{
+			Dir:      pageDir,
+			Name:     name,
+			Contents: content,
+		})
+	}
+
+	// transfer over all of the template files from the bootstrap
+	if tErr := fs.WalkDir(bootstrap, "templates", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+		var content []byte
+		content, err = tryExecute(path, data, bootstrap)
+		if err != nil {
+			return fmt.Errorf("failed to exec bootstrap template for file '%s': %s", name, err)
+		}
+		files = append(files, File{
+			Dir:      filepath.Join(pageDir, filepath.Dir(path)),
+			Name:     strings.TrimSuffix(d.Name(), ".tmpl"),
+			Contents: content,
+		})
+		return nil
+	}); tErr != nil {
+		err = tErr
+		return
+	}
+
+	// built in scaffold, some scaffold files will only be used if one is was not already added by the bootstrap
+
 	// page/name/gen.go
 	files = append(files, File{
 		Dir:      pageDir,
 		Name:     "gen.go",
 		Contents: mustExecute("scaffold/page/name/gen.go.tmpl", data, scaffold),
 	})
-	// page/name/handlers.go
-	files = append(files, File{
-		Dir:      pageDir,
-		Name:     "handlers.go",
-		Contents: mustExecute("scaffold/page/name/handlers.go.tmpl", data, scaffold),
-	})
-	// page/name/resources.go
-	files = append(files, File{
-		Dir:      pageDir,
-		Name:     "resources.go",
-		Contents: mustExecute("scaffold/page/name/resources.go.tmpl", data, scaffold),
-	})
-	// page/name/routemap.toml
-	files = append(files, File{
-		Dir:      pageDir,
-		Name:     "routemap.toml",
-		Contents: mustExecute("scaffold/page/name/routemap.toml.tmpl", data, scaffold),
-	})
-	// page/name/templates/placeholder.html.tmpl
-	files = append(files, File{
-		Dir:      filepath.Join(pageDir, "templates"),
-		Name:     "placeholder.html.tmpl",
-		Contents: mustExecute("scaffold/page/name/templates/placeholder.html.tmpl.tmpl", data, scaffold),
-	})
+	if ok := found["handlers.go"]; !ok {
+		// page/name/handlers.go
+		files = append(files, File{
+			Dir:      pageDir,
+			Name:     "handlers.go",
+			Contents: mustExecute("scaffold/page/name/handlers.go.tmpl", data, scaffold),
+		})
+	}
+	if ok := found["resources.go"]; !ok {
+		// page/name/resources.go
+		files = append(files, File{
+			Dir:      pageDir,
+			Name:     "resources.go",
+			Contents: mustExecute("scaffold/page/name/resources.go.tmpl", data, scaffold),
+		})
+	}
+	if ok := found["routemap.toml"]; !ok {
+		// page/name/routemap.toml
+		files = append(files, File{
+			Dir:      pageDir,
+			Name:     "routemap.toml",
+			Contents: mustExecute("scaffold/page/name/routemap.toml.tmpl", data, scaffold),
+		})
+	}
 
 	return
 }

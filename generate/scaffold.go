@@ -161,6 +161,17 @@ func ValidateScaffoldLocation(siteDir string, scaffold fs.FS) error {
 // Since the templates are embedded we can treat failure at this stage
 // as a bug
 func mustExecute(name string, data interface{}, scaffold fs.FS) []byte {
+	bites, err := tryExecute(name, data, scaffold)
+	if err != nil {
+		log.Fatalln("Failed to parse template", name, err)
+	}
+	return bites
+}
+
+// tryExecute will attempt to load a template file form and FS and then
+// execute the template using the provided data.
+// Any error that occurs will be returned
+func tryExecute(name string, data interface{}, scaffold fs.FS) ([]byte, error) {
 	tmpl, err := template.New(path.Base(name)).Delims("[#", "#]").ParseFS(scaffold, name)
 	if err != nil {
 		log.Fatalln("Failed to parse template", name, err)
@@ -168,7 +179,7 @@ func mustExecute(name string, data interface{}, scaffold fs.FS) []byte {
 	var buf bytes.Buffer
 	err = tmpl.Execute(&buf, data)
 	if err != nil {
-		log.Fatalln("Failed to execute template", name, err)
+		return nil, err
 	}
-	return buf.Bytes()
+	return buf.Bytes(), nil
 }
