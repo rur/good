@@ -77,23 +77,21 @@ func TestPageScaffold(t *testing.T) {
 			`"github.com/rur/example/admin/site/page"`,
 		},
 		"page/testing/routemap.toml": {
-			`_template = "page/testing/templates/testing.html.tmpl`,
-			`_handler = "hlp.BindEnv(bindResources(testingHandler))"`,
+			`_handler = 'hlp.BindEnv(page.GetBaseHandler("testing Page"))'`,
+			`_template = "page/templates/scripts.html.tmpl"`,
 		},
-		"page/testing/templates/testing.html.tmpl": {
-			`{{ template "site-nav" .SiteNav }}`,
-			`{{ template "content" .Content }}`,
-			`{{ template "scripts" .Scripts }}`,
-		},
-		"page/testing/templates/content/placeholder.html.tmpl": {
-			"<h1>Run go generate command for page testing</h1>",
+		"page/testing/templates/placeholder.html.tmpl": {
+			`$ go generate github.com/rur/example/admin/site/...`,
 		},
 		"page/testing/gen.go": {
 			"//go:generate good routes .",
 		},
+		"page/testing/routes.go": {
+			"hlp.BindEnv(bindResources(readmePageHandler)),",
+		},
 		"page/testing/handlers.go": {
-			`SiteNav:`,
-			`rsp.HandleSubView("site-nav", req)`,
+			`"github.com/rur/example/admin/site/service"`,
+			`(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {`,
 		},
 	}
 
