@@ -7,19 +7,14 @@ import (
 	"github.com/rur/treetop"
 )
 
-// -------------------------
-// example Handlers
-// -------------------------
+// TODO: Delete this after you have run the generate command
 
-// Ref: example-dummy
-// Block: content
-// Method: GET
-// Doc: This is an unused handler for the sake of example
-func exampleDummyHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+// Doc: Handler for the PLACEHOLDER page for the default page boostrap
+func placeholderPageHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{
-		HandlerInfo: "example Page exampleDummyHandler",
+		HandlerInfo: "PLACEHOLDER handler",
 	}
 	return data
 }
