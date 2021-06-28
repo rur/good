@@ -7,38 +7,14 @@ import (
 	"github.com/rur/treetop"
 )
 
-// -------------------------
-// newpage Handlers
-// -------------------------
+// TODO: Delete this after you have run the generate command
 
-// Ref: newpage
-// Block: content
-// Method: GET
-// Doc: Root handler for the newpage page
-func newpageHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
-	data := struct {
-		HandlerInfo string
-		SiteNav     interface{}
-		Content     interface{}
-		Scripts     interface{}
-	}{
-		HandlerInfo: "newpage Page newpageHandler",
-		SiteNav:     rsp.HandleSubView("site-nav", req),
-		Content:     rsp.HandleSubView("content", req),
-		Scripts:     rsp.HandleSubView("scripts", req),
-	}
-	return data
-}
-
-// Ref: placeholder
-// Block: content
-// Method: GET
-// Doc: This is placeholder content, add your endpoints to the routemap.toml and run go generate
-func placeholderHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+// Doc: Handler for the PLACEHOLDER page for the default page boostrap
+func placeholderPageHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{
-		HandlerInfo: "newpage Page placeholderHandler",
+		HandlerInfo: "PLACEHOLDER handler",
 	}
 	return data
 }

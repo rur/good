@@ -1,25 +1,23 @@
 _ref = "newpage"
-_template = "page/newpage/templates/newpage.html.tmpl"
-_handler = "hlp.BindEnv(bindResources(newpageHandler))"
+_template = "page/templates/base.html.tmpl"
 _doc = "Base HTML template for newpage page"
 _uri = "/newpage"
+_handler = 'hlp.BindEnv(page.GetBaseHandler("newpage Page"))'
 
-    [[site-nav]]
-    _ref = "main-nav"
+    [[nav]]
+    _ref = "newpage-nav"
     _default = true
-    _template = "page/templates/nav.html.tmpl"
-    _handler = "hlp.BindEnv(page.SiteNavHandler)"
 
     [[content]]
-    _ref = "newpage-placeholder"
+    _ref = "newpage-landing"
     _default = true
-    _doc = "Placeholder page"
+    _doc = "Landing content view for the newpage page URI"
+    _method = "GET"
     _path = "/newpage"
-    _template = "page/newpage/templates/content/placeholder.html.tmpl"
-    _handler = "hlp.BindEnv(bindResources(placeholderHandler))"
 
     [[scripts]]
     _ref = "site-scripts"
     _default = true
+    _doc = "Include sitewide script footer"
     _template = "page/templates/scripts.html.tmpl"
     _handler = "treetop.Noop"
