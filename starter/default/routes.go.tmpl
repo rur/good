@@ -10,8 +10,8 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 	// Placeholder setup, run `go generate [# .PagePath #]` see the starter page
 
 	readme := treetop.NewView(
-		"[# .Templates #]/README.html.tmpl",
-		hlp.BindEnv(bindResources(readmePageHandler)),
+		"[# .Templates #]/PLACEHOLDER.html.tmpl",
+		hlp.BindEnv(bindResources(placeholderPageHandler)),
 	)
 
 	hlp.Handle("/[# .Name #]",
