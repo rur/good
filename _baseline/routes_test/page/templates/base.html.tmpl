@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ .HandlerInfo }}</title>
+    <link rel="shortcut icon" href="/public/favicon.ico">
+    <title>{{ .PageTitle }}</title>
 </head>
 <body>
-    {{ template "site-nav" .SiteNav }}
+    {{ template "nav" .Nav }}
     {{ template "content" .Content }}
     {{ template "scripts" .Scripts }}
 </body>
