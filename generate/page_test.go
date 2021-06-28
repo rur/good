@@ -93,6 +93,15 @@ func TestPageScaffold(t *testing.T) {
 			`"github.com/rur/example/admin/site/service"`,
 			`(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {`,
 		},
+		"static/js/testing/example.js": {
+			`function test() {`,
+		},
+		"static/styles/testing/example.css": {
+			`.test {`,
+		},
+		"static/public/testing/example.txt": {
+			`This is a test`,
+		},
 	}
 
 	for file, checks := range expectedFileMap {

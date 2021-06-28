@@ -100,6 +100,40 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, bootstrap fs.F
 		return
 	}
 
+	// transfer over all of the assets files from the bootstrap to the
+	// site static folder
+	if aErr := fs.WalkDir(bootstrap, "assets", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+		var dest string
+		parts := strings.Split(path, string(os.PathSeparator))
+		switch parts[1] {
+		case "js", "styles", "public":
+			// add dir to revelant static dir with the name of this page
+			dest = filepath.Join("static", parts[1], name)
+		default:
+			return nil
+		}
+		var content []byte
+		content, err = fs.ReadFile(bootstrap, path)
+		if err != nil {
+			return fmt.Errorf("failed to exec bootstrap template for file '%s': %s", name, err)
+		}
+		files = append(files, File{
+			Dir:      filepath.Dir(filepath.Join(append([]string{dest}, parts[2:]...)...)),
+			Name:     d.Name(),
+			Contents: content,
+		})
+		return nil
+	}); aErr != nil && !isFSNotExist(aErr) {
+		err = aErr
+		return
+	}
+
 	// built in scaffold, some scaffold files will only be used if one is was not already added by the bootstrap
 
 	// page/name/gen.go
@@ -209,4 +243,9 @@ func SiteFromPagePackage(pkg GoPackage) (sitePkg GoPackage, err error) {
 		Module:     pkg.Module,
 	}
 	return
+}
+
+func isFSNotExist(err error) bool {
+	pErr, ok := err.(*fs.PathError)
+	return ok && os.IsNotExist(pErr.Err)
 }
