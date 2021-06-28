@@ -140,12 +140,12 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 	mustNot(err)
 	files = append(files, pageFile)
 
-	welcome := os.DirFS(filepath.Join("starter", "welcome"))
+	starter := os.DirFS(filepath.Join("starter", "default"))
 
 	for _, page := range pages {
 		err = generate.ValidatePageName(page)
 		mustNot(err)
-		pFiles, err := generate.PageScaffold(sitePkg, page, scaffold, welcome)
+		pFiles, err := generate.PageScaffold(sitePkg, page, scaffold, starter)
 		mustNot(err)
 		files = append(files, pFiles...)
 	}
@@ -173,8 +173,8 @@ func pageCmd(sitePkgRel, pageName string) {
 	mustNot(err)
 	err = generate.ValidatePageLocation(filepath.Join(sitePkg.Dir, "page", pageName), scaffold)
 	mustNot(err)
-	welcome := os.DirFS(filepath.Join("starter", "welcome"))
-	files, err := generate.PageScaffold(sitePkg, pageName, scaffold, welcome)
+	starter := os.DirFS(filepath.Join("starter", "default"))
+	files, err := generate.PageScaffold(sitePkg, pageName, scaffold, starter)
 	mustNot(err)
 	err = generate.FlushFiles(sitePkg.Dir, files)
 	mustNot(err)

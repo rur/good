@@ -23,7 +23,7 @@ var (
 )
 
 // PageScaffold will assemble files for adding a new page to the site scaffold
-func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, bootstrap fs.FS) (files []File, err error) {
+func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, starter fs.FS) (files []File, err error) {
 	// setup page with some placeholder data
 	data := struct {
 		Name      string // Go package name for page
@@ -52,8 +52,8 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, bootstrap fs.F
 	found := make(map[string]bool)
 
 	for _, name := range tracked {
-		// check if a tracked file exists in the bootstrap
-		if tmp, err := bootstrap.Open(name + ".tmpl"); err != nil {
+		// check if a tracked file exists in the starter
+		if tmp, err := starter.Open(name + ".tmpl"); err != nil {
 			if err == os.ErrNotExist {
 				continue
 			}
@@ -64,9 +64,9 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, bootstrap fs.F
 		found[name] = true
 
 		var content []byte
-		content, err = tryExecute(name+".tmpl", data, bootstrap)
+		content, err = tryExecute(name+".tmpl", data, starter)
 		if err != nil {
-			err = fmt.Errorf("failed to exec bootstrap template for file '%s.tmpl': %s", name, err)
+			err = fmt.Errorf("failed to exec starter template for file '%s.tmpl': %s", name, err)
 			return
 		}
 		files = append(files, File{
@@ -76,8 +76,8 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, bootstrap fs.F
 		})
 	}
 
-	// transfer over all of the template files from the bootstrap
-	if tErr := fs.WalkDir(bootstrap, "templates", func(path string, d fs.DirEntry, err error) error {
+	// transfer over all of the template files from the starter
+	if tErr := fs.WalkDir(starter, "templates", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -85,9 +85,9 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, bootstrap fs.F
 			return nil
 		}
 		var content []byte
-		content, err = tryExecute(path, data, bootstrap)
+		content, err = tryExecute(path, data, starter)
 		if err != nil {
-			return fmt.Errorf("failed to exec bootstrap template for file '%s': %s", name, err)
+			return fmt.Errorf("failed to exec starter template for file '%s': %s", name, err)
 		}
 		files = append(files, File{
 			Dir:      filepath.Join(pageDir, filepath.Dir(path)),
@@ -100,9 +100,9 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, bootstrap fs.F
 		return
 	}
 
-	// transfer over all of the assets files from the bootstrap to the
+	// transfer over all of the assets files from the starter to the
 	// site static folder
-	if aErr := fs.WalkDir(bootstrap, "assets", func(path string, d fs.DirEntry, err error) error {
+	if aErr := fs.WalkDir(starter, "assets", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -119,9 +119,9 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, bootstrap fs.F
 			return nil
 		}
 		var content []byte
-		content, err = fs.ReadFile(bootstrap, path)
+		content, err = fs.ReadFile(starter, path)
 		if err != nil {
-			return fmt.Errorf("failed to exec bootstrap template for file '%s': %s", name, err)
+			return fmt.Errorf("failed to exec starter template for file '%s': %s", name, err)
 		}
 		files = append(files, File{
 			Dir:      filepath.Dir(filepath.Join(append([]string{dest}, parts[2:]...)...)),
@@ -134,7 +134,7 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, bootstrap fs.F
 		return
 	}
 
-	// built in scaffold, some scaffold files will only be used if one is was not already added by the bootstrap
+	// built in scaffold, some scaffold files will only be used if one is was not already added by the starter
 
 	// page/name/gen.go
 	files = append(files, File{
