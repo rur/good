@@ -1,8 +1,8 @@
 _ref = "example"
 _template = "page/templates/base.html.tmpl"
+_handler = 'hlp.BindEnv(page.GetBaseHandler("Routes Test - example page"))'
 _doc = "Base HTML template for example page"
 _uri = "/example"
-_handler = 'hlp.BindEnv(page.GetBaseHandler("Routes Test - example page"))'
 
     [[nav]]
     _ref = "main-nav"
