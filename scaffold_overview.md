@@ -17,16 +17,16 @@ The generated code is intended to be plain and readable so that it is easy to fi
 It is important to understand the relationship between the site Go packages
 when adding your code to the scaffold.
 
-``` 
- [main]
-    +-------------------> [./page] <---+
-    |                         |        |
-    +-------> [./service] <---+        |
-    |               ^                  |
-    |               |                  |
-    +---> [./page/{*name}] ------------+
+```  
+[main]
+    +----------------> [./page/{*name}] --+
+    |                         |           |
+    +----> [./page] <---------+           |
+    |           |                         |
+    |           V                         |
+    +----> [./service] <------------------+
     |
-    +---> [./static/{js styles public}](embedded)
+    +----> [./static/{js styles public}](embedded)
 ```
 Note that cyclical dependencies are strictly prohibited by Golang. For example,
 the `[site]/page` pkg cannot refer to code inside any of the named pages, by design.
@@ -50,7 +50,7 @@ This is the file structure set up by the `good scaffold` command.
 
 This is the file structure set up by the `good page {name}` command. 
 
-| location                  | note 
+| Location                  | Note 
 |---------------------------|--------------
 | page/{name}/routemap.toml | configuration of route, template and handler mappings
 | page/{name}/routes.go     | (generated file) endpoint plumbing generated from the routemap
