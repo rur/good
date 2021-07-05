@@ -7,14 +7,18 @@ import (
 	"github.com/rur/treetop"
 )
 
-// TODO: Delete this after you have run the generate command
-
-// Doc: Handler for the PLACEHOLDER page for the default page boostrap
-func placeholderPageHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+// exampleHandler is the default top level handler for the example page
+func exampleHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
-		HandlerInfo string
+		PageTitle string
+		Nav       interface{}
+		Content   interface{}
+		Scripts   interface{}
 	}{
-		HandlerInfo: "PLACEHOLDER handler",
+		PageTitle: "example Page",
+		Nav:       rsp.HandleSubView("nav", req),
+		Content:   rsp.HandleSubView("content", req),
+		Scripts:   rsp.HandleSubView("scripts", req),
 	}
 	return data
 }

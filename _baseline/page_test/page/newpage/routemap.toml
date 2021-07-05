@@ -2,7 +2,7 @@ _ref = "newpage"
 _template = "page/templates/base.html.tmpl"
 _doc = "Base HTML template for newpage page"
 _uri = "/newpage"
-_handler = 'hlp.BindEnv(page.GetBaseHandler("newpage Page"))'
+_handler = 'hlp.BindEnv(bindResources(newpageHandler))'
 
     [[nav]]
     _ref = "newpage-nav"

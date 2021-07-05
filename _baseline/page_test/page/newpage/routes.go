@@ -11,7 +11,7 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 
 	readme := treetop.NewView(
 		"page/newpage/templates/PLACEHOLDER.html.tmpl",
-		hlp.BindEnv(bindResources(placeholderPageHandler)),
+		treetop.Noop,
 	)
 
 	hlp.Handle("/newpage",

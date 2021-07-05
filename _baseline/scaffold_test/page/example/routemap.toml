@@ -2,7 +2,7 @@ _ref = "example"
 _template = "page/templates/base.html.tmpl"
 _doc = "Base HTML template for example page"
 _uri = "/example"
-_handler = 'hlp.BindEnv(page.GetBaseHandler("example Page"))'
+_handler = 'hlp.BindEnv(bindResources(exampleHandler))'
 
     [[nav]]
     _ref = "example-nav"
