@@ -10,7 +10,7 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 	// Placeholder setup, run `go generate github.com/rur/good/baseline/scaffold_test/page/example` see the starter page
 
 	readme := treetop.NewView(
-		"page/example/templates/PLACEHOLDER.html.tmpl",
+		"page/example/templates/PLACEHOLDER_SCREEN.html.tmpl",
 		treetop.Noop,
 	)
 
