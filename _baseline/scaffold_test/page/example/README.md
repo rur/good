@@ -138,7 +138,7 @@ Each template in a composition is matched with a handler function via the routem
 for trivial tasks like constants `treetop.Constant(123)` or no-op `treetop.Noop`, but typically you will pass a custom
 function that loads template data for the layout.
 
-The minimal, top level signature that is required is as follows.
+The minimal, top level signature that is required is this
 
 ```
 func myHandler(resp treetop.Response, req *http.Request) interface{} {

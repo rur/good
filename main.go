@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"embed"
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"os"
@@ -78,6 +79,9 @@ Arguments
 //go:embed scaffold
 var scaffold embed.FS
 
+//go:embed starter
+var starter embed.FS
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println(usage)
@@ -140,12 +144,13 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 	mustNot(err)
 	files = append(files, pageFile)
 
-	starter := os.DirFS(filepath.Join("starter", "default"))
+	start, err := fs.Sub(starter, "starter/default")
+	mustNot(err)
 
 	for _, page := range pages {
 		err = generate.ValidatePageName(page)
 		mustNot(err)
-		pFiles, err := generate.PageScaffold(sitePkg, page, scaffold, starter)
+		pFiles, err := generate.PageScaffold(sitePkg, page, scaffold, start)
 		mustNot(err)
 		files = append(files, pFiles...)
 	}
@@ -173,8 +178,9 @@ func pageCmd(sitePkgRel, pageName string) {
 	mustNot(err)
 	err = generate.ValidatePageLocation(filepath.Join(sitePkg.Dir, "page", pageName), scaffold)
 	mustNot(err)
-	starter := os.DirFS(filepath.Join("starter", "default"))
-	files, err := generate.PageScaffold(sitePkg, pageName, scaffold, starter)
+	start, err := fs.Sub(starter, "starter/default")
+	mustNot(err)
+	files, err := generate.PageScaffold(sitePkg, pageName, scaffold, start)
 	mustNot(err)
 	err = generate.FlushFiles(sitePkg.Dir, files)
 	mustNot(err)
