@@ -106,3 +106,14 @@ func updateAdvancedSettingsHandler(rsc *resources, env *service.Env, rsp treetop
 	}
 	return data
 }
+
+// Ref: main-nav
+// Block: nav
+func mainNavHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data := struct {
+		HandlerInfo string
+	}{
+		HandlerInfo: "example Page mainNavHandler",
+	}
+	return data
+}

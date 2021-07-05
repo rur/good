@@ -34,22 +34,25 @@ function killserver() {
 }
 trap killserver EXIT
 sleep 1 # plenty of time to start up
-curl http://localhost:8000/trivial
+curl --fail http://localhost:8000/trivial
 echo
 echo "---"
-curl http://localhost:8000/example
+curl --fail http://localhost:8000/example
 echo
 echo "---"
-curl http://localhost:8000/example/alt
+curl --fail http://localhost:8000/example/alt
 echo
 echo "---"
-curl http://localhost:8000/example/settings
+curl --fail http://localhost:8000/example/settings
 echo
 echo "---"
-curl http://localhost:8000/example/advanced-settings
+curl --fail http://localhost:8000/example/advanced-settings
 echo
 echo "---"
-curl -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/form
+curl --fail -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/form
+echo
+echo "---- Feched example page successfully ---"
+curl --fail -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/advanced-settings/submit
 echo
 echo "---- Feched example page successfully ---"
 curl -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/advanced-settings/submit

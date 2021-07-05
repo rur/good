@@ -183,11 +183,11 @@ func TestSiteScaffold(t *testing.T) {
 		}, {
 			"content handler for page handlers.go",
 			"page/handlers.go",
-			`func SiteNavHandler(env *service.Env, rsp treetop.Response, req *http.Request) interface{} {`,
+			`func GetBaseHandler(title string) ViewHandlerWithEnv {`,
 		}, {
-			"common nav template",
-			"page/templates/nav.html.tmpl",
-			`{{ range $index, $link := .Links -}}`,
+			"base template",
+			"page/templates/base.html.tmpl",
+			`<title>{{ .PageTitle }}</title>`,
 		}, {
 			"common scripts template",
 			"page/templates/scripts.html.tmpl",

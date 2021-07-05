@@ -47,7 +47,7 @@ var (
 
 type handlerWithResources func(*resources, *service.Env, treetop.Response, *http.Request) interface{}
 
-// bindResources is middleware with memoization which loads home page resources for local request handlers
+// bindResources is middleware with memoization which loads trivial page resources for local request handlers
 func bindResources(f handlerWithResources) page.ViewHandlerWithEnv {
 	return func(env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
 		key := rsp.ResponseID()

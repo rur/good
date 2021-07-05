@@ -13,46 +13,135 @@ import (
 
 var (
 	PageNameRegex = regexp.MustCompile(`^[a-z][a-z]+$`)
+
+	tracked = []string{
+		"handlers.go",
+		"resources.go",
+		"routemap.toml",
+		"routes.go",
+		"README.md",
+	}
 )
 
 // PageScaffold will assemble files for adding a new page to the site scaffold
-func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS) (files []File, err error) {
+func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, starter fs.FS) (files []File, err error) {
+	dest, err := sitePkg.RelPath()
+	if err != nil {
+		return
+	}
 	// setup page with some placeholder data
 	data := struct {
-		Name      string // Go package name for page
-		Namespace string
-		Handlers  []Handler
-		Templates string
-		PagePath  string
+		Name       string // Go package name for page
+		Namespace  string
+		Handlers   []Handler
+		Templates  string
+		PagePath   string
+		SiteDirRel string
 	}{
 		PagePath:  strings.Join([]string{sitePkg.ImportPath, "page", name}, "/"),
 		Name:      name,
 		Namespace: sitePkg.ImportPath,
 		Handlers: []Handler{
 			{
-				Ref:        name,
+				Ref:        "example-dummy",
 				Block:      "content",
 				Method:     "GET",
-				Doc:        "Root handler for the " + name + " page",
-				Identifier: name + "Handler",
-				Blocks: []HandleBlock{
-					{FieldName: "SiteNav", Name: "site-nav"},
-					{FieldName: "Content", Name: "content"},
-					{FieldName: "Scripts", Name: "scripts"},
-				},
-			},
-			{
-				Ref:        "placeholder",
-				Block:      "content",
-				Method:     "GET",
-				Doc:        "This is placeholder content, add your endpoints to the routemap.toml and run go generate",
-				Identifier: "placeholderHandler",
+				Doc:        "This is an unused handler for the sake of example",
+				Identifier: "exampleDummyHandler",
 			},
 		},
-		Templates: filepath.Join("page", name, "templates"),
+		Templates:  filepath.Join("page", name, "templates"),
+		SiteDirRel: dest,
 	}
 
 	pageDir := filepath.Join("page", name)
+
+	found := make(map[string]bool)
+
+	for _, name := range tracked {
+		// check if a tracked file exists in the starter
+		if tmp, err := starter.Open(name + ".tmpl"); err != nil {
+			if isFSNotExist(err) {
+				continue
+			}
+			return nil, err
+		} else {
+			tmp.Close()
+		}
+		found[name] = true
+
+		var content []byte
+		content, err = tryExecute(name+".tmpl", data, starter)
+		if err != nil {
+			err = fmt.Errorf("failed to exec starter template for file '%s.tmpl': %s", name, err)
+			return
+		}
+		files = append(files, File{
+			Dir:      pageDir,
+			Name:     name,
+			Contents: content,
+		})
+	}
+
+	// transfer over all of the template files from the starter
+	if tErr := fs.WalkDir(starter, "templates", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+		var content []byte
+		content, err = tryExecute(path, data, starter)
+		if err != nil {
+			return fmt.Errorf("failed to exec starter template for file '%s': %s", name, err)
+		}
+		files = append(files, File{
+			Dir:      filepath.Join(pageDir, filepath.Dir(path)),
+			Name:     strings.TrimSuffix(d.Name(), ".tmpl"),
+			Contents: content,
+		})
+		return nil
+	}); tErr != nil {
+		err = tErr
+		return
+	}
+
+	// transfer over all of the assets files from the starter to the
+	// site static folder
+	if aErr := fs.WalkDir(starter, "assets", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+		var dest string
+		parts := strings.Split(path, string(os.PathSeparator))
+		switch parts[1] {
+		case "js", "styles", "public":
+			// add dir to revelant static dir with the name of this page
+			dest = filepath.Join("static", parts[1], name)
+		default:
+			return nil
+		}
+		var content []byte
+		content, err = fs.ReadFile(starter, path)
+		if err != nil {
+			return fmt.Errorf("failed to exec starter template for file '%s': %s", name, err)
+		}
+		files = append(files, File{
+			Dir:      filepath.Dir(filepath.Join(append([]string{dest}, parts[2:]...)...)),
+			Name:     d.Name(),
+			Contents: content,
+		})
+		return nil
+	}); aErr != nil && !isFSNotExist(aErr) {
+		err = aErr
+		return
+	}
+
+	// built in scaffold, some scaffold files will only be used if one is was not already added by the starter
 
 	// page/name/gen.go
 	files = append(files, File{
@@ -60,36 +149,38 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS) (files []File,
 		Name:     "gen.go",
 		Contents: mustExecute("scaffold/page/name/gen.go.tmpl", data, scaffold),
 	})
-	// page/name/handlers.go
-	files = append(files, File{
-		Dir:      pageDir,
-		Name:     "handlers.go",
-		Contents: mustExecute("scaffold/page/name/handlers.go.tmpl", data, scaffold),
-	})
-	// page/name/resources.go
-	files = append(files, File{
-		Dir:      pageDir,
-		Name:     "resources.go",
-		Contents: mustExecute("scaffold/page/name/resources.go.tmpl", data, scaffold),
-	})
-	// page/name/routemap.toml
-	files = append(files, File{
-		Dir:      pageDir,
-		Name:     "routemap.toml",
-		Contents: mustExecute("scaffold/page/name/routemap.toml.tmpl", data, scaffold),
-	})
-	// page/name/templates/name.html.tmpl
-	files = append(files, File{
-		Dir:      filepath.Join(pageDir, "templates"),
-		Name:     name + ".html.tmpl",
-		Contents: mustExecute("scaffold/page/name/templates/name.html.tmpl.tmpl", data, scaffold),
-	})
-	// page/name/templates/content/placeholder.html.tmpl
-	files = append(files, File{
-		Dir:      filepath.Join(pageDir, "templates", "content"),
-		Name:     "placeholder.html.tmpl",
-		Contents: mustExecute("scaffold/page/name/templates/content/placeholder.html.tmpl.tmpl", data, scaffold),
-	})
+	if ok := found["handlers.go"]; !ok {
+		// page/name/handlers.go
+		files = append(files, File{
+			Dir:      pageDir,
+			Name:     "handlers.go",
+			Contents: mustExecute("scaffold/page/name/handlers.go.tmpl", data, scaffold),
+		})
+	}
+	if ok := found["resources.go"]; !ok {
+		// page/name/resources.go
+		files = append(files, File{
+			Dir:      pageDir,
+			Name:     "resources.go",
+			Contents: mustExecute("scaffold/page/name/resources.go.tmpl", data, scaffold),
+		})
+	}
+	if ok := found["routemap.toml"]; !ok {
+		// page/name/routemap.toml
+		files = append(files, File{
+			Dir:      pageDir,
+			Name:     "routemap.toml",
+			Contents: mustExecute("scaffold/page/name/routemap.toml.tmpl", data, scaffold),
+		})
+	}
+	if ok := found["README.md"]; !ok {
+		// page/name/README.md
+		files = append(files, File{
+			Dir:      pageDir,
+			Name:     "README.md",
+			Contents: mustExecute("scaffold/page/name/README.md.tmpl", data, scaffold),
+		})
+	}
 
 	return
 }
@@ -167,4 +258,9 @@ func SiteFromPagePackage(pkg GoPackage) (sitePkg GoPackage, err error) {
 		Module:     pkg.Module,
 	}
 	return
+}
+
+func isFSNotExist(err error) bool {
+	pErr, ok := err.(*fs.PathError)
+	return ok && os.IsNotExist(pErr.Err)
 }

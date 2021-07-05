@@ -1,14 +1,12 @@
 _ref = "example"
-_template = "page/example/templates/example.html.tmpl"
-_handler = "hlp.BindEnv(bindResources(exampleHandler))"
+_template = "page/templates/base.html.tmpl"
+_handler = 'hlp.BindEnv(page.GetBaseHandler("Routes Test - example page"))'
 _doc = "Base HTML template for example page"
 _uri = "/example"
 
-    [[site-nav]]
+    [[nav]]
     _ref = "main-nav"
     _default = true
-    _template = "page/templates/nav.html.tmpl"
-    _handler = "hlp.BindEnv(page.SiteNavHandler)"
 
     [[content]]
     _ref = "example-placeholder"
@@ -16,7 +14,13 @@ _uri = "/example"
     _doc = "Placeholder page"
     _partial = true
     _path = "/example"
-    _handler = 'treetop.Delegate("form")'
+    _handler = '''treetop.Constant(struct{
+        Form interface{}
+    }{
+        Form: struct{FormError string}{
+            FormError: "This is a test",
+        },
+    })'''
 
         [[content.form]]
         _ref = "placeholder-form"

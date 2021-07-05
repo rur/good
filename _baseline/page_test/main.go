@@ -52,6 +52,9 @@ func init() {
 			ViewExecutor: &treetop.FileSystemExecutor{
 				// this assumes you are runing the dev server from your project root
 				FS: http.Dir("./baseline/page_test"),
+				KeyedString: map[string]string{
+					"::empty::": "",
+				},
 			},
 		}
 	} else {
@@ -60,6 +63,9 @@ func init() {
 		staticFS = http.FS(dir)
 		exec = &treetop.FileSystemExecutor{
 			FS: http.FS(templates),
+			KeyedString: map[string]string{
+				"::empty::": "",
+			},
 		}
 	}
 }
@@ -84,11 +90,10 @@ func main() {
 		log.Fatalf("Template errors:\n%s", errs)
 	}
 
+	m.Handle("/js/treetop.js", treetop.ServeClientLibrary)
 	m.Handle("/styles/", http.FileServer(staticFS))
 	m.Handle("/js/", http.FileServer(staticFS))
 	m.Handle("/public/", http.FileServer(staticFS))
-	// TODO: embed treetop client in serverside library
-	// m.Handle("/js/treetop.js", treetop.ServeClientLibrary)
 
 	addr := fmt.Sprintf(":%d", port)
 	fmt.Printf("Starting github.com/rur/good/baseline/page_test server at %s\n", addr)

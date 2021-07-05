@@ -1,7 +1,0 @@
-<nav>
-    <ul>
-        {{ range $index, $link := .Links -}}
-        <li><a{{ if $link.Path }} href="{{ $link.Path }}"{{ end }}>{{ $link.Title }}</a></li>
-        {{ end }}
-    </ul>
-</nav>

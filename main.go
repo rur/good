@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"embed"
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"os"
@@ -78,6 +79,9 @@ Arguments
 //go:embed scaffold
 var scaffold embed.FS
 
+//go:embed starter
+var starter embed.FS
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println(usage)
@@ -139,16 +143,16 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 	pageFile, err := generate.PagesScaffold(sitePkg, pages, scaffold)
 	mustNot(err)
 	files = append(files, pageFile)
+
+	start, err := fs.Sub(starter, "starter/default")
+	mustNot(err)
+
 	for _, page := range pages {
 		err = generate.ValidatePageName(page)
 		mustNot(err)
-		pFiles, err := generate.PageScaffold(sitePkg, page, scaffold)
-		mustNot(err)
-		entries, routes := routemap.PlaceholderRoutesConfig(page, filepath.Join("page", page, "templates"))
-		rFiles, err := generate.RoutesScaffold(sitePkg, page, entries, routes, nil, nil, scaffold)
+		pFiles, err := generate.PageScaffold(sitePkg, page, scaffold, start)
 		mustNot(err)
 		files = append(files, pFiles...)
-		files = append(files, rFiles...)
 	}
 
 	// FS operations
@@ -163,7 +167,7 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 		fmt.Println("Output from go fmt:")
 		fmt.Println(stdout)
 	}
-	fmt.Printf("Created good scaffold for %s!", sitePkg)
+	fmt.Printf("Created good scaffold for %s!", sitePkg.ImportPath)
 }
 
 // pageCmd attempts to add a new page to an existing scaffold site
@@ -174,15 +178,10 @@ func pageCmd(sitePkgRel, pageName string) {
 	mustNot(err)
 	err = generate.ValidatePageLocation(filepath.Join(sitePkg.Dir, "page", pageName), scaffold)
 	mustNot(err)
-	files, err := generate.PageScaffold(sitePkg, pageName, scaffold)
+	start, err := fs.Sub(starter, "starter/default")
 	mustNot(err)
-	entries, routes := routemap.PlaceholderRoutesConfig(pageName, filepath.Join("page", pageName, "templates"))
-	// TODO: add handlers and templates to placeholder output
-	routeFiles, err := generate.RoutesScaffold(sitePkg, pageName, entries, routes, nil, nil, scaffold)
-	if err != nil {
-		return
-	}
-	files = append(files, routeFiles...)
+	files, err := generate.PageScaffold(sitePkg, pageName, scaffold, start)
+	mustNot(err)
 	err = generate.FlushFiles(sitePkg.Dir, files)
 	mustNot(err)
 

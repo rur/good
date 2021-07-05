@@ -8,16 +8,19 @@ import (
 )
 
 
-type link struct {
-	Title string
-	Path  string
-}
-
-// SiteNavHandler is the root handler use for most pages
-func SiteNavHandler(env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
-	var data struct {
-		Links []link
+// GetBaseHandler Loads handlers data for nav, content and scripts blocks
+func GetBaseHandler(title string) ViewHandlerWithEnv {
+	return func(env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+		return struct {
+			PageTitle string
+			Nav       interface{}
+			Content   interface{}
+			Scripts   interface{}
+		}{
+			PageTitle: title,
+			Nav:       rsp.HandleSubView("nav", req),
+			Content:   rsp.HandleSubView("content", req),
+			Scripts:   rsp.HandleSubView("scripts", req),
+		}
 	}
-	// TODO: load pages from metadata of some sort
-	return data
 }

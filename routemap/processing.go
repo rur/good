@@ -36,8 +36,6 @@ var (
 type TemplateBlock struct {
 	Name  string
 	Views []RouteView
-
-	// TODO: byRef map[string]*RouteView
 }
 
 // RouteView is a handler + template pair corresponding to a single

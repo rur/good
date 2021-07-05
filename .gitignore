@@ -17,3 +17,6 @@ baseline
 # General purpose dirs
 admin/
 _idea/
+
+# OS Files
+.DS_Store

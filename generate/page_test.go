@@ -2,6 +2,7 @@ package generate
 
 import (
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -49,7 +50,9 @@ func TestSiteFromPagePackage(t *testing.T) {
 }
 
 func TestPageScaffold(t *testing.T) {
-	fs := os.DirFS("../")
+	scaffold := os.DirFS("..")
+	bootstrap := os.DirFS(filepath.Join("testdata", "bootstrap"))
+
 	gotFiles, err := PageScaffold(
 		GoPackage{
 			ImportPath: "github.com/rur/example/admin/site",
@@ -60,7 +63,8 @@ func TestPageScaffold(t *testing.T) {
 			},
 		},
 		"testing",
-		fs,
+		scaffold,
+		bootstrap,
 	)
 	if err != nil {
 		t.Errorf("PageScaffold() error = %v", err)
@@ -73,23 +77,33 @@ func TestPageScaffold(t *testing.T) {
 			`"github.com/rur/example/admin/site/page"`,
 		},
 		"page/testing/routemap.toml": {
-			`_template = "page/testing/templates/testing.html.tmpl`,
-			`_handler = "hlp.BindEnv(bindResources(testingHandler))"`,
+			`_handler = 'hlp.BindEnv(page.GetBaseHandler("testing Page"))'`,
+			`_template = "page/templates/scripts.html.tmpl"`,
 		},
-		"page/testing/templates/testing.html.tmpl": {
-			`{{ template "site-nav" .SiteNav }}`,
-			`{{ template "content" .Content }}`,
-			`{{ template "scripts" .Scripts }}`,
-		},
-		"page/testing/templates/content/placeholder.html.tmpl": {
-			"<h1>Run go generate command for page testing</h1>",
+		"page/testing/templates/placeholder.html.tmpl": {
+			`$ go generate github.com/rur/example/admin/site/...`,
 		},
 		"page/testing/gen.go": {
 			"//go:generate good routes .",
 		},
+		"page/testing/routes.go": {
+			"hlp.BindEnv(bindResources(readmePageHandler)),",
+		},
+		"page/testing/README.md": {
+			"# Page `testing`",
+		},
 		"page/testing/handlers.go": {
-			`SiteNav:`,
-			`rsp.HandleSubView("site-nav", req)`,
+			`"github.com/rur/example/admin/site/service"`,
+			`(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {`,
+		},
+		"static/js/testing/example.js": {
+			`function test() {`,
+		},
+		"static/styles/testing/example.css": {
+			`.test {`,
+		},
+		"static/public/testing/example.txt": {
+			`This is a test`,
 		},
 	}
 
