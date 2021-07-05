@@ -20,7 +20,7 @@ go generate [# .Namespace #]/...
 Start the server with optional port and dev-mode flags
 
 ```
-go run [# .Namespace #] 8080 --dev
+go run [# .Namespace #] --port 8080 --dev
 ```
 
 ## Scaffold Overview
@@ -46,9 +46,6 @@ it should be easy to find your way around the code and make the modifications th
 It is important to understand the _imports from_ relationship between the scaffold Go packages
 when adding code to your site.
 
-Cyclical imports are prohibited by Golang, so for example, the `{site}/page` pkg cannot refer to code
-inside any of the named pages, this is by design.
-
 ```
 [main]
     +----------------> [{site}/page/{*name}] --+
@@ -61,6 +58,9 @@ inside any of the named pages, this is by design.
     +----> [{site}/static](embedded)
 ```
 
+Cyclical imports are prohibited by Golang, so for example, the `{site}/page` pkg cannot refer to code
+inside any of the named pages, this is by design.
+
 ### Site files
 
 These are the key files set up by the `good scaffold` command.
@@ -70,9 +70,10 @@ These are the key files set up by the `good scaffold` command.
 | main.go                   | Initiailize and start the web server                                      |
 | pages.go                  | (generated file) static link to page routes during init                   |
 | static/{js styles public} | embedded browser assets                                                   |
+| service/env.go            | Site-wide services and config passed to handlers                          |
 | service/\*.go             | Place your IO & wrapper code in this package (Auth, Postgres, S3, etc...) |
-| page/handlers.go          | Handlers and utilities available to all pages                             |
-| page/templates/\*\*.tmpl  | Template files available to all pages                                     |
+| page/handlers.go          | Handlers and utilities available to ALL pages                             |
+| page/templates/\*\*.tmpl  | Template files available to ALL pages                                     |
 | page/{\*name}/            | A named page package (see details below)                                  |
 
 ### Page files
