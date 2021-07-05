@@ -39,6 +39,12 @@ func SiteScaffold(pkg GoPackage, scaffold fs.FS) (files []File, err error) {
 		Name:     "gen.go",
 		Contents: mustExecute("scaffold/gen.go.tmpl", data, scaffold),
 	})
+	// README.md
+	files = append(files, File{
+		Dir:      "",
+		Name:     "README.md",
+		Contents: mustExecute("scaffold/README.md.tmpl", data, scaffold),
+	})
 	// static/*
 	if err = fs.WalkDir(scaffold, "scaffold/static", func(path string, d fs.DirEntry, err error) error {
 		if d.IsDir() {

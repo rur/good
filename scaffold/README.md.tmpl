@@ -1,10 +1,37 @@
-# Scaffold Overview
+_Site Package: `[# .Namespace #]`_
 
-The scaffolded code is a self-contained setup for a Golang HTML web app.
-It contains a series of named pages, each of which can have a variety of endpoints
-and functionality.
+# `[# .SiteDirRel #]` Web App
 
-## Code layout
+This is a self-contained setup for a Golang HTML web app. It contains a series of named pages,
+each of which can have a variety of endpoints and functionality.
+
+## Setup
+
+### Generated Code
+
+To ensure that the site code is up to date run the recursive generate command.
+
+```
+go generate [# .Namespace #]/...
+```
+
+### Run the server
+
+Start the server with optional port and dev-mode flags
+
+```
+go run [# .Namespace #] 8080 --dev
+```
+
+## Scaffold Overview
+
+This code was originally set up by the [good scaffold](https://www.github.com/rur/good), like so...
+
+```
+$ good scaffold [# .SiteDirRel #]
+```
+
+### Code layout
 
 The generated code is intended to be plain and readable. If you are familiar with Golang,
 it should be easy to find your way around the code and make the modifications that suit your needs.
@@ -14,12 +41,13 @@ it should be easy to find your way around the code and make the modifications th
 > You can toggle through the areas of the code important
 > for customization by searching for the `// EDITME:` comments.
 
-### Site packages & internal dependency relations
+### Packages & internal import relations
 
 It is important to understand the _imports from_ relationship between the scaffold Go packages
-when adding code to your site, since cyclical imports are prohibited by Golang.
+when adding code to your site.
 
-For example the `{site}/page` Go pkg cannot refer to code inside any of the named pages, this is by design.
+Cyclical imports are prohibited by Golang, so for example, the `{site}/page` pkg cannot refer to code
+inside any of the named pages, this is by design.
 
 ```
 [main]

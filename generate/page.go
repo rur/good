@@ -19,18 +19,24 @@ var (
 		"resources.go",
 		"routemap.toml",
 		"routes.go",
+		"README.md",
 	}
 )
 
 // PageScaffold will assemble files for adding a new page to the site scaffold
 func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, starter fs.FS) (files []File, err error) {
+	dest, err := sitePkg.RelPath()
+	if err != nil {
+		return
+	}
 	// setup page with some placeholder data
 	data := struct {
-		Name      string // Go package name for page
-		Namespace string
-		Handlers  []Handler
-		Templates string
-		PagePath  string
+		Name       string // Go package name for page
+		Namespace  string
+		Handlers   []Handler
+		Templates  string
+		PagePath   string
+		SiteDirRel string
 	}{
 		PagePath:  strings.Join([]string{sitePkg.ImportPath, "page", name}, "/"),
 		Name:      name,
@@ -44,7 +50,8 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, starter fs.FS)
 				Identifier: "exampleDummyHandler",
 			},
 		},
-		Templates: filepath.Join("page", name, "templates"),
+		Templates:  filepath.Join("page", name, "templates"),
+		SiteDirRel: dest,
 	}
 
 	pageDir := filepath.Join("page", name)
@@ -54,7 +61,7 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, starter fs.FS)
 	for _, name := range tracked {
 		// check if a tracked file exists in the starter
 		if tmp, err := starter.Open(name + ".tmpl"); err != nil {
-			if err == os.ErrNotExist {
+			if isFSNotExist(err) {
 				continue
 			}
 			return nil, err
@@ -164,6 +171,14 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, starter fs.FS)
 			Dir:      pageDir,
 			Name:     "routemap.toml",
 			Contents: mustExecute("scaffold/page/name/routemap.toml.tmpl", data, scaffold),
+		})
+	}
+	if ok := found["README.md"]; !ok {
+		// page/name/README.md
+		files = append(files, File{
+			Dir:      pageDir,
+			Name:     "README.md",
+			Contents: mustExecute("scaffold/page/name/README.md.tmpl", data, scaffold),
 		})
 	}
 
