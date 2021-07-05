@@ -89,6 +89,9 @@ func TestPageScaffold(t *testing.T) {
 		"page/testing/routes.go": {
 			"hlp.BindEnv(bindResources(readmePageHandler)),",
 		},
+		"page/testing/README.md": {
+			"# Page `testing`",
+		},
 		"page/testing/handlers.go": {
 			`"github.com/rur/example/admin/site/service"`,
 			`(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {`,
