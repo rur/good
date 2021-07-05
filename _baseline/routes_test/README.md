@@ -1,6 +1,6 @@
-_Site Package: `github.com/rur/good/baseline/scaffold_test`_
+_Site Package: `github.com/rur/good/baseline/routes_test`_
 
-# `./baseline/scaffold_test` Web App
+# `./baseline/routes_test` Web App
 
 This is a self-contained setup for a Golang HTML web app. It contains a series of named pages,
 each of which can have a variety of endpoints and functionality.
@@ -12,7 +12,7 @@ each of which can have a variety of endpoints and functionality.
 To ensure that the site code is up to date run the recursive generate command.
 
 ```
-go generate github.com/rur/good/baseline/scaffold_test/...
+go generate github.com/rur/good/baseline/routes_test/...
 ```
 
 ### Run the server
@@ -20,7 +20,7 @@ go generate github.com/rur/good/baseline/scaffold_test/...
 Start the server with optional port and dev-mode flags
 
 ```
-go run github.com/rur/good/baseline/scaffold_test --port 8080 --dev
+go run github.com/rur/good/baseline/routes_test --port 8080 --dev
 ```
 
 ## Scaffold Overview
@@ -28,7 +28,7 @@ go run github.com/rur/good/baseline/scaffold_test --port 8080 --dev
 This code was originally set up by the [good scaffold](https://www.github.com/rur/good), like so...
 
 ```
-$ good scaffold ./baseline/scaffold_test
+$ good scaffold ./baseline/routes_test
 ```
 
 ### Code layout
