@@ -176,7 +176,7 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 	}
 
 	// use current package to find go module
-	curPkg, err := generate.GoListPackage(".")
+	curPkg, err := generate.GoListPackage("./...")
 	mustNot(err)
 	sitePkg, err := generate.ParseSitePackage(curPkg.Module, sitePkgRel)
 	mustNot(err)

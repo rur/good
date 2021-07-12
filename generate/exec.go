@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -41,14 +42,30 @@ func (pkg *GoPackage) Name() string {
 
 // GoListPackage will get the Go module information for the go path provied
 func GoListPackage(path string) (pkg GoPackage, err error) {
+	var stdout, stderr bytes.Buffer
 	if path == "" {
 		path = "."
 	} else if path[0] != '.' {
 		path = "./" + path
+	} else if path == "./..." {
+		cmd := exec.Command("go", "list", "./...")
+		cmd.Stdout = &stdout
+		cmd.Stderr = &stderr
+		if err = cmd.Run(); err != nil {
+			err = fmt.Errorf("%s: %s", err, stderr.String())
+			return
+		}
+		firstPath, err := stdout.ReadString('\n')
+		if err == nil || err == io.EOF {
+			path = strings.TrimSpace(firstPath)
+		} else {
+			err = fmt.Errorf("Failed to find a valid golang module in this directory, got output: %s, with error: %s", firstPath, err)
+		}
 	}
 
 	cmd := exec.Command("go", "list", "--json", path)
-	var stdout, stderr bytes.Buffer
+	stdout.Reset()
+	stderr.Reset()
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	if err = cmd.Run(); err != nil {
