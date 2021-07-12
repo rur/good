@@ -21,10 +21,11 @@ var (
 These are scaffolding commands for the Good tool:
 
 Commands
-	scaffold <site_pkg> [<page_name>...]    Create a new site scaffold at at a package relative to the working dir
-	page     <site_pkg> <page_name>         Add a new page to an existing scaffold
+	scaffold <site_pkg> [<page_name>...]   Create a new site scaffold at at a package relative to the working dir
+	page     <site_pkg> <page_name>        Add a new page to an existing scaffold
 	pages    <site_pkg>                    Generate a routes.go file from a TOML config
 	routes   <page_pkg>                    Generate a routes.go file from a TOML config
+	starter  <out_dir>                     Create a new dir and populate it with a template for a custom starter page
 
 `
 	scaffoldUsage = `usage: good scaffold <site_pkg_rel> [<page_name>...]
@@ -76,6 +77,23 @@ Example
 
 Arguments
 	page_pkg_rel   page import path from the root of the Go module
+
+`
+	starterUsage = `usage: good starter <out_dir>
+
+Generate a template directory for a custom starter page that can be used with the
+'goodo page' comand.
+
+
+Example
+	$ good starter ./admin/utils/customstarter
+    [...customize the files...]
+
+    # create a new page using your starter
+    $ good page ./admin/site awesomenewpage --starter-template ./admin/utils/customstarter
+
+Arguments
+	out_dir   a not-already-existing path where a folder will be created
 
 `
 )
@@ -134,6 +152,13 @@ func main() {
 			log.Fatalln("Missing target scaffold page path")
 		}
 		routesCmd(pArgs[1])
+
+	case "starter":
+		if len(pArgs) < 2 {
+			fmt.Println(starterUsage)
+			log.Fatalln("Missing target starter folder path")
+		}
+		starterCmd(pArgs[1])
 
 	default:
 		fmt.Println(usage)
@@ -309,6 +334,23 @@ func routesCmd(pagePkgRel string) {
 		fmt.Println(stdout)
 	}
 	fmt.Printf("Updated routes.go for scaffold page %s!", pkg.ImportPath)
+}
+
+// starterCmd generates a page strter template that can be used with the 'good page x --starter-template ...' command
+func starterCmd(dest string) {
+	start, err := fs.Sub(starter, "starter/default")
+	mustNot(err)
+	files, err := generate.StarterScaffold(dest, start)
+	mustNot(err)
+	err = generate.FlushFiles(".", files)
+	mustNot(err)
+	fmt.Println("Created files:")
+	for _, file := range files {
+		fmt.Println("\t-", filepath.Join(file.Dir, file.Name))
+	}
+	fmt.Println()
+
+	fmt.Printf("Outputted default starter template to dest folder %s!", dest)
 }
 
 func mustNot(err error) {
