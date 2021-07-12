@@ -1,0 +1,25 @@
+package [# .Name #]
+
+import (
+	"net/http"
+
+	"github.com/rur/treetop"
+	"[# .Namespace #]/service"
+)
+
+// [# .Name #]Handler is the default top level handler for the [# .Name #] page
+func [# .Name #]Handler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data := struct {
+		PageTitle string
+		Nav       interface{}
+		Content   interface{}
+		Scripts   interface{}
+	}{
+		PageTitle: "[# .Name #] Page",
+		Nav:       rsp.HandleSubView("nav", req),
+		Content:   rsp.HandleSubView("content", req),
+		Scripts:   rsp.HandleSubView("scripts", req),
+	}
+	return data
+}
+
