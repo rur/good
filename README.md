@@ -51,6 +51,14 @@ Add a new 'settings' page to an existing scaffold path.
 Re-generate the routing code for the portal settings page based on the
 `./portal/settings/routemap.toml` file.
 
+#### Good Starter ...
+
+    $ good starter ./portal/helpers/pagestarter
+
+Output a folder contianing a set of files for customizing the page scaffold using the
+`good page` command. Good page has a `--starter-template` flag for specifying a dir
+containing starter files.
+
 ### Intro
 
 #### 1. Generate clear, grok-able code
