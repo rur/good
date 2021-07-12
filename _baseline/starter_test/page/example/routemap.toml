@@ -1,0 +1,23 @@
+_ref = "example"
+_template = "page/templates/base.html.tmpl"
+_doc = "Base HTML template for example page"
+_uri = "/example"
+_handler = 'hlp.BindEnv(bindResources(exampleHandler))'
+
+    [[nav]]
+    _ref = "example-nav"
+    _default = true
+
+    [[content]]
+    _ref = "example-landing"
+    _default = true
+    _doc = "Landing content view for the example page URI"
+    _method = "GET"
+    _path = "/example"
+
+    [[scripts]]
+    _ref = "site-scripts"
+    _default = true
+    _doc = "Include sitewide script footer"
+    _template = "page/templates/scripts.html.tmpl"
+    _handler = "treetop.Noop"

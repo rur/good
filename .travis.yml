@@ -8,3 +8,4 @@ script:
   - ./scripts/test_baseline_scaffold.sh
   - ./scripts/test_baseline_page.sh
   - ./scripts/test_baseline_routes.sh
+  - ./scripts/test_baseline_starter.sh
