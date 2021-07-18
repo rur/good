@@ -1,3 +1,3 @@
-package example
+package intro
 
 //go:generate good routes .

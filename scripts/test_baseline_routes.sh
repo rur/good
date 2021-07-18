@@ -15,10 +15,13 @@ TESTINFO
 echo "clearly any previously failed run data"
 rm -rf baseline
 
-go run . scaffold baseline/routes_test example trivial
+go run . scaffold baseline/routes_test
 
+go run . page baseline/routes_test example
 rm baseline/routes_test/page/example/routemap.toml
 cp _baseline/testfixtures/routemap.toml baseline/routes_test/page/example/routemap.toml
+
+go run . page baseline/routes_test trivial
 rm baseline/routes_test/page/trivial/routemap.toml
 cp _baseline/testfixtures/routemap_trivial.toml baseline/routes_test/page/trivial/routemap.toml
 
