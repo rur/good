@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pelletier/go-toml"
 	"github.com/rur/good/generate"
@@ -21,11 +22,12 @@ var (
 These are scaffolding commands for the Good tool:
 
 Commands
-	scaffold <site_pkg>              Create a new site scaffold at at a package relative to the working dir
-	page     <site_pkg> <page_name>  Add a new page to an existing scaffold
-	pages    <site_pkg>              Generate a routes.go file from a TOML config
-	routes   <page_pkg>              Generate a routes.go file from a TOML config
-	starter  <out_dir>               Create a new dir and populate it with a template for a custom starter page
+	scaffold  <site_pkg>              Create a new site scaffold at at a package relative to the working dir
+	page      <site_pkg> <page_name>  Add a new page to an existing scaffold
+	pages     <site_pkg>              Re-generate the pages.go file
+	listpages <site_pkg>              Print pages found in site
+	routes    <page_pkg>              Re-generate the routes.go file for a specified scaffold page package
+	starter   <out_dir>               Create a new dir and populate it with a template for a custom starter page
 
 `
 	scaffoldUsage = `usage: good scaffold <site_pkg_rel>
@@ -64,6 +66,17 @@ Example
 
 Arguments
 	site_pkg_rel   relative import path of an existing scaffold site from the current Go module
+
+`
+	listPagesUsage = `usage: good listpages <site_pkg_rel>
+
+List the names of pages for a scaffold site pkg in STDOUT
+
+Example
+	good listpages ./admin/site
+
+Arguments
+	site_pkg_rel relative import path of an existing scaffold site from the current Go module
 
 `
 	routesUsage = `usage: good routes <page_pkg_rel>
@@ -144,6 +157,13 @@ func main() {
 			log.Fatalf("Missing target site package path")
 		}
 		pagesCmd(pArgs[1])
+
+	case "listpages":
+		if len(pArgs) < 2 {
+			fmt.Println(listPagesUsage)
+			log.Fatalf("Missing target site package path")
+		}
+		listPagesCmd(pArgs[1])
 
 	case "routes":
 		if len(pArgs) < 2 {
@@ -268,6 +288,15 @@ func pagesCmd(sitePkgRel string) {
 		fmt.Println(stdout)
 	}
 	fmt.Printf("Updated pages.go for scaffold %s!", sitePkg.ImportPath)
+}
+
+// listPagesCmd prints the list of page names to stdout
+func listPagesCmd(sitePkgRel string) {
+	sitePkg, err := generate.GoListPackage(sitePkgRel)
+	mustNot(err)
+	pageList, err := generate.ScanSitemap(sitePkg)
+	mustNot(err)
+	fmt.Printf("%s", strings.Join(pageList, "\n"))
 }
 
 // routesCmd will parse a routemap.toml file and generate routes, handlers and templates
