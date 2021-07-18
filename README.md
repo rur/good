@@ -4,23 +4,25 @@
 
 ## A pretty good web scaffold for Golang
 
-- Clear, grok-able code
-- Basic dependencies
-- Embed within your binary
+`good` is a CLI tool for setting up an embedded web console in a Go application.
+
+- Generates plain, grok-able code
+- Only basic dependencies
+- Embed all assets
 - Classic template composition
 - No surprises
 
-`good` is a code-gen tool for embedding a web GUI in an existing Golang application.
-It outputs a self-contained scaffold for a modern server-side app with the aim of
-being straightforward to setup and maintain over time.
+The `good scaffold` command outputs files for a web server in the sub package of a
+Go project. Pages are added to the site using the `good page` command, which has a
+starter template feature help to speed up development.
 
-This is a general purpose setup that is particularly well suited to user workflows
-involving direct server integration like admin tools and service controls.
+This is a general purpose setup that is particularly useful for apps that have
+under-the-hood integrations like admin tools and service controls.
 
 ### CLI Overview
 
-The CLI tool will generate HTML and Golang files in your project
-for you to modify & refactor to suit your needs.
+The CLI tool will generate HTML and Golang files in your project,
+which you should modify & refactor to suit your needs.
 
 #### TLDR; quickstart
 
