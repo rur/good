@@ -21,23 +21,22 @@ var (
 These are scaffolding commands for the Good tool:
 
 Commands
-	scaffold <site_pkg> [<page_name>...]   Create a new site scaffold at at a package relative to the working dir
-	page     <site_pkg> <page_name>        Add a new page to an existing scaffold
-	pages    <site_pkg>                    Generate a routes.go file from a TOML config
-	routes   <page_pkg>                    Generate a routes.go file from a TOML config
-	starter  <out_dir>                     Create a new dir and populate it with a template for a custom starter page
+	scaffold <site_pkg>              Create a new site scaffold at at a package relative to the working dir
+	page     <site_pkg> <page_name>  Add a new page to an existing scaffold
+	pages    <site_pkg>              Generate a routes.go file from a TOML config
+	routes   <page_pkg>              Generate a routes.go file from a TOML config
+	starter  <out_dir>               Create a new dir and populate it with a template for a custom starter page
 
 `
-	scaffoldUsage = `usage: good scaffold <site_pkg_rel> [<page_name>...]
+	scaffoldUsage = `usage: good scaffold <site_pkg_rel>
 
 Create a new site scaffold in the current Golang project
 
 Example
-	good scaffold ./admin/site dashboard settings
+	good scaffold ./admin/site
 
 Arguments
 	site_pkg_rel    relative import path of the new site from the current Go module
-	page_name       optional list of page names to be initialized along with the site, default is 'example'
 
 `
 	pageUsage = `usage: good page <site_pkg_rel> <page_name> [--starter-template <path>]
@@ -82,7 +81,7 @@ Arguments
 	starterUsage = `usage: good starter <out_dir>
 
 Generate a template directory for a custom starter page that can be used with the
-'goodo page' comand.
+'good page' comand.
 
 
 Example
@@ -128,7 +127,7 @@ func main() {
 			fmt.Println(scaffoldUsage)
 			log.Fatalf("Missing target site package path")
 		}
-		scaffoldCmd(pArgs[1], pArgs[2:])
+		scaffoldCmd(pArgs[1])
 
 	case "page":
 		if len(pArgs) < 3 {
@@ -169,12 +168,7 @@ func main() {
 
 // scaffoldCmd creates a full site scaffold at a location relative to the
 // current golang module.
-func scaffoldCmd(sitePkgRel string, pages []string) {
-	if len(pages) == 0 {
-		// if no page names were listed, add a page called 'example'
-		pages = []string{"example"}
-	}
-
+func scaffoldCmd(sitePkgRel string) {
 	// use current package to find go module
 	curPkg, err := generate.GoListPackage(".")
 	mustNot(err)
@@ -184,20 +178,14 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 	mustNot(err)
 	files, err := generate.SiteScaffold(sitePkg, scaffold)
 	mustNot(err)
-	pageFile, err := generate.PagesScaffold(sitePkg, pages, scaffold)
+	pageFile, err := generate.PagesScaffold(sitePkg, []string{"intro"}, scaffold)
 	mustNot(err)
 	files = append(files, pageFile)
-
-	start, err := fs.Sub(starter, "starter/default")
+	start, err := fs.Sub(starter, "starter/intro")
 	mustNot(err)
-
-	for _, page := range pages {
-		err = generate.ValidatePageName(page)
-		mustNot(err)
-		pFiles, err := generate.PageScaffold(sitePkg, page, scaffold, start)
-		mustNot(err)
-		files = append(files, pFiles...)
-	}
+	pFiles, err := generate.PageScaffold(sitePkg, "intro", scaffold, start)
+	mustNot(err)
+	files = append(files, pFiles...)
 
 	// FS operations
 	err = generate.FlushFiles(sitePkg.Dir, files)

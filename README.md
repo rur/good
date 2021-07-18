@@ -36,9 +36,9 @@ Visit localhost:8000 and take it from there.
 
 #### Good Scaffold ...
 
-    $ good scaffold ./portal dashboard
+    $ good scaffold ./portal
 
-Create a new app at `[current_go_mod]/portal` with a single page named _dashboard_.
+Create a new app at `[current_go_mod]/portal`.
 
 #### Good Page ...
 
@@ -48,10 +48,19 @@ Add a new 'settings' page to an existing scaffold path.
 
 #### Good Routes ...
 
-    $ good routes ./portal/settings
+    $ good routes ./portal/page/settings
 
 Re-generate the routing code for the portal settings page based on the
 `./portal/settings/routemap.toml` file.
+
+#### Good Starter ...
+
+    $ good starter ./portal/my-page-starter
+
+Create a directory containing files for a custom starter page that can be used with the
+'good page' command like so.
+
+    $ good page ./portal mypage --starter-template ./portal/my-page-starter
 
 ### Intro
 
