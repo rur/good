@@ -1,0 +1,15 @@
+package [# .Name #]
+
+import (
+	"github.com/rur/treetop"
+	"[# .Namespace #]/page"
+)
+
+func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
+	readme := treetop.NewView(
+		"[# .Templates #]/index.html.tmpl",
+		treetop.Noop,
+	)
+
+	hlp.Handle("/", exec.NewViewHandler(readme).PageOnly())
+}

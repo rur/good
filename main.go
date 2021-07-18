@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pelletier/go-toml"
 	"github.com/rur/good/generate"
@@ -21,23 +22,27 @@ var (
 These are scaffolding commands for the Good tool:
 
 Commands
-	scaffold <site_pkg> [<page_name>...]   Create a new site scaffold at at a package relative to the working dir
-	page     <site_pkg> <page_name>        Add a new page to an existing scaffold
-	pages    <site_pkg>                    Generate a routes.go file from a TOML config
-	routes   <page_pkg>                    Generate a routes.go file from a TOML config
-	starter  <out_dir>                     Create a new dir and populate it with a template for a custom starter page
+	scaffold  <site_pkg>              Create a new site scaffold at at a package relative to the working dir
+	page      <site_pkg> <page_name>  Add a new page to an existing scaffold
+	pages     <site_pkg>              Re-generate the pages.go file
+	listpages <site_pkg>              Print pages found in site
+	routes    <page_pkg>              Re-generate the routes.go file for a specified scaffold page package
+	starter   <out_dir>               Create a new dir and populate it with a template for a custom starter page
 
 `
-	scaffoldUsage = `usage: good scaffold <site_pkg_rel> [<page_name>...]
+	scaffoldUsage = `usage: good scaffold <site_pkg_rel>
 
 Create a new site scaffold in the current Golang project
 
 Example
-	good scaffold ./admin/site dashboard settings
+	good scaffold ./admin/site
 
 Arguments
 	site_pkg_rel    relative import path of the new site from the current Go module
-	page_name       optional list of page names to be initialized along with the site, default is 'example'
+
+Options
+    -h
+	Print usage for scaffold command
 
 `
 	pageUsage = `usage: good page <site_pkg_rel> <page_name> [--starter-template <path>]
@@ -52,6 +57,8 @@ Arguments
 	page_name      package name of the new page to initialize
 
 Options
+    -h
+	Print usage for page command
     --starter-template <path>
         Use specified directory as the starter template for the new page scaffold
 
@@ -66,6 +73,25 @@ Example
 Arguments
 	site_pkg_rel   relative import path of an existing scaffold site from the current Go module
 
+Options
+    -h
+	Print usage for pages command
+
+`
+	listPagesUsage = `usage: good listpages <site_pkg_rel>
+
+List the names of pages for a scaffold site pkg in STDOUT
+
+Example
+	good listpages ./admin/site
+
+Arguments
+	site_pkg_rel relative import path of an existing scaffold site from the current Go module
+
+Options
+    -h
+	Print usage for listpages command
+
 `
 	routesUsage = `usage: good routes <page_pkg_rel>
 
@@ -78,11 +104,15 @@ Example
 Arguments
 	page_pkg_rel   page import path from the root of the Go module
 
+Options
+    -h
+	Print usage for routes command
+
 `
 	starterUsage = `usage: good starter <out_dir>
 
 Generate a template directory for a custom starter page that can be used with the
-'goodo page' comand.
+'good page' command.
 
 
 Example
@@ -94,6 +124,10 @@ Example
 
 Arguments
 	out_dir   a not-already-existing path where a folder will be created
+
+Options
+    -h
+	Print usage for starter command
 
 `
 )
@@ -110,8 +144,14 @@ func main() {
 	for i := range pArgs {
 		if pArgs[i][0] == '-' {
 			// treat all subsequent args as CLI flags
-			for j := i; j < len(pArgs)-1; j += 2 {
-				fArgs[pArgs[j]] = pArgs[j+1]
+			for j := i; j < len(pArgs); j++ {
+				// cheap and cheerful arg parsing
+				if j < len(pArgs)-1 && pArgs[j+1][0] != '-' {
+					fArgs[pArgs[j]] = pArgs[j+1]
+					j++
+				} else {
+					fArgs[pArgs[j]] = ""
+				}
 			}
 			pArgs = pArgs[:i]
 			break
@@ -119,18 +159,30 @@ func main() {
 	}
 
 	if len(pArgs) < 1 {
+		if _, help := fArgs["-h"]; help {
+			fmt.Println(usage)
+			return
+		}
 		fmt.Println(usage)
 		log.Fatalf("Missing <command>")
 	}
 	switch pArgs[0] {
 	case "scaffold":
+		if _, help := fArgs["-h"]; help {
+			fmt.Println(scaffoldUsage)
+			return
+		}
 		if len(pArgs) < 2 {
 			fmt.Println(scaffoldUsage)
 			log.Fatalf("Missing target site package path")
 		}
-		scaffoldCmd(pArgs[1], pArgs[2:])
+		scaffoldCmd(pArgs[1])
 
 	case "page":
+		if _, help := fArgs["-h"]; help {
+			fmt.Println(pageUsage)
+			return
+		}
 		if len(pArgs) < 3 {
 			fmt.Println(pageUsage)
 			log.Fatalf("Missing required arguments")
@@ -140,13 +192,32 @@ func main() {
 		pageCmd(pArgs[1], pArgs[2], starterTemplatePath)
 
 	case "pages":
+		if _, help := fArgs["-h"]; help {
+			fmt.Println(pagesUsage)
+			return
+		}
 		if len(pArgs) < 2 {
 			fmt.Println(pagesUsage)
 			log.Fatalf("Missing target site package path")
 		}
 		pagesCmd(pArgs[1])
 
+	case "listpages":
+		if _, help := fArgs["-h"]; help {
+			fmt.Println(listPagesUsage)
+			return
+		}
+		if len(pArgs) < 2 {
+			fmt.Println(listPagesUsage)
+			log.Fatalf("Missing target site package path")
+		}
+		listPagesCmd(pArgs[1])
+
 	case "routes":
+		if _, help := fArgs["-h"]; help {
+			fmt.Println(routesUsage)
+			return
+		}
 		if len(pArgs) < 2 {
 			fmt.Println(routesUsage)
 			log.Fatalln("Missing target scaffold page path")
@@ -154,6 +225,10 @@ func main() {
 		routesCmd(pArgs[1])
 
 	case "starter":
+		if _, help := fArgs["-h"]; help {
+			fmt.Println(starterUsage)
+			return
+		}
 		if len(pArgs) < 2 {
 			fmt.Println(starterUsage)
 			log.Fatalln("Missing target starter folder path")
@@ -169,12 +244,7 @@ func main() {
 
 // scaffoldCmd creates a full site scaffold at a location relative to the
 // current golang module.
-func scaffoldCmd(sitePkgRel string, pages []string) {
-	if len(pages) == 0 {
-		// if no page names were listed, add a page called 'example'
-		pages = []string{"example"}
-	}
-
+func scaffoldCmd(sitePkgRel string) {
 	// use current package to find go module
 	curPkg, err := generate.GoListPackage("./...")
 	mustNot(err)
@@ -184,20 +254,14 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 	mustNot(err)
 	files, err := generate.SiteScaffold(sitePkg, scaffold)
 	mustNot(err)
-	pageFile, err := generate.PagesScaffold(sitePkg, pages, scaffold)
+	pageFile, err := generate.PagesScaffold(sitePkg, []string{"intro"}, scaffold)
 	mustNot(err)
 	files = append(files, pageFile)
-
-	start, err := fs.Sub(starter, "starter/default")
+	start, err := fs.Sub(starter, "starter/intro")
 	mustNot(err)
-
-	for _, page := range pages {
-		err = generate.ValidatePageName(page)
-		mustNot(err)
-		pFiles, err := generate.PageScaffold(sitePkg, page, scaffold, start)
-		mustNot(err)
-		files = append(files, pFiles...)
-	}
+	pFiles, err := generate.PageScaffold(sitePkg, "intro", scaffold, start)
+	mustNot(err)
+	files = append(files, pFiles...)
 
 	// FS operations
 	err = generate.FlushFiles(sitePkg.Dir, files)
@@ -280,6 +344,15 @@ func pagesCmd(sitePkgRel string) {
 		fmt.Println(stdout)
 	}
 	fmt.Printf("Updated pages.go for scaffold %s!", sitePkg.ImportPath)
+}
+
+// listPagesCmd prints the list of page names to stdout
+func listPagesCmd(sitePkgRel string) {
+	sitePkg, err := generate.GoListPackage(sitePkgRel)
+	mustNot(err)
+	pageList, err := generate.ScanSitemap(sitePkg)
+	mustNot(err)
+	fmt.Printf("%s", strings.Join(pageList, "\n"))
 }
 
 // routesCmd will parse a routemap.toml file and generate routes, handlers and templates

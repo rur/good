@@ -5,6 +5,7 @@ import (
 	"github.com/rur/treetop"
 
 	"github.com/rur/good/baseline/routes_test/page/example"
+	"github.com/rur/good/baseline/routes_test/page/intro"
 	"github.com/rur/good/baseline/routes_test/page/trivial"
 )
 
@@ -13,5 +14,6 @@ import (
 func registerPages(hlp page.Helper, exec treetop.ViewExecutor) {
 	// register pages
 	example.Routes(hlp, exec)
+	intro.Routes(hlp, exec)
 	trivial.Routes(hlp, exec)
 }

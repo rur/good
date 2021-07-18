@@ -29,11 +29,11 @@ trap killserver EXIT
 sleep 1 # plenty of time to start up
 
 echo
-curl --fail http://localhost:8000/example
+curl --fail http://localhost:8000/intro
 echo
 curl --fail http://localhost:8000/newpage
 
-echo "---- Feched example and newpage page successfully ---"
+echo "---- Feched intro and newpage page successfully ---"
 
 rm -rf _baseline/page_test
 mv baseline/page_test _baseline/

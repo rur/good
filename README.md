@@ -4,23 +4,25 @@
 
 ## A pretty good web scaffold for Golang
 
-- Clear, grok-able code
-- Basic dependencies
-- Embed within your binary
+`good` is a CLI tool for setting up an embedded web console in a Go application.
+
+- Generates plain, grok-able code
+- Only basic dependencies
+- Embed all assets
 - Classic template composition
 - No surprises
 
-`good` is a code-gen tool for embedding a web GUI in an existing Golang application.
-It outputs a self-contained scaffold for a modern server-side app with the aim of
-being straightforward to setup and maintain over time.
+The `good scaffold` command outputs files for a web server in the sub package of a
+Go project. Pages are added to the site using the `good page` command, which has a
+starter template feature help to speed up development.
 
-This is a general purpose setup that is particularly well suited to user workflows
-involving direct server integration like admin tools and service controls.
+This is a general purpose setup that is particularly useful for apps that have
+under-the-hood integrations like admin tools and service controls.
 
 ### CLI Overview
 
-The CLI tool will generate HTML and Golang files in your project
-for you to modify & refactor to suit your needs.
+The CLI tool will generate HTML and Golang files in your project,
+which you should modify & refactor to suit your needs.
 
 #### TLDR; quickstart
 
@@ -34,9 +36,9 @@ Visit localhost:8000 and take it from there.
 
 #### Good Scaffold ...
 
-    $ good scaffold ./portal dashboard
+    $ good scaffold ./portal
 
-Create a new app at `[current_go_mod]/portal` with a single page named _dashboard_.
+Create a new app at `[current_go_mod]/portal`.
 
 #### Good Page ...
 
@@ -46,18 +48,19 @@ Add a new 'settings' page to an existing scaffold path.
 
 #### Good Routes ...
 
-    $ good routes ./portal/settings
+    $ good routes ./portal/page/settings
 
 Re-generate the routing code for the portal settings page based on the
 `./portal/settings/routemap.toml` file.
 
 #### Good Starter ...
 
-    $ good starter ./portal/helpers/pagestarter
+    $ good starter ./portal/my-page-starter
 
-Output a folder contianing a set of files for customizing the page scaffold using the
-`good page` command. Good page has a `--starter-template` flag for specifying a dir
-containing starter files.
+Create a directory containing files for a custom starter page that can be used with the
+'good page' command like so.
+
+    $ good page ./portal mypage --starter-template ./portal/my-page-starter
 
 ### Intro
 

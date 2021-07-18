@@ -3,24 +3,22 @@ package generate
 import (
 	"fmt"
 	"io/fs"
-	"io/ioutil"
 	"path"
+	"path/filepath"
 )
 
 // ScanSitemap will scan the site page package and load site routing
 // data
 func ScanSitemap(sitePkg GoPackage) (pages []string, err error) {
-	dir := path.Join(sitePkg.Dir, "page")
-	list, err := ioutil.ReadDir(dir)
+	list, err := filepath.Glob(path.Join(sitePkg.Dir, "page", "*", "routes.go"))
 	if err != nil {
 		err = fmt.Errorf("failed to scan scaffold '%s' for pages: %s", sitePkg.ImportPath, err)
 		return
 	}
 	for i := range list {
-		// note that 'templates' is reserved for shared template files
-		name := list[i].Name()
-		if list[i].IsDir() && name != "templates" {
-			pages = append(pages, list[i].Name())
+		pageName := filepath.Base(filepath.Dir(list[i]))
+		if pageName != "templates" {
+			pages = append(pages, pageName)
 		}
 	}
 	return pages, nil
