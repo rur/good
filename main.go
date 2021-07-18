@@ -21,10 +21,11 @@ var (
 These are scaffolding commands for the Good tool:
 
 Commands
-	scaffold <site_pkg> [<page_name>...]    Create a new site scaffold at at a package relative to the working dir
-	page     <site_pkg> <page_name>         Add a new page to an existing scaffold
+	scaffold <site_pkg> [<page_name>...]   Create a new site scaffold at at a package relative to the working dir
+	page     <site_pkg> <page_name>        Add a new page to an existing scaffold
 	pages    <site_pkg>                    Generate a routes.go file from a TOML config
 	routes   <page_pkg>                    Generate a routes.go file from a TOML config
+	starter  <out_dir>                     Create a new dir and populate it with a template for a custom starter page
 
 `
 	scaffoldUsage = `usage: good scaffold <site_pkg_rel> [<page_name>...]
@@ -39,7 +40,7 @@ Arguments
 	page_name       optional list of page names to be initialized along with the site, default is 'example'
 
 `
-	pageUsage = `usage: good page <site_pkg_rel> <page_name>
+	pageUsage = `usage: good page <site_pkg_rel> <page_name> [--starter-template <path>]
 
 Add a new page to an existing scaffold site.
 
@@ -49,6 +50,10 @@ Example
 Arguments
 	site_pkg_rel   relative import path of an existing scaffold site from the current Go module
 	page_name      package name of the new page to initialize
+
+Options
+    --starter-template <path>
+        Use specified directory as the starter template for the new page scaffold
 
 `
 	pagesUsage = `usage: good pages <site_pkg_rel>
@@ -74,6 +79,23 @@ Arguments
 	page_pkg_rel   page import path from the root of the Go module
 
 `
+	starterUsage = `usage: good starter <out_dir>
+
+Generate a template directory for a custom starter page that can be used with the
+'goodo page' comand.
+
+
+Example
+	$ good starter ./admin/utils/customstarter
+    [...customize the files...]
+
+    # create a new page using your starter
+    $ good page ./admin/site awesomenewpage --starter-template ./admin/utils/customstarter
+
+Arguments
+	out_dir   a not-already-existing path where a folder will be created
+
+`
 )
 
 //go:embed scaffold
@@ -83,42 +105,64 @@ var scaffold embed.FS
 var starter embed.FS
 
 func main() {
-	if len(os.Args) < 2 {
+	pArgs := os.Args[1:]
+	fArgs := make(map[string]string)
+	for i := range pArgs {
+		if pArgs[i][0] == '-' {
+			// treat all subsequent args as CLI flags
+			for j := i; j < len(pArgs)-1; j += 2 {
+				fArgs[pArgs[j]] = pArgs[j+1]
+			}
+			pArgs = pArgs[:i]
+			break
+		}
+	}
+
+	if len(pArgs) < 1 {
 		fmt.Println(usage)
 		log.Fatalf("Missing <command>")
 	}
-	switch os.Args[1] {
+	switch pArgs[0] {
 	case "scaffold":
-		if len(os.Args) < 3 {
+		if len(pArgs) < 2 {
 			fmt.Println(scaffoldUsage)
 			log.Fatalf("Missing target site package path")
 		}
-		scaffoldCmd(os.Args[2], os.Args[3:])
+		scaffoldCmd(pArgs[1], pArgs[2:])
 
 	case "page":
-		if len(os.Args) < 4 {
+		if len(pArgs) < 3 {
 			fmt.Println(pageUsage)
 			log.Fatalf("Missing required arguments")
 		}
-		pageCmd(os.Args[2], os.Args[3])
+		starterTemplatePath := fArgs["--starter-template"]
+		fmt.Printf("Starter template %#v \n", starterTemplatePath)
+		pageCmd(pArgs[1], pArgs[2], starterTemplatePath)
 
 	case "pages":
-		if len(os.Args) < 3 {
+		if len(pArgs) < 2 {
 			fmt.Println(pagesUsage)
 			log.Fatalf("Missing target site package path")
 		}
-		pagesCmd(os.Args[2])
+		pagesCmd(pArgs[1])
 
 	case "routes":
-		if len(os.Args) < 3 {
+		if len(pArgs) < 2 {
 			fmt.Println(routesUsage)
 			log.Fatalln("Missing target scaffold page path")
 		}
-		routesCmd(os.Args[2])
+		routesCmd(pArgs[1])
+
+	case "starter":
+		if len(pArgs) < 2 {
+			fmt.Println(starterUsage)
+			log.Fatalln("Missing target starter folder path")
+		}
+		starterCmd(pArgs[1])
 
 	default:
 		fmt.Println(usage)
-		log.Fatalf("Unknown command %s", os.Args[1])
+		log.Fatalf("Unknown command %s", pArgs[0])
 	}
 	fmt.Println()
 }
@@ -134,7 +178,7 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 	// use current package to find go module
 	curPkg, err := generate.GoListPackage(".")
 	mustNot(err)
-	sitePkg, err := generate.ParseSitePackage(curPkg.Module, os.Args[2])
+	sitePkg, err := generate.ParseSitePackage(curPkg.Module, sitePkgRel)
 	mustNot(err)
 	err = generate.ValidateScaffoldLocation(sitePkg.Dir, scaffold)
 	mustNot(err)
@@ -171,15 +215,25 @@ func scaffoldCmd(sitePkgRel string, pages []string) {
 }
 
 // pageCmd attempts to add a new page to an existing scaffold site
-func pageCmd(sitePkgRel, pageName string) {
+func pageCmd(sitePkgRel, pageName, starterTemplatePath string) {
 	err := generate.ValidatePageName(pageName)
 	mustNot(err)
 	sitePkg, err := generate.GoListPackage(sitePkgRel)
 	mustNot(err)
 	err = generate.ValidatePageLocation(filepath.Join(sitePkg.Dir, "page", pageName), scaffold)
 	mustNot(err)
-	start, err := fs.Sub(starter, "starter/default")
-	mustNot(err)
+	var start fs.FS
+	if starterTemplatePath != "" {
+		start = os.DirFS(starterTemplatePath)
+		stat, err := fs.Stat(start, ".")
+		mustNot(err)
+		if !stat.IsDir() {
+			mustNot(fmt.Errorf("starter-template must be a directory, a file was found at %s", starterTemplatePath))
+		}
+	} else {
+		start, err = fs.Sub(starter, "starter/default")
+		mustNot(err)
+	}
 	files, err := generate.PageScaffold(sitePkg, pageName, scaffold, start)
 	mustNot(err)
 	err = generate.FlushFiles(sitePkg.Dir, files)
@@ -280,6 +334,23 @@ func routesCmd(pagePkgRel string) {
 		fmt.Println(stdout)
 	}
 	fmt.Printf("Updated routes.go for scaffold page %s!", pkg.ImportPath)
+}
+
+// starterCmd generates a page strter template that can be used with the 'good page x --starter-template ...' command
+func starterCmd(dest string) {
+	start, err := fs.Sub(starter, "starter/default")
+	mustNot(err)
+	files, err := generate.StarterScaffold(dest, start)
+	mustNot(err)
+	err = generate.FlushFiles(".", files)
+	mustNot(err)
+	fmt.Println("Created files:")
+	for _, file := range files {
+		fmt.Println("\t-", filepath.Join(file.Dir, file.Name))
+	}
+	fmt.Println()
+
+	fmt.Printf("Outputted default starter template to dest folder %s!", dest)
 }
 
 func mustNot(err error) {
