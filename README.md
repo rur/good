@@ -4,7 +4,7 @@
 
 ## A pretty good web scaffold for Golang
 
-`good` is a CLI tool for building an embedded web console in a Go application.
+`good` is a CLI tool for creating an embedded web console for a Golang application.
 
 - Generates plain, grok-able code
 - Only basic dependencies
@@ -16,13 +16,13 @@ The `good scaffold` command outputs files for a web server in the sub package of
 Go project. Pages are added to the site using the `good page` command, which has a
 starter template feature to help speed-up development.
 
-The scaffold is a general purpose web setup that is particularly useful for apps with
-under-the-hood integrations like admin tools and service consoles.
+The scaffold is a general purpose web setup that is particularly useful for apps that have
+under-the-hood integrations like admin tools and service dashboards.
 
-### CLI Overview
+## CLI Overview
 
-The CLI tool will generate HTML and Golang files in your project,
-which you should modify & refactor to suit your needs.
+The CLI tools will generate HTML and Golang files that you should modify & refactor
+to suit your needs.
 
 #### TLDR; quickstart
 
@@ -33,6 +33,8 @@ which you should modify & refactor to suit your needs.
     [mygoproject]$ go run ./myportal
 
 Visit localhost:8000 and take it from there.
+
+### Commands:
 
 #### Good Scaffold ...
 
@@ -62,33 +64,32 @@ Create a directory containing files for a custom starter page that can be used w
 
     $ good page ./portal mypage --starter-template ./portal/my-page-starter
 
-### Intro
+### Notes
 
-#### 1. Generate clear, grok-able code
+#### 1. Generate plain, grok-able code
 
-The output is mostly vanilla Golang and HTML. We embrace a little redundancy
-so that the code will be more static and so easier to customize.
-This works very well with the Golang tooling, making refactoring a cinch.
+The output is mostly vanilla Golang and HTML. We embrace some redundancy
+so that so that the code will be more static, easier to read and customize.
+This works well with the Golang type system and tooling, making refactoring a cinch.
 
 #### 2. Basic Dependencies
 
-We take full advantage of the standard _html/template_ and _net/http_
-libraries to avoid many dependencies. The scaffold code is clearly commented
-to make it easy for you to integrate the dependencies you wish to use in
-your project.
+Taking advantage of the standard library helps us to avoid a lot of mandatory dependencies.
+There is no plugin system, instead we encourage you to manually integrate your chosen libraries
+and rely on an easy-to-follow codebase to help you out.
 
 #### 3. Binary Embedded
 
-The `//go:embed ` directive is configured so that the web server is fully embedded at compile time.
+The `//go:embed ` directive is configured so that web server assets can be fully embedded at compile time.
 
 #### 4. Classic template composition
 
-Nested HTML template composition is a tried a true approach for building
-web GUI that has excellent support in Golang. With the addition of fragment
-hot-swapping, nested templates are capable of delivering a modern web experience
-from a server-side app.
+HTML template composition has excellent support in Golang. This scaffold uses the
+[Treetop library](https://github.com/rur/treetop) to help organize templates, with
+the added benefit of fragment hot-swapping to enhance interactivity.
 
 #### 5. No Surprises
 
-If a framework might be overkill for your project, and you need more than static
-content pages, this scaffold is probably a reasonable option.
+This scaffold is more of a workhorse than a unicorn, we embrace many practical
+limitations for the benefit of long term maintenance and tight integration.
+Take care to judge whether this will be a good fit for your project or not.
