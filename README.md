@@ -12,7 +12,7 @@
 - Classic template composition
 - No surprises
 
-_[see [developer notes](#notes)]_
+_[see [developer notes](#developer-notes)]_
 
 ### Overview
 
