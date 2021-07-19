@@ -4,7 +4,7 @@
 
 ## A pretty good web scaffold for Golang
 
-`good` is a CLI tool for creating an embedded web console for a Golang application.
+`good` is a CLI tool for embedding a web console in a Golang application.
 
 - Generates plain, grok-able code
 - Only basic dependencies
@@ -55,13 +55,13 @@ Add a new 'settings' page to an existing scaffold path.
     $ good routes ./portal/page/settings
 
 Re-generate the routing code for the portal settings page based on the
-`./portal/settings/routemap.toml` file.
+`./portal/page/settings/routemap.toml` file.
 
 #### Good Starter ...
 
     $ good starter ./portal/my-page-starter
 
-Create a directory containing files for a custom starter page that can be used with the
+Create a directory containing files for a customized starter page that can be used with the
 'good page' command like so.
 
     $ good page ./portal mypage --starter-template ./portal/my-page-starter
@@ -92,6 +92,6 @@ the added benefit of fragment hot-swapping to enhance interactivity.
 
 #### 5. No Surprises
 
-This scaffold is more of a workhorse than a unicorn, we embrace many practical
+This scaffold is more of a workhorse than a unicorn; we embrace many practical
 limitations for the benefit of long term maintenance and tight integration.
-Take care to judge whether this will be a good fit for your project or not.
+Take care to judge if this will be a good fit for your project.
