@@ -12,17 +12,16 @@
 - Classic template composition
 - No surprises
 
-The `good scaffold` command outputs files for a web server in the sub package of a
+_[see [developer notes](#notes)]_
+
+### Overview
+
+The `good scaffold` command outputs files for a web server in a sub package of a
 Go project. Pages are added to the site using the `good page` command, which has a
 starter template feature to help speed-up development.
 
-The scaffold is a general purpose web setup that is particularly useful for apps that have
+The scaffold is a general purpose setup that is particularly useful for apps that have
 under-the-hood integrations like admin tools and service dashboards.
-
-## CLI Overview
-
-The CLI tools will generate HTML and Golang files that you should modify & refactor
-to suit your needs.
 
 #### TLDR; quickstart
 
@@ -34,7 +33,10 @@ to suit your needs.
 
 Visit localhost:8000 and take it from there.
 
-### Commands:
+### CLI Commands
+
+The CLI tools will generate HTML and Golang files that you should modify & refactor
+to suit your needs.
 
 #### Good Scaffold ...
 
@@ -64,7 +66,7 @@ Create a directory containing files for a custom starter page that can be used w
 
     $ good page ./portal mypage --starter-template ./portal/my-page-starter
 
-### Notes
+## Developer Notes
 
 #### 1. Generate plain, grok-able code
 
@@ -76,7 +78,7 @@ This works well with the Golang type system and tooling, making refactoring a ci
 
 Taking advantage of the standard library helps us to avoid a lot of mandatory dependencies.
 There is no plugin system, instead we encourage you to manually integrate your chosen libraries
-and rely on an easy-to-follow codebase to help you out.
+and rely on the easy-to-follow codebase to help you out.
 
 #### 3. Binary Embedded
 
