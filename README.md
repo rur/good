@@ -17,11 +17,11 @@ _[see [developer notes](#developer-notes)]_
 ### Overview
 
 The `good scaffold` command outputs files for a web server in a sub package of a
-Go project. Pages are added to the site using the `good page` command, which has a
-starter template feature to help speed-up development.
+Go project. Top-level pages are added to the site using the `good page` command, which has a
+[starter template](#Starter-Template) feature to speed-up development.
 
-The scaffold is a general purpose setup that is particularly useful for apps that have
-under-the-hood integrations like admin tools and service dashboards.
+With under-the-hood code integration, this scaffold is especially useful for adding GUI
+to a web service or a background daemon implemented in Go.
 
 #### TLDR; quickstart
 
@@ -33,16 +33,18 @@ under-the-hood integrations like admin tools and service dashboards.
 
 Visit localhost:8000 and take it from there.
 
-### CLI Commands
+### CLI Overview
 
 The CLI tools will generate HTML and Golang files that you should modify & refactor
 to suit your needs.
+
+> Tip: _Use the `-h` flag for help with commands_
 
 #### Good Scaffold ...
 
     $ good scaffold ./portal
 
-Create a new app at `[current_go_mod]/portal`.
+Example command that creates a new app at `[current_go_mod]/portal`.
 
 #### Good Page ...
 
@@ -70,19 +72,21 @@ Create a directory containing files for a customized starter page that can be us
 
 #### 1. Generate plain, grok-able code
 
-The output is mostly vanilla Golang and HTML. We embrace some redundancy
-so that so that the code will be more static, easier to read and customize.
-This works well with the Golang type system and tooling, making refactoring a cinch.
+The output is mostly vanilla Golang and HTML templates. We embrace some redundancy
+in the code so that it will be more static, easier to read and customize.
+This works well with the Golang type system and tooling, which makes refactoring a cinch,
+at the expense of some extra typing.
 
 #### 2. Basic Dependencies
 
-Taking advantage of the standard library helps us to avoid a lot of mandatory dependencies.
-There is no plugin system, instead we encourage you to manually integrate your chosen libraries
-and rely on the easy-to-follow codebase to help you out.
+We avoid a lot of mandatory dependencies by taking full advantage of the standard library.
+There is no plugin system, if you are familiar with Golang you can rely on an easy-to-follow
+codebase to integrate your chosen libraries manually.
 
 #### 3. Binary Embedded
 
-The `//go:embed ` directive is configured so that web server assets can be fully embedded at compile time.
+The `//go:embed ` compiler directive is configured so that web server assets can be fully embedded at compile time.
+This gives you the option to distribute your GUI as a self-contained binary.
 
 #### 4. Classic template composition
 
@@ -93,5 +97,9 @@ the added benefit of fragment hot-swapping to enhance interactivity.
 #### 5. No Surprises
 
 This scaffold is more of a workhorse than a unicorn; we embrace many practical
-limitations for the benefit of long term maintenance and tight integration.
-Take care to judge if this will be a good fit for your project.
+limitations for the benefit of simplicity and integration.
+Take care to judge whether this will be a good fit for your project.
+
+## Starter Template
+
+[TODO] Docs
