@@ -1,14 +1,14 @@
 [![Build Status](https://travis-ci.com/rur/good.svg?token=ghq4t9FLdVA8tqkRUMoY&branch=main)](https://travis-ci.com/rur/good)
 
-# _Good_
+# ☑Good
 
 ## A pretty good web scaffold for Golang
 
-`good` is a CLI tool for embedding a web console in a Golang application.
+CLI tool for embedding a web setup in a Golang application.
 
 - Generates plain, grok-able code
-- Only basic dependencies
-- Embed all assets
+- Basic dependencies
+- Embedded server assets
 - Classic template composition
 - No surprises
 
@@ -16,12 +16,13 @@ _[see [developer notes](#developer-notes)]_
 
 ### Overview
 
-The `good scaffold` command outputs files for a web server in a sub package of a
-Go project. Top-level pages are added to the site using the `good page` command, which has a
-[starter template](#Starter-Template) feature to speed-up development.
+The `good scaffold` command outputs files for a web server to a sub package of a
+Go project. It geared towards under-the-hood GUIs like admin tools, consoles and user dashboards.
 
-With under-the-hood code integration, this scaffold is especially useful for adding GUI
-to a web service or a background daemon implemented in Go.
+Top-level pages are added to the site using the `good page` command, which has a
+[starter template](#Starter-Template) feature to speed-up development. The scaffold
+is designed to be integrated with the codebase of a typical web service or background daemon
+implemented in Go.
 
 #### TLDR; quickstart
 
@@ -63,24 +64,24 @@ Re-generate the routing code for the portal settings page based on the
 
     $ good starter ./portal/my-page-starter
 
-Create a directory containing files for a customized starter page that can be used with the
-'good page' command like so.
+Make a directory and populate it will code template files for a customized starter page
+that can be used with the 'good page' command like so.
 
-    $ good page ./portal mypage --starter-template ./portal/my-page-starter
+    $ good page ./portal mynewpage --starter-template ./portal/my-page-starter
 
 ## Developer Notes
 
 #### 1. Generate plain, grok-able code
 
 The output is mostly vanilla Golang and HTML templates. We embrace some redundancy
-in the code so that it will be more static, easier to read and customize.
-This works well with the Golang type system and tooling, which makes refactoring a cinch,
-at the expense of some extra typing.
+so that the code will be more static, easier to read and customize.
+This works well with the Golang type system and tooling, which makes refactoring a cinch
+at the cost of some extra typing.
 
 #### 2. Basic Dependencies
 
 We avoid a lot of mandatory dependencies by taking full advantage of the standard library.
-There is no plugin system, if you are familiar with Golang you can rely on an easy-to-follow
+There is no plugin system; if you are familiar with Golang you can rely on an easy-to-follow
 codebase to integrate your chosen libraries manually.
 
 #### 3. Binary Embedded
@@ -96,9 +97,9 @@ the added benefit of fragment hot-swapping to enhance interactivity.
 
 #### 5. No Surprises
 
-This scaffold is more of a workhorse than a unicorn; we embrace many practical
-limitations for the benefit of simplicity and integration.
-Take care to judge whether this will be a good fit for your project.
+This scaffold is more of a workhorse than a unicorn; we embrace some practical
+limitations for the purpose of simplicity and embedding.
+You should take care to judge whether this will be a good fit for your project.
 
 ## Starter Template
 
