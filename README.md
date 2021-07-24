@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.com/rur/good.svg?token=ghq4t9FLdVA8tqkRUMoY&branch=main)](https://travis-ci.com/rur/good)
 
-# ☑Good
+# <img src="docs/check.svg" height="23rem" width="30rem"/>Good
 
 ## A pretty good web scaffold for Golang
 
