@@ -4,7 +4,7 @@
 
 ## A pretty good web scaffold for Golang
 
-CLI tool for embedding a web setup in a Golang application.
+Command line tool for embedding a web GUI in a Golang application.
 
 - Generates plain, grok-able code
 - Basic dependencies
@@ -17,11 +17,11 @@ _[see [developer notes](#developer-notes)]_
 ### Overview
 
 The `good scaffold` command outputs files for a web server to a sub package of a
-Go project. It geared towards under-the-hood GUIs like admin tools, consoles and user dashboards.
+Go module. It geared towards embedded, under-the-hood apps like admin tools, consoles and user dashboards.
 
 Top-level pages are added to the site using the `good page` command, which has a
 [starter template](#Starter-Template) feature to speed-up development. The scaffold
-is designed to be integrated with the codebase of a typical web service or background daemon
+is designed to integrate well with the codebase of a typical web service or background daemon
 implemented in Go.
 
 #### TLDR; quickstart
@@ -74,7 +74,7 @@ that can be used with the 'good page' command like so.
 #### 1. Generate plain, grok-able code
 
 The output is mostly vanilla Golang and HTML templates. We embrace some redundancy
-so that the code will be more static, easier to read and customize.
+so that the code will be more static, so easier to read and customize.
 This works well with the Golang type system and tooling, which makes refactoring a cinch
 at the cost of some extra typing.
 
