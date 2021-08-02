@@ -16,10 +16,15 @@ echo "clearing any previously failed run data"
 rm -rf baseline
 
 go run . scaffold baseline/page_test
-go run . page baseline/page_test newpage
+go run . page ./baseline/page_test newpage
+
+if [[ ! -z $(bash ./scripts/usedports.sh | grep 8000) ]]; then
+  echo >&2 "Port 8000 appears to be in use, cannot run test"
+  exit 1
+fi
 
 echo "---- run new server and ping endpoints ---"
-go run ./baseline/page_test > testing_stdout.log 2> testing_stderr.log &
+go run ./baseline/page_test --port 8000 > testing_stdout.log 2> testing_stderr.log &
 serverPID=$!
 function killserver() {
     echo "Kill test server at PID $serverPID"

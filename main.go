@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -22,12 +23,13 @@ var (
 These are scaffolding commands for the Good tool:
 
 Commands
-	scaffold  <site_pkg>              Create a new site scaffold at at a package relative to the working dir
-	page      <site_pkg> <page_name>  Add a new page to an existing scaffold
-	pages     <site_pkg>              Re-generate the pages.go file
-	listpages <site_pkg>              Print pages found in site
-	routes    <page_pkg>              Re-generate the routes.go file for a specified scaffold page package
-	starter   <out_dir>               Create a new dir and populate it with a template for a custom starter page
+	scaffold     <site_pkg>              Create a new site scaffold at at a package relative to the working dir
+	page         <site_pkg> <page_name>  Add a new page to an existing scaffold
+	pages gen    <site_pkg>              Re-generate the pages.go file
+	pages list   <site_pkg>              List pages in a site to stdout
+	pages delete <page_pkg>              Remove a page from a site
+	routes       <page_pkg>              Re-generate the routes.go file for a specified scaffold page package
+	starter      <out_dir>               Create a new dir and populate it with a template for a custom starter page
 
 `
 	scaffoldUsage = `usage: good scaffold <site_pkg_rel>
@@ -68,29 +70,20 @@ Options
 Scan site page/ folder and update the pages.go file with any pages added manually.
 
 Example
-	good pages ./admin/site
+	good pages [-h] [command] <args>
 
-Arguments
-	site_pkg_rel   relative import path of an existing scaffold site from the current Go module
+Commands
+	gen <site path>
+		Generated a new pages.go file, useful when the site page folders has been modifed
+	list <site path>
+		List named pages found for a site to stdout
+	delete <page path>
+		Delete folder for a named page and regenerate the pages.go file.
+		Convenience command, simalar to 'rm -rf <page path> && good pages gen <site path>'
 
 Options
     -h
 	Print usage for pages command
-
-`
-	listPagesUsage = `usage: good listpages <site_pkg_rel>
-
-List the names of pages for a scaffold site pkg in STDOUT
-
-Example
-	good listpages ./admin/site
-
-Arguments
-	site_pkg_rel relative import path of an existing scaffold site from the current Go module
-
-Options
-    -h
-	Print usage for listpages command
 
 `
 	routesUsage = `usage: good routes <page_pkg_rel>
@@ -196,22 +189,24 @@ func main() {
 			fmt.Println(pagesUsage)
 			return
 		}
-		if len(pArgs) < 2 {
+		if len(pArgs) < 3 {
 			fmt.Println(pagesUsage)
-			log.Fatalf("Missing target site package path")
+			log.Fatalf("Incomplete pages command: %v", strings.Join(pArgs, " "))
 		}
-		pagesCmd(pArgs[1])
+		switch pArgs[1] {
+		case "gen":
+			pagesCmd(pArgs[2])
 
-	case "listpages":
-		if _, help := fArgs["-h"]; help {
-			fmt.Println(listPagesUsage)
-			return
+		case "list":
+			listPagesCmd(pArgs[2])
+
+		case "delete":
+			deletePageCmd(pArgs[2])
+
+		default:
+			fmt.Println(pagesUsage)
+			log.Fatalf("Unknown pages command '%s'", pArgs[1])
 		}
-		if len(pArgs) < 2 {
-			fmt.Println(listPagesUsage)
-			log.Fatalf("Missing target site package path")
-		}
-		listPagesCmd(pArgs[1])
 
 	case "routes":
 		if _, help := fArgs["-h"]; help {
@@ -331,6 +326,7 @@ func pagesCmd(sitePkgRel string) {
 	mustNot(err)
 	pageList, err := generate.ScanSitemap(sitePkg)
 	mustNot(err)
+	fmt.Println("Found pages:", pageList)
 	pages, err := generate.PagesScaffold(sitePkg, pageList, scaffold)
 	mustNot(err)
 	err = generate.FlushFiles(sitePkg.Dir, []generate.File{pages})
@@ -353,6 +349,42 @@ func listPagesCmd(sitePkgRel string) {
 	pageList, err := generate.ScanSitemap(sitePkg)
 	mustNot(err)
 	fmt.Printf("%s", strings.Join(pageList, "\n"))
+}
+
+// deletePageCmd unlinks the page from the FS and updates the site pages
+func deletePageCmd(pagePackage string) {
+	pagePkg, err := generate.GoListPackage(pagePackage)
+	mustNot(err)
+	_, err = os.Stat(path.Join(pagePkg.Dir, "routemap.toml"))
+	if os.IsNotExist(err) {
+		log.Fatalf("Not a scaffold page '%s'", pagePackage)
+	} else {
+		mustNot(err)
+	}
+	var sitePkg generate.GoPackage
+	{
+		parts := strings.Split(pagePkg.ImportPath, "/")
+		if len(parts) < 2 || parts[len(parts)-2] != "page" {
+			mustNot(fmt.Errorf("invalid page path '%s'", pagePackage))
+		}
+		sitePkg, err = generate.GoListPackage(strings.Join(parts[:len(parts)-2], "/"))
+		mustNot(err)
+	}
+	{
+		// ask user if they want to delete the page folder
+		fmt.Println("Found scaffold page at path ", pagePkg.Dir)
+		fmt.Printf(">> Are you sure you want to delete this directory [yY]: ")
+		var input string
+		_, scErr := fmt.Scanln(&input)
+		if scErr != nil || (input != "y" && input != "Y") {
+			log.Fatalf("Cancelled delete, received answer '%s'\n", input)
+		}
+	}
+
+	err = os.RemoveAll(pagePkg.Dir)
+	mustNot(err)
+	fmt.Println("Updating scaffold pages", sitePkg.ImportPath)
+	pagesCmd(sitePkg.ImportPath)
 }
 
 // routesCmd will parse a routemap.toml file and generate routes, handlers and templates

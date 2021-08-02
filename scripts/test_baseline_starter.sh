@@ -17,10 +17,15 @@ rm -rf baseline
 
 go run . scaffold baseline/starter_test
 go run . starter baseline/starter_test/starter
-go run . page baseline/starter_test newpage --starter-template ./baseline/starter_test/starter
+go run . page ./baseline/starter_test newpage --starter-template ./baseline/starter_test/starter
+
+if [[ ! -z $(bash ./scripts/usedports.sh | grep 8000) ]]; then
+  echo >&2 "Port 8000 appears to be in use, cannot run test"
+  exit 1
+fi
 
 echo "---- run new server and ping endpoints ---"
-go run ./baseline/starter_test > testing_stdout.log 2> testing_stderr.log &
+go run ./baseline/starter_test --port 8000 > testing_stdout.log 2> testing_stderr.log &
 serverPID=$!
 function killserver() {
     echo "Kill test server at PID $serverPID"
