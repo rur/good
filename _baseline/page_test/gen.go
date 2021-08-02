@@ -1,3 +1,3 @@
 package main
 
-//go:generate good pages .
+//go:generate good pages gen .

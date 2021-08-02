@@ -16,7 +16,7 @@ echo "clearing any previously failed run data"
 rm -rf baseline
 
 go run . scaffold baseline/page_test
-go run . page baseline/page_test newpage
+go run . page ./baseline/page_test newpage
 
 if [[ ! -z $(bash ./scripts/usedports.sh | grep 8000) ]]; then
   echo >&2 "Port 8000 appears to be in use, cannot run test"
