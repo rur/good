@@ -19,7 +19,10 @@ func StarterScaffold(dir string, scaffold fs.FS) (files []File, err error) {
 		err = nil
 	}
 
-	err = fs.WalkDir(scaffold, ".", func(path string, d fs.DirEntry, err error) error {
+	err = fs.WalkDir(scaffold, ".", func(path string, d fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
 		if d.IsDir() {
 			return nil
 		}

@@ -43,11 +43,7 @@ func (pkg *GoPackage) Name() string {
 // GoListPackage will get the Go module information for the go path provied
 func GoListPackage(path string) (pkg GoPackage, err error) {
 	var stdout, stderr bytes.Buffer
-	if path == "" {
-		path = "."
-	} else if path[0] != '.' {
-		path = "./" + path
-	} else if path == "./..." {
+	if path == "./..." {
 		cmd := exec.Command("go", "list", "./...")
 		cmd.Stdout = &stdout
 		cmd.Stderr = &stderr
@@ -55,11 +51,12 @@ func GoListPackage(path string) (pkg GoPackage, err error) {
 			err = fmt.Errorf("%s: %s", err, stderr.String())
 			return
 		}
-		firstPath, err := stdout.ReadString('\n')
-		if err == nil || err == io.EOF {
+		firstPath, stdOutErr := stdout.ReadString('\n')
+		if stdOutErr == nil || stdOutErr == io.EOF {
 			path = strings.TrimSpace(firstPath)
 		} else {
-			err = fmt.Errorf("Failed to find a valid golang module in this directory, got output: %s, with error: %s", firstPath, err)
+			err = fmt.Errorf("failed to find a valid golang module in this directory, got output: %s, with error: %s", firstPath, stdOutErr)
+			return
 		}
 	}
 
