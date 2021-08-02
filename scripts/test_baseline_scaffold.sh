@@ -17,8 +17,13 @@ rm -rf baseline
 
 go run . scaffold baseline/scaffold_test
 
+if [[ ! -z $(bash ./scripts/usedports.sh | grep 8000) ]]; then
+  echo >&2 "Port 8000 appears to be in use, cannot run test"
+  exit 1
+fi
+
 echo "---- run new server and ping /example endpoint ---"
-go run ./baseline/scaffold_test > testing_stdout.log 2> testing_stderr.log &
+go run ./baseline/scaffold_test --port 8000 > testing_stdout.log 2> testing_stderr.log &
 serverPID=$!
 function killserver() {
     echo "Kill test server at PID $serverPID"

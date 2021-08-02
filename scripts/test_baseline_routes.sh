@@ -28,8 +28,13 @@ cp _baseline/testfixtures/routemap_trivial.toml baseline/routes_test/page/trivia
 go run . routes ./baseline/routes_test/page/example
 go run . routes ./baseline/routes_test/page/trivial
 
+if [[ ! -z $(bash ./scripts/usedports.sh | grep 8000) ]]; then
+  echo >&2 "Port 8000 appears to be in use, cannot run test"
+  exit 1
+fi
+
 echo "---- run new server and ping /example endpoint ---"
-go run ./baseline/routes_test > testing_stdout.log 2> testing_stderr.log &
+go run ./baseline/routes_test --port 8000 > testing_stdout.log 2> testing_stderr.log &
 serverPID=$!
 function killserver() {
     echo "Kill test server at PID $serverPID"
