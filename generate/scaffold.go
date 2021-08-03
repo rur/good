@@ -45,8 +45,29 @@ func SiteScaffold(pkg GoPackage, scaffold fs.FS) (files []File, err error) {
 		Name:     "README.md",
 		Contents: mustExecute("scaffold/README.md.tmpl", data, scaffold),
 	})
+	// docs/*
+	if err = fs.WalkDir(scaffold, "scaffold/docs", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+
+		files = append(files, File{
+			Dir:      strings.TrimPrefix(filepath.Dir(path), "scaffold"+string(os.PathSeparator)),
+			Name:     strings.TrimSuffix(d.Name(), ".tmpl"),
+			Contents: mustExecute(path, data, scaffold),
+		})
+		return nil
+	}); err != nil {
+		return
+	}
 	// static/*
 	if err = fs.WalkDir(scaffold, "scaffold/static", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
 		if d.IsDir() {
 			return nil
 		}
@@ -62,6 +83,9 @@ func SiteScaffold(pkg GoPackage, scaffold fs.FS) (files []File, err error) {
 	}
 	// service/*
 	if err = fs.WalkDir(scaffold, "scaffold/service", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
 		if d.IsDir() {
 			return nil
 		}
@@ -76,6 +100,9 @@ func SiteScaffold(pkg GoPackage, scaffold fs.FS) (files []File, err error) {
 	}
 	// page/
 	err = fs.WalkDir(scaffold, "scaffold/page", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
 		if d.IsDir() {
 			if path == "scaffold/page/name" {
 				return fs.SkipDir
