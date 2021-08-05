@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.com/rur/good.svg?token=ghq4t9FLdVA8tqkRUMoY&branch=main)](https://travis-ci.com/rur/good)
 
-# <img src="docs/readme_logo_2.svg" aria-label="Good"/>
+# <img src="docs/readme_logo.svg" alt="Good Web Scaffold"/>
 
 ## A pretty good web scaffold for Golang
 
