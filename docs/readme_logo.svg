@@ -5,7 +5,7 @@
   }
   @media (prefers-color-scheme: dark) {
       path, text {
-          fill: #CCC;
+          fill: #c9d1d9;
       }
   }
   .good-logo {
