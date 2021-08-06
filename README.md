@@ -10,15 +10,15 @@ Tools for embedding a web GUI in a Golang project.
 - Self contained server with basic dependencies
 - Embedded assets
 - Classic HTML template composition
-- No surprises
+- Pretty boring, no surprises
 
 (see [developer notes](#developer-notes))
 
 ### Overview
 
 The `good scaffold` command outputs files for a web server to a sub package of a
-Go module. The scaffold is geared towards building user consoles and admin tools that are
-integrated with Golang web services or daemons.
+Go module. The scaffold is geared towards user consoles and admin tools; integrated
+GUIs for a Golang web service or daemon.
 
 Top-level pages are added to the site using the `good page` command, which has a
 [starter template](#Starter-Template) feature to speed-up development. The scaffold package
@@ -104,7 +104,7 @@ HTML template composition has excellent support in Golang. The scaffold uses the
 [Treetop library](https://github.com/rur/treetop) to help organize templates and handlers,
 with the added benefit of fragment hot-swapping for enhanced interactivity.
 
-#### 5. No Surprises
+#### 5. Pretty boring, no surprises
 
 This scaffold is more of a workhorse than a unicorn; we embrace some practical
 limitations for the purpose of tight server-side integration.
