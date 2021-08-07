@@ -15,18 +15,19 @@ var (
 
 	// TODO: consider making the values regexp for validation purposes
 	knownKeys = map[string]bool{
-		"_ref":      true,
-		"_uri":      true,
-		"_default":  true,
-		"_doc":      true,
-		"_path":     true,
-		"_template": true,
-		"_handler":  true,
-		"_method":   true,
-		"_fragment": true,
-		"_partial":  true,
-		"_merge":    true,
-		"_includes": true,
+		"_ref":        true,
+		"_uri":        true,
+		"_entrypoint": true,
+		"_default":    true,
+		"_doc":        true,
+		"_path":       true,
+		"_template":   true,
+		"_handler":    true,
+		"_method":     true,
+		"_fragment":   true,
+		"_partial":    true,
+		"_merge":      true,
+		"_includes":   true,
 	}
 )
 
@@ -61,7 +62,7 @@ type RouteView struct {
 // a URI and golang package namespace
 type PageRoutes struct {
 	RouteView
-	URI string `toml:"_uri"`
+	EntryPoint string `toml:"_entrypoint"`
 }
 
 // Missing is a missing value in the TOML file tree, it pairs the route view data
@@ -83,8 +84,11 @@ func ProcessRoutemap(tree *toml.Tree, templatePath string) (routes PageRoutes, t
 	if err != nil {
 		return
 	}
-	if uri, ok := tree.Get("_uri").(string); ok {
-		routes.URI = uri
+	if uri, ok := tree.Get("_entrypoint").(string); ok {
+		routes.EntryPoint = uri
+	} else if uri, ok := tree.Get("_uri").(string); ok {
+		// legacy routemaps use '_uri' for this purpose
+		routes.EntryPoint = uri
 	}
 	templates = parser.missingTemplates
 	handlers = parser.missingHandlers

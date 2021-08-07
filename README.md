@@ -17,8 +17,8 @@ Tools for embedding a web GUI in a Golang project.
 ### Overview
 
 The `good scaffold` command outputs files for a web server to a sub package of a
-Go module. The scaffold is geared towards user consoles and admin tools; integrated
-GUIs for a Golang web service or daemon.
+Go module. The scaffold is geared towards integrated GUIs for Golang web services
+and daemons, like admin tools or a user console.
 
 Top-level pages are added to the site using the `good page` command, which has a
 [starter template](#Starter-Template) feature to speed-up development. The scaffold package
