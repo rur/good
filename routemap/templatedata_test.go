@@ -10,7 +10,7 @@ import (
 
 func TestTemplateDataFromRoutes(t *testing.T) {
 	def := PageRoutes{
-		URI: "/my-page",
+		EntryPoint: "/my-page",
 		RouteView: RouteView{
 			Ref:      "mypage",
 			Template: "page/mypage/templates/mypage.html.tmpl",
@@ -168,7 +168,7 @@ func TestTemplateDataFromRoutes(t *testing.T) {
 
 func TestTemplateDataFromRoutesValidation(t *testing.T) {
 	def := PageRoutes{
-		URI: "/my-page",
+		EntryPoint: "/my-page",
 		RouteView: RouteView{
 			Ref:      "mypage",
 			Template: "page/mypage/templates/mypage.html.tmpl",
@@ -205,7 +205,7 @@ func TestTemplateDataFromRoutesValidation(t *testing.T) {
 
 func TestTemplateDataFromRoutes_EmptyBlock(t *testing.T) {
 	def := PageRoutes{
-		URI: "/my-page",
+		EntryPoint: "/my-page",
 		RouteView: RouteView{
 			Ref:      "mypage",
 			Template: "page/mypage/templates/mypage.html.tmpl",

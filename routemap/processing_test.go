@@ -15,7 +15,7 @@ func TestProcessRoutemapBasic(t *testing.T) {
 	}
 
 	want := PageRoutes{
-		URI: "/example",
+		EntryPoint: "/example",
 		RouteView: RouteView{
 			Ref:      "example",
 			Doc:      "Base HTML template for example page",
