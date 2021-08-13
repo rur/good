@@ -17,7 +17,7 @@ rm -rf baseline
 
 go run . scaffold baseline/starter_test
 go run . starter baseline/starter_test/starter
-go run . page ./baseline/starter_test newpage --starter-template ./baseline/starter_test/starter
+go run . page ./baseline/starter_test newpage --starter ./baseline/starter_test/starter
 
 if [[ ! -z $(bash ./scripts/usedports.sh | grep 8000) ]]; then
   echo >&2 "Port 8000 appears to be in use, cannot run test"

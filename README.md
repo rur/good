@@ -75,7 +75,7 @@ Re-generate the route plumbing code for the portal settings page based on the
 Make a directory and populate it with code templates for a customized starter page
 that can be used with the 'good page' command like so.
 
-    $ good page ./portal mynewpage --starter-template ./portal/my-page-starter
+    $ good page ./portal mynewpage --starter ./portal/my-page-starter
 
 ## Developer Notes
 

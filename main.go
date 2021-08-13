@@ -47,7 +47,7 @@ Options
 	Print usage for scaffold command
 
 `
-	pageUsage = `usage: good page <site_pkg_rel> <page_name> [--starter-template <path>]
+	pageUsage = `usage: good page <site_pkg_rel> <page_name> [--starter <path>]
 
 Add a new page to an existing scaffold site.
 
@@ -61,7 +61,7 @@ Arguments
 Options
     -h
 	Print usage for page command
-    --starter-template <path>
+    --starter <dir path>
         Use specified directory as the starter template for the new page scaffold
 
 `
@@ -113,7 +113,7 @@ Example
     [...customize the files...]
 
     # create a new page using your starter
-    $ good page ./admin/site awesomenewpage --starter-template ./admin/utils/customstarter
+    $ good page ./admin/site awesomenewpage --starter ./admin/utils/customstarter
 
 Arguments
 	out_dir   a not-already-existing path where a folder will be created
@@ -180,7 +180,7 @@ func main() {
 			fmt.Println(pageUsage)
 			log.Fatalf("Missing required arguments")
 		}
-		starterTemplatePath := fArgs["--starter-template"]
+		starterTemplatePath := fArgs["--starter"]
 		fmt.Printf("Starter template %#v \n", starterTemplatePath)
 		pageCmd(pArgs[1], pArgs[2], starterTemplatePath)
 
@@ -287,7 +287,7 @@ func pageCmd(sitePkgRel, pageName, starterTemplatePath string) {
 		stat, err := fs.Stat(start, ".")
 		mustNot(err)
 		if !stat.IsDir() {
-			mustNot(fmt.Errorf("starter-template must be a directory, a file was found at %s", starterTemplatePath))
+			mustNot(fmt.Errorf("starter template must be a directory, a file was found at %s", starterTemplatePath))
 		}
 	} else {
 		start, err = fs.Sub(starter, "starter/default")
@@ -441,7 +441,7 @@ func routesCmd(pagePkgRel string) {
 	fmt.Printf("Updated routes.go for scaffold page %s!", pkg.ImportPath)
 }
 
-// starterCmd generates a page strter template that can be used with the 'good page x --starter-template ...' command
+// starterCmd generates a page strter template that can be used with the 'good page x --starter ...' command
 func starterCmd(dest string) {
 	start, err := fs.Sub(starter, "starter/default")
 	mustNot(err)
