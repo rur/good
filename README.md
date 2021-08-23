@@ -10,7 +10,7 @@ Tools for embedding a web GUI in a Golang project.
 - Self contained server with basic dependencies
 - Embedded assets
 - Classic HTML template composition
-- Pretty boring, no surprises
+- Pretty boring, avoid surprises
 
 (see [developer notes](#developer-notes))
 
@@ -30,7 +30,7 @@ is unobtrusive so that it can be embedded in the codebase of an existing system.
     $ cd ~/path/to/mygoproject
     [mygoproject]$ good scaffold ./myportal
     [mygoproject]$ go generate ./myportal/...
-    [mygoproject]$ go run ./myportal --port 8000
+    [mygoproject]$ go run ./myportal --dev --port 8000
 
 Visit localhost:8000 and take it from there.
 
@@ -43,13 +43,13 @@ to suit your needs.
 
 #### Good Scaffold \<site\>
 
-Create a new app at `./portal` relative to the current project.
+The example creates a new app at `./portal` relative to the current project.
 
     $ good scaffold ./portal
 
 #### Good Page \<site\> \<name\>
 
-Add a new 'settings' page to an existing scaffold path.
+The example adds a new 'settings' page to the existing `./portal` scaffold.
 
     $ good page ./portal settings
 
@@ -63,8 +63,8 @@ Utilities for site pages. For example, list the pages to stdout
 
 #### Good Routes \<page\>
 
-Re-generate the route plumbing code for the portal settings page based on the
-`./portal/page/settings/routemap.toml` file.
+Re-generate the route plumbing code for our `./protal` settings page. The tool will try to load
+a `./portal/page/settings/routemap.toml` file.
 
     $ good routes ./portal/page/settings
 
@@ -72,8 +72,8 @@ Re-generate the route plumbing code for the portal settings page based on the
 
     $ good starter ./portal/my-page-starter
 
-Make a directory and populate it with code templates for a customized starter page
-that can be used with the 'good page' command like so.
+Create a directory and populate it with code template files for a customized starter page.
+This can be used with the Good Page command like so.
 
     $ good page ./portal mynewpage --starter ./portal/my-page-starter
 
@@ -104,7 +104,7 @@ HTML template composition has excellent support in Golang. The scaffold uses the
 [Treetop library](https://github.com/rur/treetop) to help organize templates and handlers,
 with the added benefit of fragment hot-swapping for enhanced interactivity.
 
-#### 5. Pretty boring, no surprises
+#### 5. Pretty boring, avoid surprises
 
 This scaffold is more of a workhorse than a unicorn; we embrace some practical
 limitations for the purpose of tight server-side integration.
