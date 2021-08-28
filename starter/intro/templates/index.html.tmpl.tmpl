@@ -187,15 +187,16 @@
           <div class="row mt-5">
             <div class="col col-md-6 px-4 mb-5">
               <h4 class="mb-3"><strong>📈 next step,</strong> add a page</h4>
-              <pre class="bg-light p-3">
-$ good page [# .Namespace #] &lt;pagename&gt; --starter :bootstrap5/examples</pre
+              <pre class="bg-light p-3"><code>
+$ good page [# .Namespace #] first \
+    --starter :bootstrap5/examples
+              </code></pre
               >
               <p>
                 This command will create a page using the built-in
                 <em>bootstrap5</em> starter layout. This includes example
                 functionality to show how to get things done. Choose a
-                <code>&lt;pagename&gt;</code>
-                with lowercase alpha characters only.
+                page name with lowercase alpha characters only.
               </p>
 
               <h5 class="mt-4">Other layout starter options</h5>
@@ -204,6 +205,12 @@ $ good page [# .Namespace #] &lt;pagename&gt; --starter :bootstrap5/examples</pr
                 wish:
               </p>
               <ul>
+                <li>
+                  <code>:default</code> (<a href="#demo">demo</a>)
+                </li>
+                <li>
+                  <code>:intro</code> (<a href="#demo">demo</a>)
+                </li>
                 <li>
                   <code>:bootstrap5/examples</code> (<a href="#demo">demo</a>)
                 </li>
@@ -224,8 +231,9 @@ $ good page [# .Namespace #] &lt;pagename&gt; --starter :bootstrap5/examples</pr
               <pre
                 class="mt-2 b-5 bg-light p-4 mx-auto"
                 style="max-width: 750px"
-              >
-$ good pages delete ./portal/page/intro</pre
+              ><code>
+                $ good pages delete [# .Namespace #]/page/intro
+              </code></pre
               >
               <p>
                 Use the <code>-h</code> CLI flag for more details on commands &
