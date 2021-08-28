@@ -1,5 +1,11 @@
-_ref = "[# .Name #]"
+_ref = "index"
 _template = "[# .Templates #]/index.html.tmpl"
-_uri = "/"
+_entrypoint = "/"
 _path = "/"
 _handler = 'treetop.Noop'
+
+	[[diagram]]
+	_ref = "main-diagram"
+	_default = true
+	_handler = "treetop.Noop"
+	_template = "[# .Templates #]/diagram.svg"

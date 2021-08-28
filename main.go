@@ -69,7 +69,7 @@ Options
 
 		:default - a bare bones setup
 		:intro - the intro page with an introduction to the good scaffold
-		:bootstrap5/example - a working demo using Bootsrap v5.0 layout and components
+		:bootstrap5/examples - a working demo using Bootsrap v5.0 layout and components
 		:bootstrap5/layout - useful Bootsrap v5.0 app setup
 
 
