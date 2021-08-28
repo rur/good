@@ -62,7 +62,16 @@ Options
     -h
 	Print usage for page command
     --starter <dir path>
-        Use specified directory as the starter template for the new page scaffold
+        Use specified directory as the starter template for the new page scaffold.
+
+	There are a number of built-in page starters you can choose from. These are specified using
+	a single colon prefix. Here is the list of available build-ins you can try:
+
+		:default - a bare bones setup
+		:intro - the intro page with an introduction to the good scaffold
+		:bootstrap5/example - a working demo using Bootsrap v5.0 layout and components
+		:bootstrap5/layout - useful Bootsrap v5.0 app setup
+
 
 `
 	pagesUsage = `usage: good pages <site_pkg_rel>
@@ -282,16 +291,19 @@ func pageCmd(sitePkgRel, pageName, starterTemplatePath string) {
 	err = generate.ValidatePageLocation(filepath.Join(sitePkg.Dir, "page", pageName), scaffold)
 	mustNot(err)
 	var start fs.FS
-	if starterTemplatePath != "" {
+	if starterTemplatePath == "" {
+		start, err = fs.Sub(starter, "starter/default")
+		mustNot(err)
+	} else if starterTemplatePath[0] == ':' {
+		start, err = fs.Sub(starter, "starter/"+starterTemplatePath[1:])
+		mustNot(err)
+	} else {
 		start = os.DirFS(starterTemplatePath)
 		stat, err := fs.Stat(start, ".")
 		mustNot(err)
 		if !stat.IsDir() {
 			mustNot(fmt.Errorf("starter template must be a directory, a file was found at %s", starterTemplatePath))
 		}
-	} else {
-		start, err = fs.Sub(starter, "starter/default")
-		mustNot(err)
 	}
 	files, err := generate.PageScaffold(sitePkg, pageName, scaffold, start)
 	mustNot(err)

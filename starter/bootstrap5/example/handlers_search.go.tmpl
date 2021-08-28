@@ -1,0 +1,57 @@
+package [# .Name #]
+
+import (
+	"net/http"
+	"regexp"
+	"strings"
+
+	"[# .Namespace #]/service"
+	"github.com/rur/treetop"
+)
+
+// -------------------------
+// [# .Name #] Handlers
+// -------------------------
+
+type QuickSearchResult struct {
+	Link  string
+	Key   string
+	Title string
+}
+
+var nonAlpha = regexp.MustCompile(`[^\w]`)
+
+// Ref: quick-search-demo
+// Block: quick-search-menu
+// Method: GET
+// Doc: Show options for search query, as it is being typed (must be fast!)
+func quickSearchDemoHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data := struct {
+		RawQuery string
+		Results  []QuickSearchResult
+	}{
+		RawQuery: req.URL.Query().Get("query"),
+	}
+	// mock quick search implementation!
+	query := string(nonAlpha.ReplaceAll([]byte(strings.ToLower(data.RawQuery)), []byte{}))
+	options := []QuickSearchResult{{
+		Link:  "/[# .Name #]",
+		Title: "Datatable",
+		Key:   "datatable",
+	}, {
+		Link:  "/[# .Name #]/comments",
+		Title: "Comments",
+		Key:   "comments",
+	}, {
+		Link:  "/[# .Name #]/logs",
+		Title: "Log",
+		Key:   "log",
+	}}
+	for _, option := range options {
+		if strings.Contains(option.Key, query) {
+			data.Results = append(data.Results, option)
+		}
+	}
+
+	return data
+}

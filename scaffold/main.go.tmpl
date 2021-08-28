@@ -52,9 +52,7 @@ func init() {
 			ViewExecutor: &treetop.FileSystemExecutor{
 				// this assumes you are runing the dev server from your project root
 				FS: http.Dir("[# .SiteDirRel #]"),
-				KeyedString: map[string]string{
-					"::empty::": "",
-				},
+				KeyedString: page.KeyedTemplates,
 			},
 		}
 	} else {
@@ -63,9 +61,7 @@ func init() {
 		staticFS = http.FS(dir)
 		exec = &treetop.FileSystemExecutor{
 			FS: http.FS(templates),
-			KeyedString: map[string]string{
-				"::empty::": "",
-			},
+      KeyedString: page.KeyedTemplates,
 		}
 	}
 }

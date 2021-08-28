@@ -1,0 +1,45 @@
+package [# .Name #]
+
+import (
+	"fmt"
+	"net/http"
+	"strconv"
+
+	"[# .Namespace #]/service"
+	"github.com/rur/treetop"
+)
+
+// -------------------------
+// [# .Name #] Handlers
+// -------------------------
+
+// Ref: datatable
+// Block: subsection
+func datatableHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	return struct {
+		SubsectionTabs interface{}
+		MainTable      interface{}
+	}{
+		SubsectionTabs: rsp.HandleSubView("subsection-tabs", req),
+		MainTable:      rsp.HandleSubView("main-table", req),
+	}
+}
+
+// Ref: expanding-datatable
+// Block: main-table
+// Method: GET
+// Doc: table capable of being dynamically expanded
+func expandingDatatableHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data := struct {
+		Rows     []DataTableRow
+		MoreLink string
+	}{
+		Rows: mockDatatableItems,
+	}
+	offset, _ := strconv.Atoi(req.URL.Query().Get("table-offset"))
+	// hardcoded limit just for demonstration purposes
+	if offset < 20 {
+		data.MoreLink = fmt.Sprintf("/[# .Name #]/datatable/more?table-offset=%d", offset+len(mockDatatableItems))
+	}
+	return data
+}

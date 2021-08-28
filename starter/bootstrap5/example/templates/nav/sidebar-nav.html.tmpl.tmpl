@@ -1,0 +1,51 @@
+<nav id="nav" class="sidebar p-3">
+  <div class="dropdown">
+    <div
+      class="d-flex align-items-center dropdown-toggle"
+      style="cursor: pointer"
+      id="dropdownUser1"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      <div class="flex-shrink-0 pe-1">
+        <img alt="" width="32" height="32" class="rounded-circle bg-danger" />
+      </div>
+      <div class="flex-grow-1 ms-2" style="width: 120px">
+        <div style="overflow: hidden; text-overflow: ellipsis">
+          <strong>{{ .User.Name }}</strong>
+        </div>
+        <div style="overflow: hidden; text-overflow: ellipsis" class="small">
+          {{ .User.Email }}
+        </div>
+      </div>
+    </div>
+    <hr />
+    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser1">
+      <li><a class="dropdown-item" href="#">Settings</a></li>
+      <li><a class="dropdown-item" href="#">Profile</a></li>
+      <li><hr class="dropdown-divider" /></li>
+      <li><a class="dropdown-item" href="#">sign out</a></li>
+    </ul>
+  </div>
+
+  {{ template "nav-links" .NavLinks }}
+
+  <div class="footer px-3 py-4">
+    <hr />
+    <div class="text-center">
+      <a href="/" class="mb-2 link-dark text-decoration-none">
+        <span class="fs-5 fw-light"
+          >☑Good<span class="fw-semibold color-purple"> Bootstrap5</span></span
+        >
+      </a>
+    </div>
+    <div class="text-center small text-secondary px-3">
+      <a
+        treetop
+        href="/[# .Name #]/about"
+        class="btn btn-link btn-sm text-decoration-none"
+        >about</a
+      >
+    </div>
+  </div>
+</nav>

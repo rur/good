@@ -1,0 +1,166 @@
+<script>
+  window.TREETOP_CONFIG = {
+    /* these directives are applied _after_ a new element has been inserted to the DOM */
+    mountAttr: {
+      autofocus: (elt) => {
+        setTimeout(() => elt.focus(), 0);
+      },
+      "data-good-modal": (elt) => {
+        // show the new modal unless the [aria-hidden] attribute is true
+        if (elt.getAttribute("aria-hidden") !== "true") {
+          const modal = new bootstrap.Modal(elt);
+          modal.show();
+        }
+      },
+      "data-good-long-polling": (elt) => {
+        startLongPolling(elt);
+      },
+      "data-good-quick-search": (elt) => {
+        // use Bootstrap dropdown
+        const drop = new bootstrap.Dropdown(elt);
+        elt.addEventListener("keyup", (evt) => {
+          if (evt.key === "Enter") {
+            const menu = document.getElementById("quick-search-menu");
+            if (!menu) return;
+            const item = menu.querySelector("[aria-current=true]");
+            if (!item || typeof item.click !== "function") return;
+            item.click();
+          }
+        });
+        elt.addEventListener("input", (evt) => {
+          drop.show();
+          treetop.submit(elt.form);
+        });
+      },
+      "data-ctrl-slash-focus": (elt) => {
+        elt.__focusHandler = (evt) => {
+          // this would test for whichever key is 40 (down arrow) and the ctrl key at the same time
+          if (evt.ctrlKey && evt.key === "/") {
+            const dropper = bootstrap.Dropdown.getInstance(elt);
+            if (dropper) {
+              dropper.toggle();
+            }
+
+            elt.focus();
+            elt.select();
+          }
+        };
+        document.addEventListener("keyup", elt.__focusHandler, false);
+      },
+    },
+
+    /* directives applied _after_ an element has been removed from the DOM */
+    unmountAttr: {
+      "data-good-modal": (elt) => {
+        const modal = bootstrap.Modal.getInstance(elt);
+        if (modal !== null && modal._isShown) {
+          modal.hide();
+          modal.dispose();
+        }
+      },
+      "data-good-quick-search": (elt) => {
+        const dd = bootstrap.Dropdown.getInstance(elt);
+        if (dd !== null) {
+          dd.hide();
+          dd.dispose();
+        }
+      },
+      "data-ctrl-slash-focus": (elt) => {
+        if (typeof elt.__focusHandler === "function") {
+          document.removeEventListener("keyup", elt.__focusHandler, false);
+        }
+      },
+    },
+    /* custom element merge functions */
+    merge: {
+      "table-append": (nue, table) => {
+        // merge the new tbody(s) into the old table and replace the old footer
+        const newBody = nue.getElementsByTagName("tbody");
+        let newFooter = nue.getElementsByTagName("tfoot")[0];
+        for (let i = table.children.length - 1; i >= 0; i--) {
+          let child = table.children[i];
+          if (newFooter && child.tagName === "TFOOT") {
+            treetop.mount(newFooter, child);
+            newFooter = undefined;
+            continue;
+          }
+          if (child.tagName === "TBODY") {
+            const insertionPoint = child.nextElementSibling;
+            for (let j = 0; j < newBody.length; j++) {
+              if (insertionPoint) {
+                treetop.mountBefore(newBody[j], insertionPoint);
+              } else {
+                treetop.mountChild(newBody[j], table);
+              }
+            }
+            break;
+          }
+        }
+      },
+      "insert-at-head": (nue, head) => {
+        // Kinda like a linked list, insert the new element above the current
+        // head and steal it's ID attribute
+        const id = head.id;
+        head.id = "";
+        nue.id = id; // this becomes the head for future inserts
+        treetop.mountBefore(nue, head);
+      },
+    },
+    onNetworkError: (xhr) => {
+      alert("Check connection");
+    },
+    onUnsupported: (xhr) => {
+      alert("Unsupported Fragment Request");
+    },
+  };
+</script>
+
+<!-- Bootstrap Bundle with Popper -->
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+  crossorigin="anonymous"
+  defer
+></script>
+<script defer src="/js/treetop.js"></script>
+
+<script>
+  /**
+   * Long Polling vanilla JS component
+   */
+  const startLongPolling = (() => {
+    // setup
+    let pollCount = 0;
+    const MAX_POLLS = 10; // stop polling after this many iterations
+
+    // directive
+    return (elt) => {
+      const enabledCtrl = document.getElementById("pollingEnabled");
+      const intervalCtrl = document.getElementById("polling-interval");
+
+      const queryURL = elt.getAttribute("data-good-long-polling");
+      if (queryURL.indexOf("?") === -1) {
+        throw Error(
+          `Invalid polling url, expecting a path with a query string got '${queryURL}'`
+        );
+      }
+      function poll() {
+        pollCount++;
+        enabledCtrl.removeEventListener("change", poll);
+        let interval = intervalCtrl.valueAsNumber;
+        treetop.request("GET", queryURL + "&delay=" + interval);
+        elt.textContent = `update in ${interval} seconds (${pollCount} of ${MAX_POLLS})`;
+      }
+
+      // check if polling is enabled
+      if (enabledCtrl.checked && pollCount < MAX_POLLS) {
+        poll();
+      } else {
+        pollCount = 0; // reset
+        enabledCtrl.checked = false;
+        elt.textContent = "polling disabled!";
+        enabledCtrl.addEventListener("change", poll);
+      }
+    };
+  })();
+</script>
