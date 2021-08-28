@@ -20,12 +20,12 @@ Tools for embedding a web GUI in a Golang project.
 ### Overview
 
 The `good scaffold` command outputs files for a web server to a sub package of a
-Go module. The scaffold is geared towards integrated GUIs for Golang web services
-and daemons, like admin tools or a user console.
+Go module. The GUI scaffold is geared towards Golang web services
+or daemons, for building web consoles and admin tools.
 
 Top-level pages are added using the `good page` command, which has a
 [starter template](#starter-templates) feature to speed-up development. The scaffold package
-is unobtrusive so that it can be embedded in the codebase of an existing system.
+is unobtrusive so that it can be embedded in an existing codebase without difficulty.
 
 #### TLDR; quickstart
 
@@ -46,13 +46,13 @@ to suit your needs.
 
 #### Good Scaffold \<site\>
 
-The example creates a new app at `./portal` relative to the current project.
+The snippet creates a new app at `./portal`, relative to the current Go module.
 
     $ good scaffold ./portal
 
 #### Good Page \<site\> \<name\>
 
-The example adds a new 'settings' page to the existing `./portal` scaffold.
+Adds a new 'settings' page to our `./portal` example.
 
     $ good page ./portal settings --starter :bootstrap5/layout
 
@@ -93,7 +93,7 @@ approachable for Backend devs.
 * Code generation with [TOML](https://toml.io/en/) config:
   * Make full use of the compiler
   * Unify config for routing, templates and dispatch
-* Minimizing logic outside of Golang
+* Minimize logic outside of Golang
   * Server-side rendering
   * Use existing project code directly
 
