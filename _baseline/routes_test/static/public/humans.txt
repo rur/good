@@ -1,0 +1,1 @@
+Site generated using the Good Scaffold tool https://github.com/rur/good
