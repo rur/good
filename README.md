@@ -13,7 +13,7 @@ Tools for embedding a web GUI in a Golang project.
 - Pretty boring, avoid surprises
 
 [ [CLI Overview](#cli-overview) ~
-[Building Pages](#building-pages) ~
+[Building GUIs](#building-guis) ~
 [Developer Notes](#developer-notes) ~
 [Starter Templates](#starter-templates)]
 
@@ -79,29 +79,31 @@ This can be used with the Good Page command like so.
 
     $ good page ./portal mynewpage --starter ./portal/my-page-starter
 
-## Building Pages
-> We plan to add a web console in v2
+## Building GUIs
+
+> We'll add a web console in the next version
 >
->_– Opimistic BE Developer_
+>_– Backend Developer_
 
-With this scaffolding tool, we hope to make GUI development more enjoyable and
-approachable for Backend devs.
+Our mission is to make GUI development more enjoyable and
+approachable for backend developers in the following ways:
 
-* Quick-start boilerplate for dashboard layouts:
-  * Get set up with a suitable CSS framework
-  * Functioning examples, share starter templates
+* Include boilerplate templates for a server console:
+  * Use a suitable CSS tookit
+  * Functioning examples with the starter templates
 * Code generation with [TOML](https://toml.io/en/) config:
-  * Make full use of the compiler
-  * Unify config for routing, templates and dispatch
+  * Generate 'plumbing' code
+  * Make use of the compiler
 * Minimize logic outside of Golang
   * Server-side rendering
-  * Use existing project code directly
+  * Use existing Golang code directly
 
-### TOML Routemaps
+### TOML Routemap Layouts
+
 Routemaps combine code generation with a familiar approach to HTML templating.
 The `good routes` command reads this config and generates plumbing code.
 
-This sample has two endpoints; dive into the scaffold to see more.
+This sample has two endpoints; try out the scaffold to see more examples.
 
 ```TOML
 _ref = "base"
