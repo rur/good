@@ -1,23 +1,63 @@
-_ref = "newpage"
-_template = "page/templates/base.html.tmpl"
+_ref = "base"
+_handler = "hlp.BindEnv(bindResources(baseHandler))"
+_template = "page/newpage/templates/base.html.tmpl"
 _doc = "Base HTML template for newpage page"
 _entrypoint = "/newpage"
-_handler = 'hlp.BindEnv(bindResources(newpageHandler))'
 
     [[nav]]
-    _ref = "newpage-nav"
+    _ref = "sidebar-nav"
+    _handler = "hlp.BindEnv(bindResources(sidebarNavHandler))"
     _default = true
+    _template = "page/newpage/templates/nav/sidebar-nav.html.tmpl"
+
+        [[nav.nav-links]]
+        _ref = "sidebar-nav-links"
+        _handler = "hlp.BindEnv(bindResources(sidebarNavLinksHandler))"
+        _default = true
+        _template = "page/newpage/templates/nav/nav-link/sidebar-nav-links.html.tmpl"
 
     [[content]]
-    _ref = "newpage-landing"
+    _ref = "content-wrapper"
     _default = true
+    _template = "page/newpage/templates/content/wrapper.html.tmpl"
+    _handler = "hlp.BindEnv(bindResources(contentWrapperHandler))"
     _doc = "Landing content view for the newpage page URI"
     _method = "GET"
-    _path = "/newpage"
+
+        [[content.subsection]]
+        _ref = "landing"
+        _default = true
+        _partial = true
+        _template = "page/newpage/templates/content/subsection/landing.html.tmpl"
+        _handler = "hlp.BindEnv(bindResources(landingHandler))"
+        _path = "/newpage"
+        _method = "GET"
+
+            [[content.subsection.subsection-tabs]]
+            _ref = "landing-tabs"
+            _default = true
+            _template = "page/newpage/templates/content/subsection/tabs.html.tmpl"
+            _handler = 'treetop.Constant("landing")'
 
     [[scripts]]
-    _ref = "site-scripts"
+    _ref = "page-scripts"
     _default = true
-    _doc = "Include sitewide script footer"
-    _template = "page/templates/scripts.html.tmpl"
+    _doc = "Inline scripts for the page"
+    _template = "page/newpage/templates/scripts.html.tmpl"
+    _handler = "treetop.Noop"
+
+    [[styles]]
+    _ref = "page-styles"
+    _default = true
+    _doc = "Custom inline styles for this page"
+    _template = "page/newpage/templates/styles.html.tmpl"
+    _handler = "treetop.Noop"
+
+    [[modal]]
+    _ref = "example-modal"
+    _fragment = true
+    _path = "/newpage/modal"
+    _method = "GET"
+    _template = "page/newpage/templates/modal/example-modal.html.tmpl"
+    _doc = "An example of an endpoint that returns a page modal"
     _handler = "treetop.Noop"

@@ -1,0 +1,30 @@
+<ul class="nav nav-pills">
+  {{ if eq . "landing" }}
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page">Landing</a>
+    </li>
+  {{ else }}
+    <li class="nav-item">
+      <a class="nav-link" href="/newpage">Landing</a>
+    </li>
+  {{ end }}
+  <!-- EDITME: Add your own tabs or remove tabs entirely to change the layout if you wish -->
+  {{ if eq . "tab1" }}
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page">Tab 1</a>
+    </li>
+  {{ else }}
+    <li class="nav-item">
+      <a class="nav-link" href="#tab1">Tab 1</a>
+    </li>
+  {{ end }}
+  {{ if eq . "tab2" }}
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page">Tab 2</a>
+    </li>
+  {{ else }}
+    <li class="nav-item">
+      <a class="nav-link" href="#tab2">Tab 2</a>
+    </li>
+  {{ end }}
+</ul>
