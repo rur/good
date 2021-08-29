@@ -292,7 +292,7 @@ func pageCmd(sitePkgRel, pageName, starterTemplatePath string) {
 	mustNot(err)
 	var start fs.FS
 	if starterTemplatePath == "" {
-		start, err = fs.Sub(starter, "starter/default")
+		start, err = fs.Sub(starter, "starter/bootstrap5/layout")
 		mustNot(err)
 	} else if starterTemplatePath[0] == ':' {
 		start, err = fs.Sub(starter, "starter/"+starterTemplatePath[1:])

@@ -1,0 +1,22 @@
+package [# .Name #]
+
+import (
+	"net/http"
+
+	"github.com/rur/treetop"
+	"[# .Namespace #]/service"
+)
+
+// -------------------------
+// [# .Name #] Handlers
+// -------------------------
+
+// Ref: landing
+// Block: subsection
+func landingHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	return struct {
+		SubsectionTabs interface{}
+	}{
+		SubsectionTabs: rsp.HandleSubView("subsection-tabs", req),
+	}
+}
