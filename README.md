@@ -88,22 +88,23 @@ This can be used with the Good Page command like so.
 Our mission is to make GUI development more enjoyable and
 approachable for backend developers in the following ways:
 
-* Include boilerplate templates for a server console:
-  * Use a suitable CSS tookit
-  * Functioning examples with the starter templates
+* Include boilerplate quick-start templates:
+  * Integrate a suitable CSS tookit
+  * Plenty of functioning examples (WIP)
 * Code generation with [TOML](https://toml.io/en/) config:
-  * Generate 'plumbing' code
-  * Make use of the compiler
+  * Generate the 'plumbing' code
+  * Make full use of the compiler
 * Minimize logic outside of Golang
   * Server-side rendering
-  * Use existing Golang code directly
+  * Use existing project code directly
 
 ### TOML Routemap Layouts
 
 Routemaps combine code generation with a familiar approach to HTML templating.
-The `good routes` command reads this config and generates plumbing code.
+The `good routes` command reads the config and generates the plumbing code for
+HTTP routing and page template inheritance.
 
-This sample has two endpoints; try out the scaffold to see more examples.
+This sample config has two endpoints. To learn more, [try the scaffold](#tldr-quickstart) and explore some examples.
 
 ```TOML
 _ref = "base"
