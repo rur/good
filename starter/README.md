@@ -16,7 +16,7 @@ file system.
 
 ## Available Templates
 
-### Basic
+### Basic (default)
 
 A good staring point when you want to build a custom page, or use a specific GUI
 toolkit.
