@@ -10,7 +10,7 @@ Tools for embedding a web GUI in a Golang project.
 - Self contained server with basic dependencies
 - Embedded assets
 - Classic HTML template composition
-- Boring tech, less surprises
+- Boring tech, fewer surprises
 
 [ [CLI Overview](#cli-overview) ~
 [Building GUIs](#building-guis) ~
@@ -151,7 +151,7 @@ HTML template composition has excellent support in Golang. Our scaffold uses the
 [Treetop library](https://github.com/rur/treetop) to help organize templates and handlers,
 with the added benefit of fragment hot-swapping for enhanced interactivity.
 
-#### 5. Boring tech, less surprises
+#### 5. Boring tech, fewer surprises
 
 The scaffold is more of a workhorse than a unicorn; we embrace some practical
 limitations for the purpose of tight server-side integration.
