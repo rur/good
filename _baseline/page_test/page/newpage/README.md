@@ -1,20 +1,13 @@
-# Bootstrap v5 Layout
+# Page `newpage`
 
-### Generated for page `newpage`
+This is a page within the `github.com/rur/good/baseline/page_test` HTML web app.
 
-This page includes a generic [Bootstramp v5](https://getbootstrap.com/docs/5.0) web app layout
-to help you get started with your new page!
-
----
-
-### Page Files:
+### Key Page Files:
 
 - **routemap.toml** is the configuration of all page endpoints
 - **routes.go** is generated from the route map config
 - **resources.go** loads request specific resources for handlers
 - **handlers.go** private request handlers
-- **handlers_landing.go** handlers for the initial landing content page
 - **templates/\*\*.html.tmpl** page templates
 
-Refer to the [Page Routemap Docs](../../docs/ROUTEMAP.md) for guidelines on understanding the
-page endpoint configuration.
+Refer to the [Page Routemap Docs](../../docs/ROUTEMAP.md) for guidelines.

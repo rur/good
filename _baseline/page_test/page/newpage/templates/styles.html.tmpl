@@ -1,69 +1,41 @@
-<!-- Bootstrap CSS -->
-<link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-  crossorigin="anonymous"
-/>
-
+<!-- inline page CSS here -->
 <style>
-  hr {
-    opacity: 0.1;
+
+  /* DEMO CSS Start */
+   .block {
+    border: 1px solid gray;
+    padding: 2rem 1rem 1rem;
+    position: relative;
+    margin-bottom: 1em;
   }
 
-  .sidebar {
-    width: 230px;
-    height: 100%;
-    position: fixed;
-    z-index: 100;
-    border-right: 1px solid #eef1f7;
-  }
-
-  .sidebar .footer {
+  .block::before {
+    content: "block";
     position: absolute;
-    bottom: 0;
+    background-color: gray;
+    color: white;
+    top: 0;
     left: 0;
-    right: 0;
+    padding: 3px 10px;
   }
 
-  .content {
-    margin-left: 230px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    height: 0px;
-    overflow-y: auto;
+  .block-partial {
+    border-color: green;
+  }
+  .block-partial::before {
+    content: "partial";
+    background-color: green;
+    color: white;
   }
 
-  /* SIDEBAR CSS */
+  .block-fragment {
+    border-color: purple;
+  }
+  .block-fragment::before {
+    content: "fragment";
+    background-color: purple;
+    color: white;
+  }
+  /* DEMO CSS End */
 
-  body {
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-  }
-
-  html {
-    height: -webkit-fill-available;
-  }
-
-  main {
-    display: flex;
-    flex-wrap: nowrap;
-    height: 100vh;
-    height: -webkit-fill-available;
-    max-height: 100vh;
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-
-  .dropdown-toggle {
-    outline: 0;
-  }
-
-  .fw-semibold {
-    font-weight: 600;
-  }
-  .lh-tight {
-    line-height: 1.25;
-  }
 </style>

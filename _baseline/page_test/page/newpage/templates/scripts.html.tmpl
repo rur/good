@@ -1,28 +1,20 @@
+<!-- inline page JS and script imports here -->
+
 <script>
+  /*
+   * see https://github.com/rur/treetop-client#initialization for details
+   *
+   * NOTE: You can remove all this stuff if you don't intend to use
+   *       Treetop fragment requests on your page
+   */
   window.TREETOP_CONFIG = {
-    /* these directives are applied _after_ a new element has been inserted to the DOM */
-    mountAttr: {
-      "data-good-modal": (elt) => {
-        const modal = new bootstrap.Modal(elt);
-        // show the new modal unless the [aria-hidden] attribute is true
-        if (elt.getAttribute("aria-hidden") !== "true") {
-          modal.show();
-        }
-      },
-    },
+    // these directives are applied _after_ a new element has been inserted to the DOM
+    mountAttr: {},
 
-    /* directives applied _after_ an element has been removed from the DOM */
-    unmountAttr: {
-      "data-good-modal": (elt) => {
-        const modal = bootstrap.Modal.getInstance(elt);
-        if (modal !== null && modal._isShown) {
-          modal.hide();
-          modal.dispose();
-        }
-      },
-    },
+    // directives applied _after_ an element has been removed from the DOM
+    unmountAttr: {},
 
-    /* custom element merge functions */
+    // custom element merge functions
     merge: {},
     onNetworkError: (xhr) => {
       alert("Check connection");
@@ -33,11 +25,4 @@
   };
 </script>
 
-<!-- Bootstrap Bundle with Popper -->
-<script
-  src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-  crossorigin="anonymous"
-  defer
-></script>
 <script defer src="/js/treetop.js"></script>

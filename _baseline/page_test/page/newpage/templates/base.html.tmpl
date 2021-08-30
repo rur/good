@@ -6,22 +6,11 @@
 
     {{ template "styles" .Styles }}
 
-
     <title>{{ .PageTitle }}</title>
   </head>
   <body>
-    <div>
-      {{ template "nav" .Nav }}
-      <main class="content d-flex flex-column flex-shrink-0 p-3 bg-light">
-        {{ template "content" .Content }}
-      </main>
-    </div>
-
-    {{ block "modal" .Modal }}
-      <div id="modal" aria-hidden="true" class="d-none"></div>
-    {{ end }}
-
+    {{ template "nav" .Nav }}
+    {{ template "content" .Content }}
     {{ template "scripts" .Scripts }}
-
   </body>
 </html>

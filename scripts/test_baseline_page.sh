@@ -33,10 +33,13 @@ function killserver() {
 trap killserver EXIT
 sleep 1 # plenty of time to start up
 
+rm -rf _test_output
+mkdir _test_output
+
 echo
-curl --fail http://localhost:8000/intro
+curl --fail http://localhost:8000/intro > _test_output/1.html
 echo
-curl --fail http://localhost:8000/newpage
+curl --fail http://localhost:8000/newpage > _test_output/2.html
 
 echo "---- Feched intro and newpage page successfully ---"
 
