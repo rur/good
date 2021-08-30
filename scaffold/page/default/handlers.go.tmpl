@@ -1,0 +1,18 @@
+package [# .Name #]
+
+import (
+	"net/http"
+
+	"github.com/rur/treetop"
+	"[# .Namespace #]/service"
+)
+
+// exampleHandler demonstrates a handler with page resources and the site environment
+func exampleHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	return struct {
+		Description string
+	}{
+		Description: "Example of a handler, generated for the [# .Name #] page",
+	}
+}
+

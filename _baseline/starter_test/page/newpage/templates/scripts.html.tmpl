@@ -1,0 +1,28 @@
+<!-- inline page JS and script imports here -->
+
+<script>
+  /*
+   * see https://github.com/rur/treetop-client#initialization for details
+   *
+   * NOTE: You can remove all this stuff if you don't intend to use
+   *       Treetop fragment requests on your page
+   */
+  window.TREETOP_CONFIG = {
+    // these directives are applied _after_ a new element has been inserted to the DOM
+    mountAttr: {},
+
+    // directives applied _after_ an element has been removed from the DOM
+    unmountAttr: {},
+
+    // custom element merge functions
+    merge: {},
+    onNetworkError: (xhr) => {
+      alert("Check connection");
+    },
+    onUnsupported: (xhr) => {
+      alert("Unsupported Fragment Request");
+    },
+  };
+</script>
+
+<script defer src="/js/treetop.js"></script>

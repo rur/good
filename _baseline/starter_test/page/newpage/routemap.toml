@@ -1,23 +1,30 @@
 _ref = "newpage"
-_template = "page/templates/base.html.tmpl"
 _doc = "Base HTML template for newpage page"
 _entrypoint = "/newpage"
-_handler = 'hlp.BindEnv(bindResources(newpageHandler))'
+_template = "page/newpage/templates/base.html.tmpl"
+_handler = 'hlp.BindEnv(bindResources(baseHandler))'
 
     [[nav]]
-    _ref = "newpage-nav"
+    _ref = "page-nav"
     _default = true
 
     [[content]]
-    _ref = "newpage-landing"
+    _ref = "page-landing"
     _default = true
     _doc = "Landing content view for the newpage page URI"
     _method = "GET"
     _path = "/newpage"
 
+    [[styles]]
+    _ref = "site-styles"
+    _default = true
+    _doc = "Include page styles in document header"
+    _template = "page/newpage/templates/styles.html.tmpl"
+    _handler = "treetop.Noop"
+
     [[scripts]]
     _ref = "site-scripts"
     _default = true
-    _doc = "Include sitewide script footer"
-    _template = "page/templates/scripts.html.tmpl"
+    _doc = "Include page scripts"
+    _template = "page/newpage/templates/scripts.html.tmpl"
     _handler = "treetop.Noop"

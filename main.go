@@ -457,9 +457,9 @@ func routesCmd(pagePkgRel string) {
 
 // starterCmd generates a page strter template that can be used with the 'good page x --starter ...' command
 func starterCmd(dest string) {
-	start, err := fs.Sub(starter, "starter/default")
+	start, err := fs.Sub(starter, "starter/basic")
 	mustNot(err)
-	files, err := generate.StarterScaffold(dest, start)
+	files, err := generate.StarterScaffold(dest, scaffold, start)
 	mustNot(err)
 	err = generate.FlushFiles(".", files)
 	mustNot(err)
