@@ -216,24 +216,24 @@ View `_ref: "first-content"` has a further sub block of `"sub-content"`.
 #### TOML Version
 
 ```TOML
-_ref: "mypage"
-_template: "some/template.html"
-_handler: "someHandlerFunc"
+_ref = "mypage"
+_template = "some/template.html"
+_handler = "someHandlerFunc"
 
-  [content]
-  _ref: "first-content"
-  _template: "content/first.html"
-  _handler: "firstContentHandler"
+  [[content]]
+  _ref = "first-content"
+  _template = "content/first.html"
+  _handler = "firstContentHandler"
 
-    [content.sub-content]
-    _ref: "nested-content"
-    _template: "content/nested.html"
-    _handler: "nestedContentHandler"
+    [[content.sub-content]]
+    _ref = "nested-content"
+    _template = "content/nested.html"
+    _handler = "nestedContentHandler"
 
-  [content]
-  _ref: "second-content"
-  _template: "content/seconds.html"
-  _handler: "secondContentHandler"
+  [[content]]
+  _ref = "second-content"
+  _template = "content/seconds.html"
+  _handler = "secondContentHandler"
 
 ```
 

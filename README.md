@@ -111,13 +111,13 @@ _ref = "base"
 _template = "/templates/base.html.tmpl"
 _handler = "baseHandler"
 
-  [content]
+  [[content]]
   _ref = "main-content"
   _template = "/templates/content/main.html.tmpl"
   _handler = "mainContentHandler"
   _path = "/example"
 
-  [content]
+  [[content]]
   _ref = "other-content"
   _template = "/templates/content/other.html.tmpl"
   _handler = "otherContentHandler"
