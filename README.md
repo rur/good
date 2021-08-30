@@ -159,4 +159,7 @@ Take care to judge the limitations for yourself and decide what is right for you
 
 ## Starter Templates
 
-[TODO] Docs
+A starter template is folder containing template files used by the page code generator to set up a new page.
+The `good page` command can read the boilerpate from a local folder or from the built-in options.
+
+See the [README](starter/README.md) in the starter folder to learn what built-in options are available.
