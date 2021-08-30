@@ -81,7 +81,7 @@ This can be used with the Good Page command like so.
 
 ## Building GUIs
 
-> We'll add a web console in the next version
+> We'll add a web console in the _next_ version
 >
 >_– Backend Developer_
 
@@ -92,11 +92,11 @@ approachable for backend developers in the following ways:
   * Integrate a suitable CSS tookit
   * Plenty of functioning examples (WIP)
 * Code generation with [TOML](https://toml.io/en/) config:
-  * Generate the 'plumbing' code
-  * Make full use of the compiler
+  * Generate static 'plumbing' code
+  * Take advantage of the compiler
 * Minimize logic outside of Golang
   * Server-side rendering
-  * Use existing project code directly
+  * Existing project code can be utilized directly
 
 ### TOML Routemap Layouts
 
