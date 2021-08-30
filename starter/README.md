@@ -1,24 +1,22 @@
 # Good Starter
 
-Built-in boilerplate page setup templates.
+Built-in page boilerplate templates
 
 ## Usage
 
-These templates can be used with the `good page` command like so
+These templates should be used with the `good page` command like so
 
 ```bash
 good page ./my_site newpagename --starter :bootstrap5/layout
 ```
 
-The leading colon ':' character tells the tool to look at the embedded
-starter templates.
+The leading colon ':' character tells the tool to look at the embedded templates.
 
 ## Available Templates
 
 ### Basic (default)
 
-A good staring point when you want to build a custom page, or use a specific GUI
-toolkit.
+A good staring point when you want to build a custom layout.
 
 ```
 ... --starter :basic
@@ -26,8 +24,8 @@ toolkit.
 
 ### Bootstrap v5
 
-The standard Bootstrap toolkit is a great choice for a backend dashboard,
-it is mature and well documented. You have a few setups to choose from:
+The [Bootstrap toolkit](https://getbootstrap.com/docs/5.0) is a great choice for a backend dashboard,
+it is mature and well documented. You have a few different setups to choose from:
 
 * `:bootstrap5/layout` A robust layout for dashboards, built using the Bootstrap toolkit.
 * `:bootstrap5/examples` A set of functioning demo apps using the BSv5 layout
@@ -41,7 +39,7 @@ it is mature and well documented. You have a few setups to choose from:
 
 ### Info
 
-The introduction page created for each new scaffold.
+The introduction that is the default landing page for each new scaffold.
 
 ```
 ... --starter :intro
