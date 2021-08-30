@@ -1,6 +1,6 @@
-<div id="[# .Block #]"[# if .Merge #] treetop-merge="[# .Merge #]"[# end #]>
-    [# if .Fragment #]Fragment view named [#.Name#]
-    [#- else #]Partial view named [#.Name#][# end #]
+<div id="[# .Block #]"[# if .Merge #] treetop-merge="[# .Merge #]"[# end #] class="block [# if .Fragment #]block-fragment[# end #][# if .Partial #]block-partial[# end #]">
+    <code>[#.Name#]</code>
+
     [#- range $index, $block := .Blocks #]
     <h3>Block [# $block.Name #]</h3>
     [#- if $block.Views #]

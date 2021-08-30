@@ -1,0 +1,30 @@
+_ref = "[# .Name #]"
+_doc = "Base HTML template for [# .Name #] page"
+_entrypoint = "/[# .Name #]"
+_template = "[# .Templates #]/base.html.tmpl"
+_handler = 'hlp.BindEnv(bindResources(baseHandler))'
+
+    [[nav]]
+    _ref = "page-nav"
+    _default = true
+
+    [[content]]
+    _ref = "page-landing"
+    _default = true
+    _doc = "Landing content view for the [# .Name #] page URI"
+    _method = "GET"
+    _path = "/[# .Name #]"
+
+    [[styles]]
+    _ref = "site-styles"
+    _default = true
+    _doc = "Include page styles in document header"
+    _template = "[# .Templates #]/styles.html.tmpl"
+    _handler = "treetop.Noop"
+
+    [[scripts]]
+    _ref = "site-scripts"
+    _default = true
+    _doc = "Include page scripts"
+    _template = "[# .Templates #]/scripts.html.tmpl"
+    _handler = "treetop.Noop"

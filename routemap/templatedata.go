@@ -184,7 +184,9 @@ func createTemplate(view *RouteView) generate.HTMLTemplate {
 		Path:     view.Path,
 		Block:    view.Block,
 		Merge:    view.Merge,
-		Fragment: view.Fragment,
+		Fragment: view.Fragment && !view.Partial,
+		Partial:  view.Partial,
+		Page:     !view.Partial && !view.Fragment,
 		Name:     view.Ref,
 	}
 	for _, block := range view.Blocks {

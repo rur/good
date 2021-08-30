@@ -36,6 +36,8 @@ type HTMLTemplate struct {
 	Block    string
 	Merge    string
 	Fragment bool
+	Partial  bool
+	Page     bool
 	Name     string
 }
 
