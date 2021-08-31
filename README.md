@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/rur/good.svg?token=ghq4t9FLdVA8tqkRUMoY&branch=main)](https://travis-ci.com/rur/good)
+[![Build Status](https://app.travis-ci.com/rur/good.svg?branch=main)](https://app.travis-ci.com/rur/good)
 
 # <img src="docs/readme_logo.svg" alt="Good Web Scaffold"/>
 
