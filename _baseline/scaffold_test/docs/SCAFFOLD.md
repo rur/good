@@ -22,8 +22,8 @@ it should be easy to find your way around the code and make the modifications th
 
 ### Packages & internal dependencies
 
-It is important to understand the dependency relationship within the scaffold Go
-packages when adding code to your site.
+It is important to understand the dependency relationships within the Go
+packages of the scaffold.
 
 ```
 [main]
@@ -37,20 +37,26 @@ packages when adding code to your site.
     +----> [{site}/static](embedded)
 ```
 
-Cyclical imports are prohibited in Golang. For example, the `{site}/page` pkg cannot refer to code
-inside any of the named pages, this is by design.
+> **note**
+>
+> Cyclical imports are prohibited in Golang. Therefore, the `{site}/page` pkg cannot refer to code
+> inside any of the named pages, this is by design.
 
 ## Site Env
 
-TODO: write this
+This singleton _struct_ is initialized at startup and passed to handers using the `hlp.BindEnv` function.
+
+Put your site-wide stuff here like static config, connection pools, etc...
 
 ## Managing Pages
 
-TODO: write this
+TODO: write details about page/pages commands and add a sub header about custom starter pages.
 
 ## HTTP Router
 
-TODO: write this
+The standard `net/http` server Mux is fine for basic needs. If you have a preferred routing library with
+more advanced features (CSRF etc..), modify the `[site]/page/helper.go` file and correct any compiler errors;
+that should do it!
 
 ## Files
 

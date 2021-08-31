@@ -3,20 +3,21 @@
 #### Index:
 
 - [Overview](#overview)
-- [Examples](#examples)
+- [Samples](#samples)
 - [Handlers](#handlers)
 - [Templates](#templates)
 - [Route Map TOML Reference](#route-map-toml-reference)
 
 ## Overview
 
-The `routemap.toml` file is the configuration for template composition and
-mappings to HTTP routes and handlers in this page.
+The `routemap.toml` file for a page is the configuration for template layouts and
+mappings to HTTP routes and handlers.
 
-- It is the _source of truth_ for how templates, handlers and paths are mapped within the page.
+- It is the _source of truth_ for how templates, handlers and paths are mapped.
 - It is used to generate the _routes.go_ code with the `good routes` command
 - It is capable of describing many variations of the page layout
 - HTTP endpoints can be bound to a specific layouts
+
 
 #### Modifying the Routemap
 
@@ -33,7 +34,7 @@ It can be tedious to create and configure template files and handlers when addin
 so, as a convenience, if the `_template` or `_handler` fields are missing from the routemap when the
 _routes.go_ file is generated, the missing items will be generated for you.
 
-## Examples
+## Samples
 
 ### Example of basic composition
 
@@ -146,10 +147,37 @@ func myHandler(resp treetop.Response, req *http.Request) interface{} {
 }
 ```
 
+### Child Handlers
+
+The _routemap_ defines a layout hierarchy. Since child templates are embedded in a parent, child handlers
+are also controlled by a parent handler. The child handler will only be called when the parent
+dispatches to it. This happens at arms-length using the _HandleSubView_ method. See an example below.
+
+```
+func parentHandler(resp treetop.Response, req *http.Request) interface{} {
+  return {
+    SomeChildBlock interface{}
+  }{
+    // synchronous dispatch to child handler, returns child template data
+    SomeChildBlock: resp.HandleSubView("some-child-block", req),
+  }
+}
+```
+
+The top level handler is the entry point for the request handling lifecycle.
+
+### Binding Resources
+
+Site config and resources are bound to handlers using type-safe function closures.
+
 #### Site Env
 
 If your handler needs to access site-wite services or configuration, you can bind an extra parameter
-in the routemap like so `_handler = "hlp.BindEnv(myHandlerWithEnv)"`
+in the routemap like so
+
+`_handler = "hlp.BindEnv(myHandlerWithEnv)"`
+
+Your handler must has the signature...
 
 ```
 func myHandlerWithEnv(env service.Env, resp treetop.Response, req *http.Request) interface{} {
@@ -159,9 +187,15 @@ func myHandlerWithEnv(env service.Env, resp treetop.Response, req *http.Request)
 
 #### Request Resources
 
-Within the layout page package the `resources.go` file load a set of per-request resources, like user details
-or DB data based on the request. You can bind an additional resources parameter to you handlers in the routemap
-like so `_handler = "hlp.BindEnv(bindResources(myHandlerWithResources))"`
+Within a page package, the `resources.go` file has code to load per-request page
+resources, like user details or storage data for the endpoint. You can bind an additional resources
+parameter to you handlers in the routemap like so
+
+`_handler = "hlp.BindEnv(bindResources(myHandlerWithResources))"`
+
+Note that `hlp.BindEnv` is required because the resource loader makes use of the site Env.
+Your handler must have the signature...
+
 
 ```
 func myHandlerWithResources(rsc resources, env service.Env, resp treetop.Response, req *http.Request) interface{} {
@@ -193,14 +227,14 @@ fields:
 - **\_doc** `string` optional docstring for this node
 - **\_path** `string` Attach a HTTP endpoint to this view. A layout will be assembled of default children, includes and parents (for a full-page request).
 - **\_template** `string` the template path for this view
-- **\_handler** `string` go code referencing template handler function
-- **\_method** `string` HTTP method to restrict routing too semantics depend on your chosen router
+- **\_handler** `string` Go code referencing a template handler function
+- **\_method** `string` HTTP method to restrict routing too, semantics depend on your router implementation
 - **\_default** `bool` flag to indicate that this view should be included in the parent layout by default
 - **\_fragment** `bool` This view can be loaded independently using an XHR template request
-- **\_partial** `bool` This view can be loaded independently, but can also be loaded as a regular full page using the same path
+- **\_partial** `bool` This view can be either be loaded independently or can be loaded as full page using the same path
 - **\_merge** `string` (documentation) The treetop-merge method ascribed to the top level element
 - **\_includes** `list<string>` Other views in this file to include in this layout, named by _\_ref_
-- **\_entrypoint** `string` (root only) document the entry point path for this page
+- **\_entrypoint** `string` (documentation) (root only) The entry point path for this page
 
 ### Routemap Hierarchy
 
@@ -262,3 +296,5 @@ _handler = "someHandlerFunc"
   }]
 }
 ```
+
+The TOML version is easier on the eyes!

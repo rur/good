@@ -7,19 +7,7 @@ import (
 	"github.com/rur/treetop"
 )
 
-// GetBaseHandler Loads handlers data for nav, content and scripts blocks
-func GetBaseHandler(title string) ViewHandlerWithEnv {
-	return func(env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
-		return struct {
-			PageTitle string
-			Nav       interface{}
-			Content   interface{}
-			Scripts   interface{}
-		}{
-			PageTitle: title,
-			Nav:       rsp.HandleSubView("nav", req),
-			Content:   rsp.HandleSubView("content", req),
-			Scripts:   rsp.HandleSubView("scripts", req),
-		}
-	}
+// ExampleSharedHandler can be used as a handler by multiple pages
+func ExampleSharedHandler(env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	return "Example"
 }
