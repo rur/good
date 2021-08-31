@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 
 	"github.com/rur/treetop"
@@ -51,10 +52,8 @@ func init() {
 		exec = &treetop.DeveloperExecutor{ // force templates to be re-parsed for every request
 			ViewExecutor: &treetop.FileSystemExecutor{
 				// this assumes you are runing the dev server from your project root
-				FS: http.Dir("./baseline/page_test"),
-				KeyedString: map[string]string{
-					"::empty::": "",
-				},
+				FS:          http.Dir("./baseline/page_test"),
+				KeyedString: page.KeyedTemplates,
 			},
 		}
 	} else {
@@ -62,10 +61,8 @@ func init() {
 		dir, _ := fs.Sub(assets, "static")
 		staticFS = http.FS(dir)
 		exec = &treetop.FileSystemExecutor{
-			FS: http.FS(templates),
-			KeyedString: map[string]string{
-				"::empty::": "",
-			},
+			FS:          http.FS(templates),
+			KeyedString: page.KeyedTemplates,
 		}
 	}
 }
@@ -73,8 +70,11 @@ func init() {
 func main() {
 	// Initialize Env instance to be shared with all handlers
 	env = &service.Env{
-		// EDITME: initialize site-wide stuff here
-		DB: nil,
+		// EDITME: initialize site-wide stuff here, for example...
+		ErrorLog: log.New(os.Stderr, "[error]: ", log.Llongfile),
+		WarnLog:  log.New(os.Stdout, "[warn]: ", log.Llongfile),
+		InfoLog:  log.New(os.Stdout, "[info]: ", log.Llongfile),
+		DB:       nil,
 	}
 
 	m := &http.ServeMux{}
@@ -91,6 +91,12 @@ func main() {
 	}
 
 	m.Handle("/js/treetop.js", treetop.ServeClientLibrary)
+	{
+		// root static files
+		public, _ := fs.Sub(assets, "static/public")
+		m.Handle("/favicon.ico", http.FileServer(http.FS(public)))
+		m.Handle("/humans.txt", http.FileServer(http.FS(public)))
+	}
 	m.Handle("/styles/", http.FileServer(staticFS))
 	m.Handle("/js/", http.FileServer(staticFS))
 	m.Handle("/public/", http.FileServer(staticFS))

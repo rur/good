@@ -5,6 +5,7 @@ good
 *.test
 *.log
 baseline
+_test_output
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out

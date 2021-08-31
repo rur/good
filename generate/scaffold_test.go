@@ -163,7 +163,7 @@ func TestSiteScaffold(t *testing.T) {
 		}, {
 			"simple app.css",
 			"static/styles/app.css",
-			"background-color: red",
+			"/* side wide CSS here */",
 		}, {
 			"simple service env.go",
 			"service/env.go",

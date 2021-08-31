@@ -1,0 +1,18 @@
+_ref = "[# .Name #]"
+_doc = "Base HTML template for [# .Name #] page"
+_entrypoint = "/[# .Name #]"
+
+    [[content]]
+    _ref = "[# .Name #]-landing"
+    _default = true
+    _doc = "Landing content view for the [# .Name #] page URI"
+    _method = "GET"
+    _path = "/[# .Name #]"
+
+    [[content]]
+    _ref = "[# .Name #]-other"
+    _default = true
+    _doc = "A second endpoints within this page"
+    _method = "GET"
+    _path = "/[# .Name #]/other"
+

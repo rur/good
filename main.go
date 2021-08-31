@@ -62,7 +62,18 @@ Options
     -h
 	Print usage for page command
     --starter <dir path>
-        Use specified directory as the starter template for the new page scaffold
+        Use specified directory as the starter template for the new page scaffold.
+
+	There are a number of built-in page starters you can choose from. These are specified using
+	a single colon prefix. Here is the list of available build-ins you can try:
+
+		:basic                 No layout, just a simple page scaffold (default)
+		:bootstrap5/layout     Useful Bootsrap v5.0 web console layout
+		:bootstrap5/examples   Working demos with the Bootsrap v5.0 layout and components
+		:bootstrap5/login      TODO!
+		:bootstrap5/datatable  TODO!
+		:minimum               Most bare bones option
+		:intro                 Introduction page to the good scaffold
 
 `
 	pagesUsage = `usage: good pages <site_pkg_rel>
@@ -282,16 +293,19 @@ func pageCmd(sitePkgRel, pageName, starterTemplatePath string) {
 	err = generate.ValidatePageLocation(filepath.Join(sitePkg.Dir, "page", pageName), scaffold)
 	mustNot(err)
 	var start fs.FS
-	if starterTemplatePath != "" {
+	if starterTemplatePath == "" {
+		start, err = fs.Sub(starter, "starter/basic")
+		mustNot(err)
+	} else if starterTemplatePath[0] == ':' {
+		start, err = fs.Sub(starter, "starter/"+starterTemplatePath[1:])
+		mustNot(err)
+	} else {
 		start = os.DirFS(starterTemplatePath)
 		stat, err := fs.Stat(start, ".")
 		mustNot(err)
 		if !stat.IsDir() {
 			mustNot(fmt.Errorf("starter template must be a directory, a file was found at %s", starterTemplatePath))
 		}
-	} else {
-		start, err = fs.Sub(starter, "starter/default")
-		mustNot(err)
 	}
 	files, err := generate.PageScaffold(sitePkg, pageName, scaffold, start)
 	mustNot(err)
@@ -443,9 +457,9 @@ func routesCmd(pagePkgRel string) {
 
 // starterCmd generates a page strter template that can be used with the 'good page x --starter ...' command
 func starterCmd(dest string) {
-	start, err := fs.Sub(starter, "starter/default")
+	start, err := fs.Sub(starter, "starter/basic")
 	mustNot(err)
-	files, err := generate.StarterScaffold(dest, start)
+	files, err := generate.StarterScaffold(dest, scaffold, start)
 	mustNot(err)
 	err = generate.FlushFiles(".", files)
 	mustNot(err)

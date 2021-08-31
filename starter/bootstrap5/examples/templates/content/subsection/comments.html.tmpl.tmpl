@@ -1,0 +1,68 @@
+<div id="subsection" class="mt-4">
+  {{ block "subsection-tabs" .SubsectionTabs }}{{ end }}
+  <div class="container">
+    <div class="col-lg-10 mx-auto p-3 text-center">
+      <h3>Comment Controls</h3>
+      <p class="text-secondary">
+        Each comment has a inline-form for limitless likes. The
+        <em>Reply</em> link fetch another form within a modal container.
+      </p>
+    </div>
+    {{ range $index, $comment := .Comments }}
+    <div class="row">
+      <div class="col-lg-8 mx-auto mb-4">
+        <div class="d-flex">
+          <div class="flex-shrink-0">
+            <img
+              alt=""
+              width="48"
+              height="48"
+              src="{{ $comment.ImgSrc }}"
+              class="rounded-circle mt-3 me-2"
+            />
+          </div>
+          <div class="flex-grow-1 bg-white p-4">
+            <div class="mb-3">
+              <h5 class="h5 g-color-gray-dark-v1 mb-0">
+                {{ $comment.Author }}
+              </h5>
+              <span class="g-color-gray-dark-v4 g-font-size-12">{{
+                $comment.When
+              }}</span>
+            </div>
+
+            <p>
+              {{ $comment.Content }}
+            </p>
+
+            <ul class="list-inline d-sm-flex my-0">
+              <li class="list-inline-item g-mr-20">
+                {{ template "likes" $comment }}
+              </li>
+              <li class="list-inline-item ms-auto">
+                <a
+                  treetop
+                  class="u-link-v5 g-color-gray-dark-v4 g-color-primary--hover"
+                  href="/[# .Name #]/comments/reply?comment={{ $index }}"
+                >
+                  <i class="fa fa-reply g-pos-rel g-top-1 g-mr-3"></i>
+                  Reply
+                </a>
+              </li>
+            </ul>
+            {{ if $comment.Replies }}
+            <ul class="list-group mt-3">
+              {{ range $index, $reply := $comment.Replies }}
+              <li class="list-group-item">{{ $reply }}</li>
+              {{
+                end
+              }}
+            </ul>
+            {{ end }}
+          </div>
+        </div>
+      </div>
+    </div>
+    {{ end }}
+  </div>
+</div>

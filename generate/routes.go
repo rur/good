@@ -36,6 +36,8 @@ type HTMLTemplate struct {
 	Block    string
 	Merge    string
 	Fragment bool
+	Partial  bool
+	Page     bool
 	Name     string
 }
 
@@ -110,11 +112,18 @@ func RoutesScaffold(
 	}
 	for i := 0; i < len(templates); i++ {
 		tmpl := templates[i]
-		files = append(files, File{
-			Dir:      filepath.Dir(tmpl.Filepath),
-			Name:     filepath.Base(tmpl.Filepath),
-			Contents: mustExecute("scaffold/page/name/templates/block/partial.html.tmpl.tmpl", tmpl, scaffold),
-		})
+		file := File{
+			Dir:  filepath.Dir(tmpl.Filepath),
+			Name: filepath.Base(tmpl.Filepath),
+		}
+		if tmpl.Block == "" {
+			// this is a root template, use the base scaffold template
+			file.Contents = mustExecute("scaffold/page/name/templates/base.html.tmpl.tmpl", tmpl, scaffold)
+		} else {
+			// this is a sub template, use partial scaffold template
+			file.Contents = mustExecute("scaffold/page/name/templates/block/partial.html.tmpl.tmpl", tmpl, scaffold)
+		}
+		files = append(files, file)
 	}
 	return
 }

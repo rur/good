@@ -17,11 +17,11 @@ rm -rf baseline
 
 go run . scaffold baseline/routes_test
 
-go run . page ./baseline/routes_test example
+go run . page ./baseline/routes_test example --starter :minimum
 rm baseline/routes_test/page/example/routemap.toml
 cp _baseline/testfixtures/routemap.toml baseline/routes_test/page/example/routemap.toml
 
-go run . page ./baseline/routes_test trivial
+go run . page ./baseline/routes_test trivial --starter :minimum
 rm baseline/routes_test/page/trivial/routemap.toml
 cp _baseline/testfixtures/routemap_trivial.toml baseline/routes_test/page/trivial/routemap.toml
 
@@ -42,28 +42,29 @@ function killserver() {
 }
 trap killserver EXIT
 sleep 1 # plenty of time to start up
-curl --fail http://localhost:8000/trivial
+
+rm -rf _test_output
+mkdir _test_output
+
+curl http://localhost:8000/example > _test_output/1.html
+curl --fail http://localhost:8000/trivial > _test_output/1.html
 echo
 echo "---"
-curl --fail http://localhost:8000/example
+curl --fail http://localhost:8000/example > _test_output/2.html
 echo
 echo "---"
-curl --fail http://localhost:8000/example/alt
+curl --fail http://localhost:8000/example/alt > _test_output/3.html
 echo
 echo "---"
-curl --fail http://localhost:8000/example/settings
+curl --fail -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/settings > _test_output/4.html
 echo
 echo "---"
-curl --fail http://localhost:8000/example/advanced-settings
+curl --fail http://localhost:8000/example/advanced-settings > _test_output/5.html
 echo
 echo "---"
-curl --fail -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/form
+curl --fail -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/form > _test_output/6.html
 echo
-echo "---- Feched example page successfully ---"
-curl --fail -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/advanced-settings/submit
-echo
-echo "---- Feched example page successfully ---"
-curl -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/advanced-settings/submit
+curl --fail -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/advanced-settings/submit > _test_output/7.html
 echo
 echo "---- Feched example page successfully ---"
 

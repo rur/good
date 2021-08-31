@@ -1,0 +1,37 @@
+/*
+  Useful styles format generated HTML templates
+*/
+.-generated-block {
+  border: 1px solid gray;
+  padding: 2rem 1rem 1rem;
+  position: relative;
+  margin-bottom: 1em;
+}
+
+.-generated-block::before {
+  content: "block";
+  position: absolute;
+  background-color: gray;
+  color: white;
+  top: 0;
+  left: 0;
+  padding: 3px 10px;
+}
+
+.-generated-block-partial {
+  border-color: green;
+}
+.-generated-block-partial::before {
+  content: "partial";
+  background-color: green;
+  color: white;
+}
+
+.-generated-block-fragment {
+  border-color: purple;
+}
+.-generated-block-fragment::before {
+  content: "fragment";
+  background-color: purple;
+  color: white;
+}

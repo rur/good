@@ -1,0 +1,32 @@
+<div id="quick-search-menu">
+  {{ if .RawQuery }}
+    <p class="p-3 m-0">
+      Searching for
+      <code>&OpenCurlyDoubleQuote;{{ .RawQuery }}&CloseCurlyDoubleQuote;</code>
+    </p>
+    {{ if .Results }}
+      <div class="list-group list-group-flush">
+        {{ range $index, $item := .Results }}
+          {{ if eq $index 0 }}
+            <a
+              href="{{ $item.Link }}"
+              aria-current="true"
+              class="dropdown-item list-group-item list-group-item-action active"
+              >{{ $item.Title }}</a
+            >
+          {{ else }}
+            <a
+              href="{{ $item.Link }}"
+              class="dropdown-item list-group-item list-group-item-action"
+              >{{ $item.Title }}</a
+            >
+          {{ end }}
+        {{ end }}
+      </div>
+    {{ else }}
+      <p class="px-3 text-muted">no results, sorry!</p>
+    {{ end }}
+  {{ else }}
+    <p class="muted p-3 m-0">Search for a tab name and hit enter!</p>
+  {{ end }}
+</div>

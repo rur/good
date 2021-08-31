@@ -15,9 +15,11 @@ TESTINFO
 echo "clearing any previously failed run data"
 rm -rf baseline
 
+set -x
 go run . scaffold baseline/starter_test
 go run . starter baseline/starter_test/starter
 go run . page ./baseline/starter_test newpage --starter ./baseline/starter_test/starter
+set +x
 
 if [[ ! -z $(bash ./scripts/usedports.sh | grep 8000) ]]; then
   echo >&2 "Port 8000 appears to be in use, cannot run test"
@@ -34,10 +36,13 @@ function killserver() {
 trap killserver EXIT
 sleep 1 # plenty of time to start up
 
+rm -rf _test_output
+mkdir _test_output
+
 echo
-curl --fail http://localhost:8000/example
+curl --fail http://localhost:8000/example > _test_output/1.html
 echo
-curl --fail http://localhost:8000/newpage
+curl --fail http://localhost:8000/newpage > _test_output/2.html
 
 echo "---- Feched example and newpage page successfully ---"
 

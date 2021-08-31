@@ -1,0 +1,142 @@
+package [# .Name #]
+
+import "html/template"
+
+// Comment is the view model for the comment list items
+type Comment struct {
+	Index   int
+	Author  string
+	When    string
+	Content string
+	Likes   int
+	ImgSrc  template.URL
+	Replies []string
+}
+
+var mockComments = []Comment{
+	{
+		Index:   0,
+		Author:  "Joanne Blogs",
+		When:    "3 days ago",
+		Content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eu lacinia odio. Aenean condimentum massa.",
+		ImgSrc:  template.URL("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkuLP+PwAE+wKMj9KJfwAAAABJRU5ErkJggg=="),
+		Likes:   132,
+	},
+	{
+		Index:   1,
+		Author:  "John Doe",
+		When:    "4 days ago",
+		Content: "Maecenas ac sollicitudin velit, a bibendum tellus. Phasellus feugiat dolor urna, vel egestas arcu suscipit id. Mauris nec pellentesque odio. Phasellus condimentum nunc a leo mollis, nec finibus mauris auctor. Vestibulum feugiat quam lacus, tempor fringilla diam ornare.",
+		ImgSrc:  template.URL("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8f5D9PwAHVgLIdb20nwAAAABJRU5ErkJggg=="),
+		Likes:   44,
+	},
+}
+
+// DataTableRow is the view model for the example datatable item
+type DataTableRow struct {
+	RowNumberFormatted string
+	First              string
+	Second             string
+	Third              string
+	Fourth             string
+}
+
+var mockDatatableItems = []DataTableRow{
+	{
+		RowNumberFormatted: "1,001",
+		First:              "random",
+		Second:             "data",
+		Third:              "placeholder",
+		Fourth:             "text",
+	}, {
+		RowNumberFormatted: "1,002",
+		First:              "placeholder",
+		Second:             "irrelevant",
+		Third:              "visual",
+		Fourth:             "layout",
+	}, {
+		RowNumberFormatted: "1,003",
+		First:              "data",
+		Second:             "rich",
+		Third:              "dashboard",
+		Fourth:             "tabular",
+	}, {
+		RowNumberFormatted: "1,003",
+		First:              "information",
+		Second:             "placeholder",
+		Third:              "illustrative",
+		Fourth:             "data",
+	}, {
+		RowNumberFormatted: "1,004",
+		First:              "text",
+		Second:             "random",
+		Third:              "layout",
+		Fourth:             "dashboard",
+	}, {
+		RowNumberFormatted: "1,005",
+		First:              "dashboard",
+		Second:             "irrelevant",
+		Third:              "text",
+		Fourth:             "placeholder",
+	}, {
+		RowNumberFormatted: "1,006",
+		First:              "dashboard",
+		Second:             "illustrative",
+		Third:              "rich",
+		Fourth:             "data",
+	}, {
+		RowNumberFormatted: "1,007",
+		First:              "placeholder",
+		Second:             "tabular",
+		Third:              "information",
+		Fourth:             "irrelevant",
+	}, {
+		RowNumberFormatted: "1,008",
+		First:              "random",
+		Second:             "data",
+		Third:              "placeholder",
+		Fourth:             "text",
+	}, {
+		RowNumberFormatted: "1,009",
+		First:              "placeholder",
+		Second:             "irrelevant",
+		Third:              "visual",
+		Fourth:             "layout",
+	}, {
+		RowNumberFormatted: "1,010",
+		First:              "data",
+		Second:             "rich",
+		Third:              "dashboard",
+		Fourth:             "tabular",
+	}, {
+		RowNumberFormatted: "1,011",
+		First:              "information",
+		Second:             "placeholder",
+		Third:              "illustrative",
+		Fourth:             "data",
+	}, {
+		RowNumberFormatted: "1,012",
+		First:              "text",
+		Second:             "placeholder",
+		Third:              "layout",
+		Fourth:             "dashboard",
+	}, {
+		RowNumberFormatted: "1,013",
+		First:              "dashboard",
+		Second:             "irrelevant",
+		Third:              "text",
+		Fourth:             "visual",
+	}, {
+		RowNumberFormatted: "1,014",
+		First:              "dashboard",
+		Second:             "illustrative",
+		Third:              "rich",
+		Fourth:             "data",
+	}, {
+		RowNumberFormatted: "1,015",
+		First:              "random",
+		Second:             "tabular",
+		Third:              "information",
+		Fourth:             "text",
+	},
+}

@@ -31,17 +31,20 @@ function killserver() {
 }
 trap killserver EXIT
 sleep 1 # plenty of time to start up
-curl http://localhost:8000/example
+
+rm -rf _test_output
+mkdir _test_output
+curl http://localhost:8000/example > _test_output/1.html
 
 echo
 echo "---- Fetched example page successfully ---"
 
 echo
-curl --fail http://localhost:8000/public/test.txt
+curl --fail http://localhost:8000/public/test.txt > _test_output/2.html
 echo
-curl --fail http://localhost:8000/styles/app.css
+curl --fail http://localhost:8000/styles/app.css > _test_output/3.html
 echo
-curl --fail http://localhost:8000/js/app.js
+curl --fail http://localhost:8000/js/app.js > _test_output/4.html
 
 echo
 echo "---- Fetched example static files successfully ---"
