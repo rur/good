@@ -183,15 +183,11 @@ func TestSiteScaffold(t *testing.T) {
 		}, {
 			"content handler for page handlers.go",
 			"page/handlers.go",
-			`func GetBaseHandler(title string) ViewHandlerWithEnv {`,
+			`func ExampleSharedHandler(env *service.Env, rsp treetop.Response, req *http.Request) interface{} {`,
 		}, {
 			"base template",
-			"page/templates/base.html.tmpl",
-			`<title>{{ .PageTitle }}</title>`,
-		}, {
-			"common scripts template",
-			"page/templates/scripts.html.tmpl",
-			`<script async src="/js/treetop.js"></script`,
+			"page/templates/shared.html.tmpl",
+			`<p>This template can shared by different pages</p>`,
 		},
 	}
 	for _, tt := range tests {
