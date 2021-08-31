@@ -24,7 +24,8 @@ func loadResources(env *service.Env, w http.ResponseWriter, req *http.Request) (
 	ok = true
 	rsc = &resources{
 		user: service.User{
-			Name: "!unauthenticated!",
+			Name:  "!unauthenticated!",
+			Email: "unauthenticated@example.com",
 		},
 	}
 	return

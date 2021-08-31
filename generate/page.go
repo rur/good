@@ -131,51 +131,51 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, starter fs.FS)
 	// built in scaffold, some scaffold files will only be used if one is was not already added by the starter
 
 	if ok := found["gen.go.tmpl"]; !ok {
-		// page/name/gen.go
+		// page/default/gen.go
 		files = append(files, File{
 			Dir:      pageDir,
 			Name:     "gen.go",
-			Contents: mustExecute("scaffold/page/name/gen.go.tmpl", data, scaffold),
+			Contents: mustExecute("scaffold/page/default/gen.go.tmpl", data, scaffold),
 		})
 	}
 	if ok := found["handlers.go.tmpl"]; !ok {
-		// page/name/handlers.go
+		// page/default/handlers.go
 		files = append(files, File{
 			Dir:      pageDir,
 			Name:     "handlers.go",
-			Contents: mustExecute("scaffold/page/name/handlers.go.tmpl", data, scaffold),
+			Contents: mustExecute("scaffold/page/default/handlers.go.tmpl", data, scaffold),
 		})
 	}
 	if ok := found["resources.go.tmpl"]; !ok {
-		// page/name/resources.go
+		// page/default/resources.go
 		files = append(files, File{
 			Dir:      pageDir,
 			Name:     "resources.go",
-			Contents: mustExecute("scaffold/page/name/resources.go.tmpl", data, scaffold),
+			Contents: mustExecute("scaffold/page/default/resources.go.tmpl", data, scaffold),
 		})
 	}
 	if ok := found["routemap.toml.tmpl"]; !ok {
-		// page/name/routemap.toml
+		// page/default/routemap.toml
 		files = append(files, File{
 			Dir:      pageDir,
 			Name:     "routemap.toml",
-			Contents: mustExecute("scaffold/page/name/routemap.toml.tmpl", data, scaffold),
+			Contents: mustExecute("scaffold/page/default/routemap.toml.tmpl", data, scaffold),
 		})
 	}
 	if ok := found["routes.go.tmpl"]; !ok {
-		// page/name/routes.go
+		// page/default/routes.go
 		files = append(files, File{
 			Dir:      pageDir,
 			Name:     "routes.go",
-			Contents: mustExecute("scaffold/page/name/routes.go.tmpl", data, scaffold),
+			Contents: mustExecute("scaffold/page/default/routes.go.tmpl", data, scaffold),
 		})
 	}
 	if ok := found["README.md.tmpl"]; !ok {
-		// page/name/README.md
+		// page/default/README.md
 		files = append(files, File{
 			Dir:      pageDir,
 			Name:     "README.md",
-			Contents: mustExecute("scaffold/page/name/README.md.tmpl", data, scaffold),
+			Contents: mustExecute("scaffold/page/default/README.md.tmpl", data, scaffold),
 		})
 	}
 

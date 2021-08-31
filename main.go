@@ -67,11 +67,13 @@ Options
 	There are a number of built-in page starters you can choose from. These are specified using
 	a single colon prefix. Here is the list of available build-ins you can try:
 
-		:default - a bare bones setup
-		:intro - the intro page with an introduction to the good scaffold
-		:bootstrap5/example - a working demo using Bootsrap v5.0 layout and components
-		:bootstrap5/layout - useful Bootsrap v5.0 app setup
-
+		:basic                 No layout, just a simple page scaffold (default)
+		:bootstrap5/layout     Useful Bootsrap v5.0 web console layout
+		:bootstrap5/examples   Working demos with the Bootsrap v5.0 layout and components
+		:bootstrap5/login      TODO!
+		:bootstrap5/datatable  TODO!
+		:minimum               Most bare bones option
+		:intro                 Introduction page to the good scaffold
 
 `
 	pagesUsage = `usage: good pages <site_pkg_rel>
@@ -292,7 +294,7 @@ func pageCmd(sitePkgRel, pageName, starterTemplatePath string) {
 	mustNot(err)
 	var start fs.FS
 	if starterTemplatePath == "" {
-		start, err = fs.Sub(starter, "starter/default")
+		start, err = fs.Sub(starter, "starter/basic")
 		mustNot(err)
 	} else if starterTemplatePath[0] == ':' {
 		start, err = fs.Sub(starter, "starter/"+starterTemplatePath[1:])
@@ -455,9 +457,9 @@ func routesCmd(pagePkgRel string) {
 
 // starterCmd generates a page strter template that can be used with the 'good page x --starter ...' command
 func starterCmd(dest string) {
-	start, err := fs.Sub(starter, "starter/default")
+	start, err := fs.Sub(starter, "starter/basic")
 	mustNot(err)
-	files, err := generate.StarterScaffold(dest, start)
+	files, err := generate.StarterScaffold(dest, scaffold, start)
 	mustNot(err)
 	err = generate.FlushFiles(".", files)
 	mustNot(err)

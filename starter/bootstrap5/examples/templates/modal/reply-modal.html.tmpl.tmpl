@@ -1,0 +1,59 @@
+<div id="modal" class="modal" data-good-modal tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Reply to {{ .Comment.Author }}'s comment</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        {{ if .Error }}
+        <p class="alert alert-danger">{{ .Error }}</p>
+        {{ end }}
+        <form
+          treetop
+          id="reply-form"
+          action="/[# .Name #]/comments/reply?comment={{ .CommentIndex }}"
+          method="POST"
+          enctype="application/x-www-form-urlencoded"
+        >
+          <div class="mb-3">
+            <label for="nameInput" class="form-label">Your Initials</label>
+            <input
+              autofocus
+              type="texts"
+              name="name"
+              class="form-control"
+              id="nameInput"
+              placeholder="you initials here, like 'EF'"
+              value="{{ .NameValue }}"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="replyMessage" class="form-label">Reply Message</label>
+            <input
+              type="text"
+              class="form-control"
+              id="replyMessage"
+              name="message"
+              rows="3"
+              placeholder="your message goes here!"
+              required
+              value="{{ .MessageValue }}"
+            />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" form="reply-form" class="btn btn-primary">
+          Post Message
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

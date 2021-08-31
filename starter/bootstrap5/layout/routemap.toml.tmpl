@@ -1,0 +1,63 @@
+_ref = "base"
+_handler = "hlp.BindEnv(bindResources(baseHandler))"
+_template = "[# .Templates #]/base.html.tmpl"
+_doc = "Base HTML template for [# .Name #] page"
+_entrypoint = "/[# .Name #]"
+
+    [[nav]]
+    _ref = "sidebar-nav"
+    _handler = "hlp.BindEnv(bindResources(sidebarNavHandler))"
+    _default = true
+    _template = "[# .Templates #]/nav/sidebar-nav.html.tmpl"
+
+        [[nav.nav-links]]
+        _ref = "sidebar-nav-links"
+        _handler = "hlp.BindEnv(bindResources(sidebarNavLinksHandler))"
+        _default = true
+        _template = "[# .Templates #]/nav/nav-link/sidebar-nav-links.html.tmpl"
+
+    [[content]]
+    _ref = "content-wrapper"
+    _default = true
+    _template = "[# .Templates #]/content/wrapper.html.tmpl"
+    _handler = "hlp.BindEnv(bindResources(contentWrapperHandler))"
+    _doc = "Landing content view for the [# .Name #] page URI"
+    _method = "GET"
+
+        [[content.subsection]]
+        _ref = "landing"
+        _default = true
+        _partial = true
+        _template = "[# .Templates #]/content/subsection/landing.html.tmpl"
+        _handler = "hlp.BindEnv(bindResources(landingHandler))"
+        _path = "/[# .Name #]"
+        _method = "GET"
+
+            [[content.subsection.subsection-tabs]]
+            _ref = "landing-tabs"
+            _default = true
+            _template = "[# .Templates #]/content/subsection/tabs.html.tmpl"
+            _handler = 'treetop.Constant("landing")'
+
+    [[scripts]]
+    _ref = "page-scripts"
+    _default = true
+    _doc = "Inline scripts for the page"
+    _template = "[# .Templates #]/scripts.html.tmpl"
+    _handler = "treetop.Noop"
+
+    [[styles]]
+    _ref = "page-styles"
+    _default = true
+    _doc = "Custom inline styles for this page"
+    _template = "[# .Templates #]/styles.html.tmpl"
+    _handler = "treetop.Noop"
+
+    [[modal]]
+    _ref = "example-modal"
+    _fragment = true
+    _path = "/[# .Name #]/modal"
+    _method = "GET"
+    _template = "[# .Templates #]/modal/example-modal.html.tmpl"
+    _doc = "An example of an endpoint that returns a page modal"
+    _handler = "treetop.Noop"

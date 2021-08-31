@@ -1,0 +1,39 @@
+<table
+  id="main-table"
+  treetop-merge="table-append"
+  class="table table-hover table-sm mb-0"
+>
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Header</th>
+      <th scope="col">Header</th>
+      <th scope="col">Header</th>
+      <th scope="col">Header</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{ range $index, $row := .Rows }}
+      <tr>
+        <td>{{ .RowNumberFormatted }}</td>
+        <td>{{ .First }}</td>
+        <td>{{ .Second }}</td>
+        <td>{{ .Third }}</td>
+        <td>{{ .Fourth }}</td>
+      </tr>
+    {{ end }}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="5" class="border-0 p-3 text-center">
+        {{ if .MoreLink }}
+          <button treetop-link="{{ .MoreLink }}" class="btn btn-link w-100">
+            Load more...
+          </button>
+        {{ else }}
+          <p class="display-6 text-secondary">Nothing left! 🤷</p>
+        {{ end }}
+      </td>
+    </tr>
+  </tfoot>
+</table>

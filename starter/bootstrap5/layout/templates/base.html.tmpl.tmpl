@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {{ template "styles" .Styles }}
+
+
+    <title>{{ .PageTitle }}</title>
+  </head>
+  <body>
+    <div>
+      {{ template "nav" .Nav }}
+      <main class="content d-flex flex-column flex-shrink-0 p-3 bg-light">
+        {{ template "content" .Content }}
+      </main>
+    </div>
+
+    {{ block "modal" .Modal }}
+      <div id="modal" aria-hidden="true" class="d-none"></div>
+    {{ end }}
+
+    {{ template "scripts" .Scripts }}
+
+  </body>
+</html>

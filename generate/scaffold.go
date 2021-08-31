@@ -104,7 +104,7 @@ func SiteScaffold(pkg GoPackage, scaffold fs.FS) (files []File, err error) {
 			return err
 		}
 		if d.IsDir() {
-			if path == "scaffold/page/name" {
+			if path == "scaffold/page/default" || path == "scaffold/page/name" {
 				return fs.SkipDir
 			}
 			return nil
