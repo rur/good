@@ -10,7 +10,7 @@ Tools for embedding a web GUI in a Golang project.
 - Self contained server with basic dependencies
 - Embedded assets
 - Classic HTML template composition
-- Pretty boring, avoid surprises
+- Boring tech, fewer surprises
 
 [ [CLI Overview](#cli-overview) ~
 [Building GUIs](#building-guis) ~
@@ -81,7 +81,7 @@ This can be used with the Good Page command like so.
 
 ## Building GUIs
 
-> We'll add a web console in the next version
+> We'll add a web console in the _next_ version
 >
 >_– Backend Developer_
 
@@ -92,11 +92,11 @@ approachable for backend developers in the following ways:
   * Integrate a suitable CSS tookit
   * Plenty of functioning examples (WIP)
 * Code generation with [TOML](https://toml.io/en/) config:
-  * Generate the 'plumbing' code
-  * Make full use of the compiler
+  * Generate static 'plumbing' code
+  * Take advantage of the compiler
 * Minimize logic outside of Golang
   * Server-side rendering
-  * Use existing project code directly
+  * Existing project code can be utilized directly
 
 ### TOML Routemap Layouts
 
@@ -151,7 +151,7 @@ HTML template composition has excellent support in Golang. Our scaffold uses the
 [Treetop library](https://github.com/rur/treetop) to help organize templates and handlers,
 with the added benefit of fragment hot-swapping for enhanced interactivity.
 
-#### 5. Pretty boring, avoid surprises
+#### 5. Boring tech, fewer surprises
 
 The scaffold is more of a workhorse than a unicorn; we embrace some practical
 limitations for the purpose of tight server-side integration.
@@ -159,7 +159,9 @@ Take care to judge the limitations for yourself and decide what is right for you
 
 ## Starter Templates
 
-A starter template is folder containing template files used by the page code generator to set up a new page.
-The `good page` command can read the boilerpate from a local folder or from the built-in options.
+A starter template folder contains files used by the code generator to set up a new page.
+The `good page` command can get it's boilerpate from a local folder or from one of the built-in options.
+
+### Built-in Page Boilerplate
 
 See the [README](starter/README.md) in the starter folder to learn what built-in options are available.
