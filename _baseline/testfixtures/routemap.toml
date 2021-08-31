@@ -1,6 +1,4 @@
 _ref = "example"
-_template = "page/templates/base.html.tmpl"
-_handler = 'hlp.BindEnv(page.GetBaseHandler("Routes Test - example page"))'
 _doc = "Base HTML template for example page"
 _entrypoint = "/example"
 
@@ -75,5 +73,4 @@ _entrypoint = "/example"
     [[scripts]]
     _ref = "site-scripts"
     _default = true
-    _template = "page/templates/scripts.html.tmpl"
     _handler = "treetop.Noop"

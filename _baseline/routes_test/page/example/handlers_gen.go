@@ -11,6 +11,23 @@ import (
 // example Handlers
 // -------------------------
 
+// Ref: example
+// Doc: Base HTML template for example page
+func exampleHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data := struct {
+		HandlerInfo string
+		Content     interface{}
+		Nav         interface{}
+		Scripts     interface{}
+	}{
+		HandlerInfo: "example Page exampleHandler",
+		Content:     rsp.HandleSubView("content", req),
+		Nav:         rsp.HandleSubView("nav", req),
+		Scripts:     rsp.HandleSubView("scripts", req),
+	}
+	return data
+}
+
 // Ref: placeholder-form
 // Block: form
 // Method: POST
