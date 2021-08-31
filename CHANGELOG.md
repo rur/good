@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - 2021-09-30
+
+Add Bootstrap v5 built-in starter templates and improve documentation
+
+### Added
+
+- Add Bootstrap v5 starter templates: layout and examples
+- root static files are listed during server setup
+- Building GUIs, and starter template sections on README
+- _page/keyed.go_ file to scaffold page package
+-
+
+### Changed
+
+- Rename `--starter-template` to `--starter`
+- Scaffold creates a single intro page with instructions on getting started
+- Reorg scaffold page templates between _default_ and _named_
+
 ## [Unreleased] - 2021-08-02
 
 First major milestone for enhancements from the POC functionality.
