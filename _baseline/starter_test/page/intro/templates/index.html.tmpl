@@ -75,7 +75,7 @@
           <span class="fs-4">Good Start</span>
         </a>
 
-        <code>github.com/rur/good/baseline/starter_test</code>
+        <code class="h5 m-0">github.com/rur/good/baseline/starter_test</code>
       </header>
 
       <main class="container">
@@ -98,32 +98,31 @@
         </p>
 
         <div class="row g-5">
-          <div class="col-md-4">
+          <div class="col-md-6 col-lg-4">
             <h3>Site</h3>
             <p>
-              The scaffold command installs a self-contained web server as a sub
-              package of a Golang project. eg...
-            </p>
-            <p>
-              <code>[my-go-prj]$ good scaffold ./portal</code>
-            </p>
-            <p>
-              Embedded within the codebase, it can make use of internal server
-              code and configuration, this reduces the overhead of maintaining
-              an integrated GUI.
+              Code in the scaffold package <code>./baseline/starter_test</code> is yours
+              to modify as you please. The other <em>Good</em> CLI commands can help you with pages and routing
+              if you keep the general <strong>./page</strong> structure.
             </p>
             <h5>Read the code</h5>
             <p>
-              The scaffold code is self documenting. After a quick read through,
-              you should have a sense of how to modify and re-purpose it to suit
-              your needs.
+              The code is generally self documenting. After a quick read through,
+              you should have a sense of where to modify things to suit your needs.
             </p>
             <p>
-              Beyond code, guides can be found in the
-              <em>[site]/docs</em> directory in your scaffold.
+              Markdown guideline documents can be found in the
+              <strong>./docs</strong> directory of your scaffold.
             </p>
+
+            <h4>Code generation commands:</h4>
+            <ol>
+              <li><code>good scaffold</code>: Create the initial setup</li>
+              <li><code>good page</code>: Add a new page</li>
+              <li><code>good routes</code>: Update routes for a page</li>
+            </ol>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6 col-lg-4">
             <h3>Pages</h3>
             <p>
               Top-level sections are organized into pages, each with it's own
@@ -131,9 +130,8 @@
             </p>
 
             <p>
-              An app can have as many top level pages as you wish. They are
-              independent by default; use your refactoring skills to control
-              duplication as your site grows.
+              Pages are independent by default; refactor to control redundancy
+              as your site grows.
             </p>
 
             <h5>Resources:</h5>
@@ -152,36 +150,33 @@
               </li>
             </ul>
             <p>
-              App services and resources are injected to handlers using
-              straightforward, type-safe function closures.
+              Dependencies are passed to handlers using straightforward,
+              type-safe function closures.
             </p>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-8 mx-auto col-lg-4">
             <h3>Routes</h3>
             <p>
-              Routing is configured with a TOML file in each page directory. The
-              <code>good routes [page_pkg]</code> command generates the
-              <em>routes.go</em> file with plumbing for page endpoints.
+              Routing is configured with a TOML file in each page directory.
             </p>
 
             <h5>Route Map</h5>
             <p>
               The <code>routemap.toml</code> config file outlines the layout
               hierarchy for a page and map: paths, templates and handlers to
-              define HTML endpoints.
+              HTTP endpoints.
             </p>
-
-            <h4>Role of code generation:</h4>
-            <ul>
-              <li>Create the initial scaffold</li>
-              <li>Add new pages</li>
-              <li>Update page routes</li>
-            </ul>
+            <p>
+              The <code>page/*/routes.go</code> files are generated with the
+              plumbing code for page endpoints. This must be updated when the
+              route map changes
+            </p>
             <p>
               <strong>gen.go</strong> files appear in the appropriate places so
-              that a recursive, <code>go generate &lt;site&gt;/...</code>,
-              command will take care of code-gen tasks.
+              that a recursive generate command will take care of code-gen tasks.
             </p>
+            <pre class="bg-light p-3"><code>$ go generate ./baseline/starter_test/...</code></pre>
+
           </div>
 
           <hr class="col-3 col-md-5 mb-3 mx-auto" />
@@ -189,7 +184,7 @@
           <div class="row mt-5">
             <div class="col col-md-6 px-4 mb-5">
               <h4 class="mb-3"><strong>📈 next step,</strong> add a page</h4>
-              <pre class="bg-light p-3"><code>$ good page github.com/rur/good/baseline/starter_test first \
+              <pre class="bg-light p-3"><code>$ good page ./baseline/starter_test first \
     --starter :bootstrap5/examples</code></pre>
               <p>
                 This command will create a page using the built-in
@@ -205,16 +200,16 @@
               </p>
               <ul>
                 <li>
-                  <code>:default</code> (<a href="#demo">demo</a>)
+                  <code>:default</code>
                 </li>
                 <li>
-                  <code>:intro</code> (<a href="#demo">demo</a>)
+                  <code>:intro</code>
                 </li>
                 <li>
-                  <code>:bootstrap5/examples</code> (<a href="#demo">demo</a>)
+                  <code>:bootstrap5/examples</code>
                 </li>
                 <li>
-                  <code>:bootstrap5/layout</code> (<a href="#demo">demo</a
+                  <code>:bootstrap5/layout</code>
                   >)
                 </li>
               </ul>
@@ -230,7 +225,7 @@
               <pre
                 class="mt-2 b-5 bg-light p-4 mx-auto"
                 style="max-width: 750px"
-              ><code>$ good pages delete github.com/rur/good/baseline/starter_test/page/intro</code></pre
+              ><code>$ good pages delete ./baseline/starter_test/page/intro</code></pre
               >
               <p>
                 Use the <code>-h</code> CLI flag for more details on commands &

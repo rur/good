@@ -225,13 +225,13 @@ fields:
 
 - **\_ref** `string` _(required)_ a reference unique within the TOML file (alpha-only with dash sep)
 - **\_doc** `string` optional docstring for this node
-- **\_path** `string` Attach a HTTP endpoint to this view. A layout will be assembled of default children, includes and parents (for a full-page request).
+- **\_path** `string` Attach a HTTP endpoint to this view, a view hierarchy will be used to construct a `http.Handler` instance.
 - **\_template** `string` the template path for this view
-- **\_handler** `string` Go code referencing a template handler function
-- **\_method** `string` HTTP method to restrict routing too, semantics depend on your router implementation
+- **\_handler** `string` Go code referencing a template handler function. Keyed strings are supported, see `{site}/page/keyed.go`
+- **\_method** `string` HTTP method corresponding to the path, semantics depend on your router implementation
 - **\_default** `bool` flag to indicate that this view should be included in the parent layout by default
-- **\_fragment** `bool` This view can be loaded independently using an XHR template request
-- **\_partial** `bool` This view can be either be loaded independently or can be loaded as full page using the same path
+- **\_fragment** `bool` this endpoints will fetch a HTML fragment, not a full page.
+- **\_partial** `bool` this endpoint can fetch either a fragment or full HTML document, depending on the `accept` header
 - **\_merge** `string` (documentation) The treetop-merge method ascribed to the top level element
 - **\_includes** `list<string>` Other views in this file to include in this layout, named by _\_ref_
 - **\_entrypoint** `string` (documentation) (root only) The entry point path for this page
