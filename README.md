@@ -88,7 +88,7 @@ This can be used with the Good Page command like so.
 Our mission is to make GUI development more enjoyable and
 approachable for backend developers in the following ways:
 
-* Include boilerplate quick-start templates:
+* Include quick-start layout templates:
   * Integrate a suitable CSS tookit
   * Plenty of functioning examples (WIP)
 * Code generation with [TOML](https://toml.io/en/) config:
@@ -159,9 +159,20 @@ Take care to judge the limitations for yourself and decide what is right for you
 
 ## Starter Templates
 
-A starter template folder contains files used by the code generator to set up a new page.
-The `good page` command can get it's boilerpate from a local folder or from one of the built-in options.
+A starter template is a folder containing files used by the page generator to set up a new page.
+Page boilerpate can be loaded from a local folder or using one of the built-in options.
+
 
 ### Built-in Page Boilerplate
 
-See the [README](starter/README.md) in the starter folder to learn what built-in options are available.
+```
+good page ./mysite mynewpage --starter :bootstrap5/layout
+```
+
+See the [starter/README](starter/README.md) for details about what built-in options are available.
+
+### Customized starter template
+
+It should be quick and cheap to add a new page to your site, and try something out. Add a custom
+starter template to your project using the `good starter` command. Modify the
+code templates with boilerplate for your own site.
