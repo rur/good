@@ -1,3 +1,3 @@
 package intro
 
-//go:generate good routes .
+//go:generate good routes gen .
