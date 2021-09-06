@@ -25,8 +25,8 @@ go run . page ./baseline/routes_test trivial --starter :minimum
 rm baseline/routes_test/page/trivial/routemap.toml
 cp _baseline/testfixtures/routemap_trivial.toml baseline/routes_test/page/trivial/routemap.toml
 
-go run . routes ./baseline/routes_test/page/example
-go run . routes ./baseline/routes_test/page/trivial
+go run . routes gen ./baseline/routes_test/page/example
+go run . routes gen ./baseline/routes_test/page/trivial
 
 if [[ ! -z $(bash ./scripts/usedports.sh | grep 8000) ]]; then
   echo >&2 "Port 8000 appears to be in use, cannot run test"

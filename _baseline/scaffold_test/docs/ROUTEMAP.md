@@ -14,7 +14,7 @@ The `routemap.toml` file for a page is the configuration for template layouts an
 mappings to HTTP routes and handlers.
 
 - It is the _source of truth_ for how templates, handlers and paths are mapped.
-- It is used to generate the _routes.go_ code with the `good routes` command
+- It is used to generate the _routes.go_ code with the `good routes gen` command
 - It is capable of describing many variations of the page layout
 - HTTP endpoints can be bound to a specific layouts
 

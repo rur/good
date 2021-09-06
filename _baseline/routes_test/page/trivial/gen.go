@@ -1,3 +1,3 @@
 package trivial
 
-//go:generate good routes .
+//go:generate good routes gen .

@@ -183,7 +183,7 @@ func ValidateScaffoldLocation(siteDir string, scaffold fs.FS) error {
 	} else {
 		for i := 0; i < len(names); i++ {
 			if _, ok := blockList[names[i]]; ok {
-				return fmt.Errorf("conflicting file or direcotry '%s'", names[i])
+				return fmt.Errorf("conflicting file or directory '%s'", names[i])
 			}
 		}
 	}

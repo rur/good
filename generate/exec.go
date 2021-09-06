@@ -5,19 +5,22 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"golang.org/x/mod/modfile"
 )
 
 // GoModule represents a golang project level module
 type GoModule struct {
-	Path  string `json:"Path"`
-	Dir   string `json:"Dir"`
-	GoMod string `json:"GoMod"`
+	Path string `json:"Path"`
+	Dir  string `json:"Dir"`
 }
 
-// GoPackage represents a package with a go module
+// GoPackage represents a package within a go module
 type GoPackage struct {
 	Dir        string   `json:"Dir"`
 	ImportPath string   `json:"ImportPath"`
@@ -81,4 +84,25 @@ func GoFormat(path string) (string, error) {
 		return "", fmt.Errorf("go fmt error: %s, output: %s", err, output)
 	}
 	return string(output), nil
+}
+
+// TryReadModFile will attempt to load the root module path from a go.mod file
+// it will return empty string otherwise
+func TryReadModFile() (module string, baseDir string) {
+	defer func() {
+		if module == "" {
+			baseDir = ""
+		}
+	}()
+	var err error
+	baseDir, err = os.Getwd()
+	if err != nil {
+		return
+	}
+	contents, err := ioutil.ReadFile(filepath.Join(baseDir, "go.mod"))
+	if err != nil {
+		return
+	}
+	module = modfile.ModulePath(contents)
+	return
 }

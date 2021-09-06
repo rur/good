@@ -37,12 +37,12 @@ func TestValidateScaffoldPackage(t *testing.T) {
 		{
 			name:     "conflicting file",
 			location: "./generate/testdata/with_conflict_file",
-			wantErr:  "conflicting file or direcotry 'file.go'",
+			wantErr:  "conflicting file or directory 'file.go'",
 		},
 		{
 			name:     "conflicting directory",
 			location: "./generate/testdata/with_conflict_folder",
-			wantErr:  "conflicting file or direcotry 'folder'",
+			wantErr:  "conflicting file or directory 'folder'",
 		},
 	}
 	for _, tt := range tests {
