@@ -258,11 +258,25 @@ func main() {
 // scaffoldCmd creates a full site scaffold at a location relative to the
 // current golang module.
 func scaffoldCmd(sitePkgRel string) {
-	// use current package to find go module
-	curPkg, err := generate.GoListPackage("./...")
-	mustNot(err)
-	sitePkg, err := generate.ParseSitePackage(curPkg.Module, sitePkgRel)
-	mustNot(err)
+	// first try a go.mod in the CWD
+	var (
+		sitePkg generate.GoPackage
+		err     error
+	)
+	if path, dir := generate.TryReadModFile(); path != "" {
+		// use module info parsed from the go.mod file
+		sitePkg, err = generate.ParseSitePackage(generate.GoModule{
+			Path: path,
+			Dir:  dir,
+		}, sitePkgRel)
+		mustNot(err)
+	} else {
+		// use current package to find go module
+		curPkg, err := generate.GoListPackage("./...")
+		mustNot(err)
+		sitePkg, err = generate.ParseSitePackage(curPkg.Module, sitePkgRel)
+		mustNot(err)
+	}
 	err = generate.ValidateScaffoldLocation(sitePkg.Dir, scaffold)
 	mustNot(err)
 	files, err := generate.SiteScaffold(sitePkg, scaffold)
