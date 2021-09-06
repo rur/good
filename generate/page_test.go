@@ -84,7 +84,7 @@ func TestPageScaffold(t *testing.T) {
 			`$ go generate github.com/rur/example/admin/site/...`,
 		},
 		"page/testing/gen.go": {
-			"//go:generate good routes .",
+			"//go:generate good routes gen .",
 		},
 		"page/testing/routes.go": {
 			"hlp.BindEnv(bindResources(readmePageHandler)),",

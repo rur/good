@@ -56,7 +56,7 @@ Adds a new 'settings' page to our `./portal` example.
 
     $ good page ./portal settings --starter :bootstrap5/layout
 
-#### Good Pages {gen list delete}
+#### Good Pages {gen list delete} ...
 
 Utilities for site pages. For example, list the pages to stdout
 
@@ -64,11 +64,13 @@ Utilities for site pages. For example, list the pages to stdout
     home
     settings
 
-#### Good Routes \<page\>
+#### Good Routes Gen \<page\>
 
-Re-generate the route plumbing code for our `./portal` settings page. The tool will read the `./portal/page/settings/routemap.toml` config file.
+Generate the routes.go file for a specified page containing the [Treetop](https://github.com/rur/treetop) layout plumbing code.
 
-    $ good routes ./portal/page/settings
+The following example will generate a routes file for the `./portal/page/settings/routemap.toml` config file.
+
+    $ good routes gen ./portal/page/settings
 
 #### Good Starter \<outdir\>
 
@@ -85,26 +87,30 @@ This can be used with the Good Page command like so.
 >
 >_– Backend Developer_
 
-Our mission is to make GUI development more enjoyable and
+The mission is to make GUI development more enjoyable and
 approachable for backend developers in the following ways:
 
 * Include quick-start layout templates:
   * Integrate a suitable CSS tookit
   * Plenty of functioning examples (WIP)
 * Code generation with [TOML](https://toml.io/en/) config:
-  * Generate static 'plumbing' code
+  * Generate readable 'plumbing' code
   * Take advantage of the compiler
 * Minimize logic outside of Golang
   * Server-side rendering
   * Existing project code can be utilized directly
 
-### TOML Routemap Layouts
+### Treetop Routemap Layouts
 
-Routemaps combine code generation with a familiar approach to HTML templating.
-The `good routes` command reads the config and generates the plumbing code for
-HTTP routing and page template inheritance.
+Routemaps combine code generation with a familiar approach to web templating.
+The [Treetop library](https://github.com/rur/treetop) is used to bind endpoints
+to a layout hierarchy of HTML templates and template handlers.
 
-This sample config has two endpoints. To learn more, [try the scaffold](#tldr-quickstart) and explore some examples.
+The `good routes gen` command reads the TOML config for a page and generates the plumbing code for
+routing, HTTP handlers and template inheritance.
+
+This basic config has two endpoints which share the same base template.
+To learn more, [try the scaffold](#tldr-quickstart) and explore some working examples.
 
 ```TOML
 _ref = "base"
@@ -175,4 +181,4 @@ See the [starter/README](starter/README.md) for details about what built-in opti
 
 It should be quick and cheap to add a new page to your site, and try something out. Add a custom
 starter template to your project using the `good starter` command. Modify the
-code templates with boilerplate for your own site.
+code templates with your own boilerplate.

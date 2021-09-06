@@ -28,7 +28,7 @@ Commands
 	pages gen    <site_pkg>              Re-generate the pages.go file
 	pages list   <site_pkg>              List pages in a site to stdout
 	pages delete <page_pkg>              Remove a page from a site
-	routes       <page_pkg>              Re-generate the routes.go file for a specified scaffold page package
+	routes gen   <page_pkg>              enerate the routes.go file for a specified scaffold page package
 	starter      <out_dir>               Create a new dir and populate it with a template for a custom starter page
 
 `
@@ -97,13 +97,13 @@ Options
 	Print usage for pages command
 
 `
-	routesUsage = `usage: good routes <page_pkg_rel>
+	routesUsage = `usage: good routes gen <page_pkg_rel>
 
 Generate golang code for the routemap.toml config file in a target page. This will also populate code
 for any handlers or templates that are missing from the config.
 
 Example
-	good routes ./admin/site/page/example
+	good routes gen ./admin/site/page/example
 
 Arguments
 	page_pkg_rel   page import path from the root of the Go module
@@ -224,11 +224,18 @@ func main() {
 			fmt.Println(routesUsage)
 			return
 		}
-		if len(pArgs) < 2 {
+		switch pArgs[1] {
+		case "gen":
+			if len(pArgs) < 3 {
+				fmt.Println(routesUsage)
+				log.Fatalln("Missing target page path")
+			}
+			routesGenCmd(pArgs[2])
+
+		default:
 			fmt.Println(routesUsage)
-			log.Fatalln("Missing target scaffold page path")
+			log.Fatalf("Unknown routes command '%s'", pArgs[1])
 		}
-		routesCmd(pArgs[1])
 
 	case "starter":
 		if _, help := fArgs["-h"]; help {
@@ -403,7 +410,7 @@ func deletePageCmd(pagePackage string) {
 
 // routesCmd will parse a routemap.toml file and generate routes, handlers and templates
 // as needed
-func routesCmd(pagePkgRel string) {
+func routesGenCmd(pagePkgRel string) {
 	pkg, err := generate.GoListPackage(pagePkgRel)
 	mustNot(err)
 	routemapContent, err := ioutil.ReadFile(filepath.Join(pkg.Dir, "routemap.toml"))
