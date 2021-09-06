@@ -104,9 +104,9 @@ approachable for backend developers in the following ways:
 
 Routemaps combine code generation with a familiar approach to web templating.
 The [Treetop library](https://github.com/rur/treetop) is used to bind endpoints
-to a layout hierarchy of HTML templates and template handlers.
+to a layout hierarchy of HTML files and template handlers.
 
-The `good routes gen` command reads the TOML config for a page and generates the plumbing code for
+The `good routes gen` command reads the TOML config of a page and generates the plumbing code for:
 routing, HTTP handlers and template inheritance.
 
 This basic config has two endpoints which share the same base template.
