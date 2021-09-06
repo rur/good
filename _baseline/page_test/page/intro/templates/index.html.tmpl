@@ -115,7 +115,7 @@
               <strong>./docs</strong> directory of your scaffold.
             </p>
 
-            <h4>Code generation commands:</h4>
+            <h5>Code generation CLI overview:</h5>
             <ol>
               <li><code>good scaffold</code>: Create the initial setup</li>
               <li><code>good page</code>: Add a new page</li>
@@ -184,8 +184,13 @@
           <div class="row mt-5">
             <div class="col col-md-6 px-4 mb-5">
               <h4 class="mb-3"><strong>📈 next step,</strong> add a page</h4>
-              <pre class="bg-light p-3"><code>$ good page ./baseline/page_test first \
-    --starter :bootstrap5/examples</code></pre>
+
+              <pre class="bg-light p-3"><code>$ good page ./baseline/page_test mydemo \
+    --starter :bootstrap5/examples</code>
+<code>$ go generate ./baseline/page_test/...</code>
+<code>$ go run ./baseline/page_test --dev --port 8000</code></pre>
+
+              <p>Then visit <code>http://localhost:8000/mydemo</code></p>
               <p>
                 This command will create a page using the built-in
                 <em>bootstrap5</em> starter layout. This includes example
@@ -198,21 +203,15 @@
                 You can try one of these other built-in starter options, if you
                 wish:
               </p>
-              <ul>
-                <li>
-                  <code>:default</code>
-                </li>
-                <li>
-                  <code>:intro</code>
-                </li>
-                <li>
-                  <code>:bootstrap5/examples</code>
-                </li>
-                <li>
-                  <code>:bootstrap5/layout</code>
-                  >)
-                </li>
-              </ul>
+              <table class="table">
+                <tr><td><code>:basic               </code> </td><td>No layout, just a simple page scaffold (default)</td></tr>
+                <tr><td><code>:bootstrap5/layout   </code> </td><td>Useful Bootsrap v5.0 web console layout</td></tr>
+                <tr><td><code>:bootstrap5/examples </code> </td><td>Working demos with the Bootsrap v5.0 layout and components</td></tr>
+                <tr><td><code>:bootstrap5/login    </code> </td><td><em>TODO!</em></td></tr>
+                <tr><td><code>:bootstrap5/datatable</code> </td><td><em>TODO!</em></td></tr>
+                <tr><td><code>:minimum             </code> </td><td>Most bare bones option</td></tr>
+                <tr><td><code>:intro               </code> </td><td>Introduction page to the good scaffold</td></tr>
+              </table>
             </div>
             <div class="col col-md-6 px-4">
               <h4 class="mb-3"><strong>💡 tip,</strong> delete this page</h4>
