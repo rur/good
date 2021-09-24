@@ -11,7 +11,7 @@ func TestGoListPackageError(t *testing.T) {
 	// fs error
 	if _, err := GoListPackage("./fake"); err == nil {
 		t.Error("Expecting error for fake directory")
-	} else if !strings.Contains(err.Error(), "directory not found") {
+	} else if !strings.Contains(err.Error(), "failed to load a go package for path './fake'") {
 		t.Errorf("Expecting reason for failure, got %s", err)
 	}
 }

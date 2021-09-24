@@ -2,7 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] - 2021-09-30
+## [Unreleased] - 2021-09-23
+
+Minor improvements, main fix is to allow pages to be added even when a scaffold
+site package has a compile error.
+
+### Added
+
+- Add panic recovery to page Env binding helper
+
+### Fixed
+
+- Good Page command will still work when the target scaffold has a compile error.
+
+### Changed
+
+- Minor improvements to scaffold markdown docs/ROUTEMAP.md guide
+- Add a function docstring when generating the routes.go file
+
+## [Unreleased] - 2021-08-30
 
 Add Bootstrap v5 built-in starter templates and improve documentation
 

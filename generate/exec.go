@@ -63,7 +63,7 @@ func GoListPackage(path string) (pkg GoPackage, err error) {
 		}
 	}
 
-	cmd := exec.Command("go", "list", "--json", path)
+	cmd := exec.Command("go", "list", "-e", "--json", path)
 	stdout.Reset()
 	stderr.Reset()
 	cmd.Stdout = &stdout
@@ -72,7 +72,50 @@ func GoListPackage(path string) (pkg GoPackage, err error) {
 		err = fmt.Errorf("%s: %s", err, stderr.String())
 		return
 	}
-	err = json.Unmarshal(stdout.Bytes(), &pkg)
+	target := struct {
+		GoPackage
+		Error struct {
+			Err string
+		}
+	}{}
+	err = json.Unmarshal(stdout.Bytes(), &target)
+	if target.Dir == "" {
+		err = fmt.Errorf("failed to load a go package for path '%s'", path)
+		return
+	} else {
+		pkg = target.GoPackage
+	}
+	if err != nil || pkg.Module.Dir != "" {
+		// we have everything we need
+		return
+	}
+
+	// failed to load the module, the target package is probably malformed
+	// try to load the module by trimming the package import path
+	parts := strings.Split(pkg.ImportPath, "/")
+	for i := len(parts); i > 0; i-- {
+		pkg.Module, err = GoListModule(strings.Join(parts[:i], "/"))
+		if err == nil {
+			return
+		}
+	}
+	err = fmt.Errorf("failed to load package module for path %s", path)
+	return
+}
+
+// GoListModule will get the Go module information for the import path provied
+func GoListModule(path string) (mod GoModule, err error) {
+	var stdout, stderr bytes.Buffer
+	cmd := exec.Command("go", "list", "-m", "--json", path)
+	stdout.Reset()
+	stderr.Reset()
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	if err = cmd.Run(); err != nil {
+		err = fmt.Errorf("%s: %s", err, stderr.String())
+		return
+	}
+	err = json.Unmarshal(stdout.Bytes(), &mod)
 	return
 }
 
