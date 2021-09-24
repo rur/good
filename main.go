@@ -306,10 +306,10 @@ func scaffoldCmd(sitePkgRel string) {
 }
 
 // pageCmd attempts to add a new page to an existing scaffold site
-func pageCmd(sitePkgRel, pageName, starterTemplatePath string) {
+func pageCmd(sitePkgInput, pageName, starterTemplatePath string) {
 	err := generate.ValidatePageName(pageName)
 	mustNot(err)
-	sitePkg, err := generate.GoListPackage(sitePkgRel)
+	sitePkg, err := generate.GoListPackage(sitePkgInput)
 	mustNot(err)
 	err = generate.ValidatePageLocation(filepath.Join(sitePkg.Dir, "page", pageName), scaffold)
 	mustNot(err)
