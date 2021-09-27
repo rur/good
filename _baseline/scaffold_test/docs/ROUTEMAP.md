@@ -11,17 +11,19 @@
 ## Overview
 
 The `routemap.toml` file is the configuration for template composition and
-mappings to HTTP routes and handlers in this page.
+mappings to HTTP routes and handlers in a page.
 
-- It is the _source of truth_ for how templates, handlers and paths are mapped within a page.
-- It is used to generate the _routes.go_ code with the `good routes` command
-- It is capable of describing many variations of the page layout
-- HTTP endpoints can be bound to a specific layouts
+- It is the _source of truth_ for how templates, handlers and paths are mapped
+- It is used to generate the _routes.go_ code with the `good routes gen` command
+- It helps organize templates for the various page views
+- HTTP endpoints are bound to a specific views
 
 #### Modifying the Routemap
 
-Add or change endpoints by editing the TOML file and running the go generate command
+Add or change endpoints by editing the TOML file. The Go generate command is configured
 to update the page routes code.
+
+You can refresh routes for the full site like so,
 
 ```
 go generate github.com/rur/good/baseline/scaffold_test/...
@@ -29,9 +31,9 @@ go generate github.com/rur/good/baseline/scaffold_test/...
 
 ##### Auto-gen handlers and template files
 
-It can be tedious to create and configure template files and handlers when adding new views
-so, as a convenience, if the `_template` or `_handler` fields are missing from the routemap when the
-_routes.go_ file is generated, the missing items will be generated for you.
+It can be tedious to create and configure template files and handlers when adding new views.
+So, as a convenience, if the `_template` or `_handler` fields are missing for a route map entry,
+when the _routes.go_ file is generated, the missing items will be generated for you.
 
 ## Examples
 
@@ -220,18 +222,21 @@ Note templates are read from disk in development mode using the `--dev` flag.
 A Route Map is a tree of views, each node on the tree can have the following
 fields:
 
-- **\_ref** `string` _(required)_ a reference unique within the TOML file (alpha-only with dash sep)
-- **\_doc** `string` optional docstring for this node
-- **\_path** `string` Attach a HTTP endpoint to this view, a view hierarchy will be used to construct a `http.Handler` instance.
-- **\_template** `string` the template path for this view
-- **\_handler** `string` go code referencing template handler function
-- **\_method** `string` HTTP method to restrict routing too semantics depend on your chosen router
-- **\_default** `bool` flag to indicate that this view should be included in the parent layout by default
-- **\_fragment** `bool` This view can be loaded independently using an XHR template request
-- **\_partial** `bool` This view can be loaded independently, but can also be loaded as a regular full page using the same path
-- **\_merge** `string` (documentation) The treetop-merge method ascribed to the top level element
-- **\_includes** `list<string>` Other views in this file to include in this layout, named by _\_ref_
-- **\_entrypoint** `string` (root only) document the entry point path for this page
+| Field            | TOML type      | Description
+|------------------|----------------|-------------------------------------
+| **\_ref**        | `string`       | _(required)_ View identifier, unique within the TOML file (alpha-only with dash sep)
+| **\_doc**        | `string`       | optional docstring for this node
+| **\_path**       | `string`       | Attach a HTTP endpoint to this view, ancestors will be used to construct a page layout
+| **\_template**   | `string`       | the template string for this view, can be a file path or keyed template
+| **\_handler**    | `string`       | go code referencing the template handler function
+| **\_method**     | `string`       | HTTP method, semantics depend on the router you are using (requires \_path)
+| **\_default**    | `bool`         | flag to indicate that this view should be included in the parent layout by default
+| **\_fragment**   | `bool`         | HTML fragment endpoint will not include ancestor views. Requires a special _Accept_ header
+| **\_partial**    | `bool`         | HTML partial endpoint can render with or without ancestors, varying on the _Accept_ header
+| **\_merge**      | `string`       |(documentation) The treetop-merge method ascribed to the top level element
+| **\_includes**   | `list<string>` | Other views in this file to include in this layout, named by _\_ref_
+| **\_entrypoint** | `string`       |(root only) document the entry point path for this page
+
 
 ### Routemap Hierarchy
 
