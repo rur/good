@@ -1,0 +1,211 @@
+package [# .Name #]
+
+import (
+	"crypto/rand"
+	"encoding/base64"
+	"strings"
+	"sync"
+	"time"
+
+	"[# .Namespace #]/site"
+	"golang.org/x/crypto/bcrypt"
+)
+
+var (
+	// demoDB is an in-memory singleton for the purpose of a preview
+	demoDBSingleton = demoMemDB{
+		users:                []demoMemDB_User{},
+		sessions:             make(map[string]demoMemDB_Session),
+		sessionRefreshTokens: make(map[string]demoMemDB_Session), // for remember-me cookie
+	}
+)
+
+func init() {
+	// seed the demo database with a user
+	demoDBSingleton.registerUser("Demo User", "demo@example.com", "password123")
+}
+
+// demoMemDB is just for demo purposes
+type demoMemDB struct {
+	lock                 sync.RWMutex
+	users                []demoMemDB_User
+	sessions             map[string]demoMemDB_Session
+	sessionRefreshTokens map[string]demoMemDB_Session
+}
+
+// demoMemDB_User is a user row in our mock DB
+type demoMemDB_User struct {
+	id                 int
+	name               string
+	email              string
+	bcryptPasswordHash []byte
+}
+
+// demoMemDB_Session is a session stored in our mock DB
+type demoMemDB_Session struct {
+	userID  int
+	created time.Time
+}
+
+// authenticatedUser will use credentials to load a user instance from the mock DB
+func (dmd *demoMemDB) authenticateUser(email, password string) (*site.User, error) {
+	// email address are stored in lowercase, normalize for comparison
+	email = strings.ToLower(email)
+
+	dmd.lock.RLock()
+	defer dmd.lock.RUnlock()
+
+	i := dmd.indexOfUserEmail(email)
+	if i == -1 {
+		return nil, errLoginUserNotFound
+	}
+	row := dmd.users[i]
+	err := bcrypt.CompareHashAndPassword(row.bcryptPasswordHash, []byte(password))
+	if err != nil {
+		return nil, errLoginBadPassword
+	}
+	return &site.User{
+		Name:  row.name,
+		Email: row.email,
+	}, nil
+}
+
+// registerUser will save user details to the mock DB and return a site user instance
+func (dmd *demoMemDB) registerUser(name, email, password string) error {
+	// expensive, so do it before obtainting the lock
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost)
+	if err != nil {
+		return err
+	}
+
+	// normalize email address to be all lower case
+	email = strings.ToLower(email)
+
+	// lock our in-mem DB from here on
+	dmd.lock.Lock()
+	defer dmd.lock.Unlock()
+	i := dmd.indexOfUserEmail(email)
+	if i != -1 {
+		return errRegisterEmailExists
+	}
+
+	dmd.users = append(dmd.users, demoMemDB_User{
+		id:                 len(dmd.users) + 1,
+		name:               name,
+		email:              email,
+		bcryptPasswordHash: hash,
+	})
+
+	return nil
+}
+
+// createUserSession will return two tokens, one session token and one session refresh token
+// the second token will be empty if the rememberMe flag is false
+func (dmd *demoMemDB) createUserSession(user *site.User, rememberMe bool) (session string, refresh string, err error) {
+	// do sys-calls before seeking the DB lock
+	session = generateB64Token()
+	if rememberMe {
+		refresh = generateB64Token()
+	}
+
+	// lock our in-mem DB from here on
+	dmd.lock.Lock()
+	defer dmd.lock.Unlock()
+
+	i := dmd.indexOfUserEmail(user.Email)
+	if i == -1 {
+		session = ""
+		err = errLoginUserNotFound
+		return
+	}
+	sessionData := demoMemDB_Session{
+		userID:  dmd.users[i].id,
+		created: time.Now(),
+	}
+	dmd.sessions[session] = sessionData
+	if rememberMe {
+		dmd.sessionRefreshTokens[refresh] = sessionData
+	}
+	return
+}
+
+// deleteUserSession will purge any record of the supplied session/refresh keys
+func (dmd *demoMemDB) deleteUserSession(session string, refresh string) {
+	dmd.lock.RLock()
+	defer dmd.lock.RUnlock()
+	if session != "" {
+		delete(dmd.sessions, session)
+	}
+	if refresh != "" {
+		delete(dmd.sessionRefreshTokens, refresh)
+	}
+}
+
+// getUserSession is an alternative to using a password to authenticate a user,
+// the token must have been issued recently
+func (dmd *demoMemDB) getUserSession(token string) *site.User {
+	dmd.lock.RLock()
+	defer dmd.lock.RUnlock()
+	session, ok := dmd.sessions[token]
+	if ok {
+		if time.Now().After(session.created.AddDate(0, 0, 1)) {
+			// don't keep session tokens for longer than a day
+			delete(dmd.sessions, token)
+			return nil
+		}
+		for i := range dmd.users {
+			if dmd.users[i].id == session.userID {
+				return &site.User{
+					Name:  dmd.users[i].name,
+					Email: dmd.users[i].email,
+				}
+			}
+		}
+	}
+	return nil // not found
+}
+
+// rememberUserSession will load the user for which the refresh token is based
+func (dmd *demoMemDB) rememberUserSession(token string) *site.User {
+	dmd.lock.RLock()
+	defer dmd.lock.RUnlock()
+	session, ok := dmd.sessionRefreshTokens[token]
+	if ok {
+		for i := range dmd.users {
+			if time.Now().After(session.created.AddDate(0, 1, 0)) {
+				// don't keep refresh token for longer than a month
+				delete(dmd.sessionRefreshTokens, token)
+				return nil
+			}
+			if dmd.users[i].id == session.userID {
+				return &site.User{
+					Name:  dmd.users[i].name,
+					Email: dmd.users[i].email,
+				}
+			}
+		}
+	}
+	return nil // not found
+}
+
+// indexOfUserEmail will scan a demo mem DB and return the offset index of the user entry
+func (dmd *demoMemDB) indexOfUserEmail(email string) int {
+	for i := 0; i < len(dmd.users); i++ {
+		if dmd.users[i].email == email {
+			return i
+		}
+	}
+	return -1
+}
+
+// generateB64Token will generate a cryptographically random byte array and encode it using
+// URL-safe base 64 (RFC 4648)
+func generateB64Token() string {
+	b := make([]byte, 64)
+	_, err := rand.Read(b)
+	if err != nil {
+		// wait, stop what's happening
+		panic("random number generator syscall failed " + err.Error())
+	}
+	return base64.URLEncoding.EncodeToString(b)
+}

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="generator" content="Good Scaffold">
+
+    <title>{{ .PageTitle }}</title>
+
+    {{ template "styles" .Styles }}
+  </head>
+  <body class="text-center">
+    {{ template "content" .Content }}
+
+    {{ template "scripts" .Scripts }}
+  </body>
+</html>

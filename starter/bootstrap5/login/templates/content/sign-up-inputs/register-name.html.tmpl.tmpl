@@ -1,0 +1,19 @@
+<div id="register-name" class="form-floating mb-4">
+  <input
+    id="registrationNameInput"
+    name="name"
+    type="text"
+    class="form-control{{ if .Error }} is-invalid{{ end }}"
+    placeholder="your name here"
+    autofocus
+    required
+    data-submit-reset-bs5-validation
+    value="{{ .Value }}">
+  <label for="registrationNameInput">Name</label>
+
+  {{ if .Error }}
+  <div class="invalid-feedback">
+    {{ .Error }}
+  </div>
+  {{ end }}
+</div>

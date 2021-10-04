@@ -1,0 +1,51 @@
+<!-- Bootstrap Bundle with Popper -->
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+  crossorigin="anonymous"
+  defer
+></script>
+
+<script src="/js/treetop.js" defer></script>
+
+<script>
+  window.TREETOP_CONFIG = {
+    /* these directives are applied _after_ a new element has been inserted to the DOM */
+    mountAttr: {
+      autofocus: (elt) => {
+        setTimeout(() => elt.focus(), 0);
+      },
+      "data-submit-reset-bs5-validation": (elt) => {
+        // Clear bootstrap 5 validation class names when the
+        // form submits.
+        if (!elt.form) return
+        elt.__submitWatcher = () => {
+          elt.classList.remove("is-invalid")
+          elt.classList.remove("is-valid")
+        }
+        elt.__watchingForm = elt.form
+        elt.__watchingForm.addEventListener("submit", elt.__submitWatcher)
+      }
+    },
+
+    /* directives applied _after_ an element has been removed from the DOM */
+    unmountAttr: {
+      "data-submit-reset-bs5-validation": (elt) => {
+        // some cleanup needed for GC
+        if (elt.__watchingForm && elt.__submitWatcher) {
+          elt.__watchingForm.removeEventListener("submit", elt.__submitWatcher)
+        }
+        elt.__submitWatcher = null;
+        elt.__submitWatcher = null;
+      }
+    },
+    /* custom element merge functions */
+    merge: {},
+    onNetworkError: (xhr) => {
+      alert("Check connection");
+    },
+    onUnsupported: (xhr) => {
+      alert("Unsupported Fragment Request");
+    },
+  };
+</script>

@@ -1,0 +1,128 @@
+package [# .Name #]
+
+import (
+	"fmt"
+	"net/http"
+	"regexp"
+	"strings"
+
+	"[# .Namespace #]/site"
+	"github.com/rur/treetop"
+
+	passwordvalidator "github.com/wagslane/go-password-validator"
+)
+
+// -------------------------
+// [# .Name #] Handlers
+// -------------------------
+
+// formInput used for the sign-up-inputs/* templates
+type formInput struct {
+	Value   string
+	IsValid bool
+	Error   string
+}
+
+// validation parameters
+
+const minPassEntropyBits = 60
+
+var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+
+// Ref: sign-up-form
+// Block: content
+// Doc: User registration form handler
+func signUpFormHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
+	query := req.URL.Query()
+	return struct {
+		RegisterName     formInput
+		RegisterEmail    formInput
+		RegisterPassword formInput
+		RegisterAlert    string
+	}{
+		RegisterName: formInput{
+			Value: query.Get("name"),
+		},
+		RegisterEmail: formInput{
+			Value: query.Get("email"),
+		},
+	}
+}
+
+// Ref: sign-up-submit
+// Block: content
+// Method: POST
+// Doc: Validate registration form values. Create a new user, or show an error
+func signUpSubmitHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data := struct {
+		RegisterName     formInput
+		RegisterEmail    formInput
+		RegisterPassword formInput
+		RegisterAlert    string
+		Success          bool
+	}{}
+
+	// process name
+	data.RegisterName.Value = strings.TrimSpace(req.PostFormValue("name"))
+	if len(data.RegisterName.Value) < 3 {
+		data.RegisterName.Error = "User name is too short!"
+	} else {
+		data.RegisterName.IsValid = true
+	}
+
+	// process email
+	data.RegisterEmail.Value = strings.ToLower(req.PostFormValue("email"))
+	if email := data.RegisterEmail.Value; email == "" {
+		data.RegisterEmail.Error = "An email address is required"
+	} else if !emailRegex.MatchString(email) {
+		data.RegisterEmail.Error = fmt.Sprintf("Sorry, this email address %#v does not meet our requirements", email)
+	} else if email != strings.ToLower(req.PostFormValue("confirm-email")) {
+		data.RegisterEmail.Error = "Your confirmation email does not match!"
+	} else {
+		data.RegisterEmail.IsValid = true
+	}
+
+	// process password
+	data.RegisterPassword.Value = req.PostFormValue("password")
+	if password := data.RegisterPassword.Value; password == "" {
+		data.RegisterPassword.Error = "A password is required"
+	} else if err := passwordvalidator.Validate(password, minPassEntropyBits); err != nil {
+		data.RegisterPassword.Error = err.Error()
+	} else if password != req.PostFormValue("confirm-password") {
+		data.RegisterPassword.Error = "Your confirmation password does not match!"
+	} else {
+		data.RegisterPassword.IsValid = true
+	}
+
+	if !data.RegisterName.IsValid || !data.RegisterEmail.IsValid || !data.RegisterPassword.IsValid {
+		// input error, allow the template render the error
+		rsp.Status(http.StatusUnprocessableEntity)
+		return data
+	}
+
+	// input is good, attempt to create the user
+	err := rsc.db.registerUser(
+		data.RegisterName.Value,
+		data.RegisterEmail.Value,
+		data.RegisterPassword.Value,
+	)
+	if err == errRegisterEmailExists {
+		rsp.Status(http.StatusConflict)
+		data.RegisterAlert = fmt.Sprintf(
+			"An account already exists for email %#v.",
+			data.RegisterEmail.Value,
+		)
+		return data
+	} else if err != nil {
+		env.ErrorLog.Println("Error while registering a user", err)
+		rsp.Status(http.StatusInternalServerError)
+		data.RegisterAlert = "Something went wrong, try again!"
+		return data
+	}
+
+	// An account was created, redirect to the [# .Name #] page
+	// so they can try out their new credentials.
+	rsp.Status(http.StatusCreated)
+	data.Success = true
+	return data
+}

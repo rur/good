@@ -1,0 +1,5 @@
+{{ if eq . "" }}
+<div id="register-alert" class="d-none"></div>
+{{ else }}
+<div id="register-alert" class="alert alert-danger">{{ . }}</div>
+{{ end }}

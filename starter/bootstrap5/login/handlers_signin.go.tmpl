@@ -1,0 +1,172 @@
+package [# .Name #]
+
+import (
+	"fmt"
+	"net/http"
+	"net/url"
+	"time"
+
+	"[# .Namespace #]/site"
+	"github.com/rur/treetop"
+)
+
+
+// -------------------------
+// [# .Name #] Handlers
+// -------------------------
+
+// Ref: sign-in-form
+// Block: content
+// Doc: Standing landing sign-in form asking for email and password
+func signInFormHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data := struct {
+		Email        string
+		RedirectPath string
+		RememberMe   bool
+		Error        string
+	}{}
+
+	switch req.Method {
+	case "GET", "HEAD":
+		// get params to initialize the sign in form
+		query := req.URL.Query()
+		data.Email = query.Get("email")
+		data.RememberMe = query.Get("remember") == "yes"
+		data.RedirectPath = validateRedirect(query.Get("redirect"))
+
+		// check for an existing session or attempt to refresh a remembered session
+		if user := reviveUserSession(rsc, env, rsp, req); user != nil {
+			treetop.Redirect(rsp, req, "/[# .Name #]/whoami", http.StatusSeeOther)
+			// EDITME: replace the 'Who am I' redirect above with the actual redirect below...
+			// treetop.Redirect(rsp, req, data.RedirectPath, http.StatusSeeOther)
+			return nil
+		}
+		// pass data for the form
+		return data
+
+	case "POST":
+		// process the sign up form submit
+
+		data.RememberMe = req.PostFormValue("remember-me") == "yes"
+		data.Email = req.PostFormValue("email")
+		password := req.PostFormValue("password")
+		data.RedirectPath = validateRedirect(req.PostFormValue("redirect"))
+
+		if user, err := rsc.db.authenticateUser(data.Email, password); err != nil {
+			switch err {
+			case errLoginUserNotFound:
+				env.WarnLog.Printf("Login attempt for unrecognized user %#v \n", data.Email)
+				rsp.Status(http.StatusUnauthorized)
+				data.Error = fmt.Sprintf("Unknown user '%s'", data.Email)
+
+			case errLoginBadPassword:
+				rsp.Status(http.StatusUnauthorized)
+				data.Error = "Check password"
+
+			default:
+				env.ErrorLog.Println("Login error for user", data.Email, err)
+				rsp.Status(http.StatusUnauthorized)
+				data.Error = fmt.Sprintf("login failed: %s", err)
+
+			}
+			return data
+		} else {
+			cookie, refreshCookie, err := rsc.db.createUserSession(user, data.RememberMe)
+			if err != nil {
+				env.ErrorLog.Println("Error saving the user session", data.Email, err)
+				rsp.Status(http.StatusInternalServerError)
+				data.Error = "Something went wrong, please try again"
+				return data
+			}
+			http.SetCookie(rsp, &http.Cookie{
+				Name:  SessionCookieName,
+				Path:  "/",
+				Value: cookie,
+				// Expires: xxx // browser will default to a session cookie
+				HttpOnly: true,
+				SameSite: http.SameSiteStrictMode, // mitigate CSRF for newer browsers
+				Secure:   env.HTTPS,
+			})
+			if data.RememberMe {
+				http.SetCookie(rsp, &http.Cookie{
+					Name:     SessionRefreshCookieName,
+					Path:     "/[# .Name #]", // only visible to the [# .Name #] page
+					Value:    refreshCookie,
+					Expires:  time.Now().AddDate(0, 1, 0), // one month from now
+					HttpOnly: true,
+					SameSite: http.SameSiteStrictMode,
+					Secure:   env.HTTPS,
+				})
+			}
+		}
+
+		treetop.Redirect(rsp, req, "/[# .Name #]/whoami", http.StatusSeeOther)
+		// EDITME: replace the 'Who am I' redirect above with the actual redirect below...
+		// treetop.Redirect(rsp, req, data.RedirectPath, http.StatusSeeOther)
+
+		return nil
+
+	default:
+		rsp.Status(http.StatusMethodNotAllowed)
+		rsp.Header().Add("Allow", "GET, POST, HEAD")
+		data.Error = "Invalid request method!"
+		return data
+	}
+}
+
+// validateRedirect will check that the redirect is relative, or fall back on root "/"
+func validateRedirect(path string) string {
+	if path == "" {
+		return ""
+	}
+	redirectURL, err := url.Parse(path)
+	if err != nil || redirectURL.IsAbs() || redirectURL.Hostname() != "" {
+		// only relative paths are accepted, fall back on root
+		return "/"
+	}
+	return redirectURL.String()
+}
+
+// reviveUserSession will check for a user session. If one is not found, check if there is a valid refresh
+// cookie that allows us to create a new one automatically.
+func reviveUserSession(rsc *resources, env *site.Env, w http.ResponseWriter, req *http.Request) *site.User {
+	if rsc.user != nil {
+		// already logged in
+		return rsc.user
+	}
+	if cookie, err := req.Cookie(SessionRefreshCookieName); err == nil {
+		// try to refresh
+		user := rsc.db.rememberUserSession(cookie.Value)
+		if user != nil {
+			session, _, err := rsc.db.createUserSession(user, false)
+			if err == nil {
+				// refresh the user session token
+				http.SetCookie(w, &http.Cookie{
+					Name:  SessionCookieName,
+					Path:  "/",
+					Value: session,
+					// Expires: xxx // browser will default to a session cookie
+					HttpOnly: true,
+					SameSite: http.SameSiteStrictMode, // mitigate CSRF for newer browsers
+					Secure:   env.HTTPS,
+				})
+				return user
+			}
+			// A valid refresh token was found, but something went wrong unexpectedly
+			env.ErrorLog.Printf("Error refreshing user %s session: %v\n", user.Email, err)
+			// delete the refresh token from the DB and the client to avoid a loop
+			rsc.db.deleteUserSession("", cookie.Value)
+			http.SetCookie(w, &http.Cookie{
+				Name:     SessionRefreshCookieName,
+				Path:     "/[# .Name #]",
+				Value:    "",
+				Expires:  time.Unix(0, 0), // epoch to pre-expire the cookie
+				HttpOnly: true,
+				SameSite: http.SameSiteStrictMode,
+				Secure:   env.HTTPS,
+			})
+		}
+	}
+	// fall through means no user
+	return nil
+}

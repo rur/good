@@ -1,0 +1,93 @@
+_ref = "base"
+_handler = "hlp.BindEnv(bindResources(baseHandler))"
+_template = "[# .Templates #]/base.html.tmpl"
+_doc = "Base HTML template for [# .Name #] page"
+_entrypoint = "/[# .Name #]"
+
+    [[content]]
+    _ref = "sign-in-form"
+    _template = "[# .Templates #]/content/sign-in-form.html.tmpl"
+    _handler = "hlp.BindEnv(bindResources(signInFormHandler))"
+    _partial = true
+    _path = "/[# .Name #]"
+    _doc = "Sign-in form asking for email and password"
+
+    [[content]]
+    _ref = "sign-in-whoami"
+    _template = "[# .Templates #]/content/sign-in-whoami.html.tmpl"
+    _handler = "hlp.BindEnv(bindResources(signInWhoamiHandler))"
+    _path = "/[# .Name #]/whoami"
+    _doc = "Show the current logged in status"
+
+    [[content]]
+    _ref = "log-user-out"
+    _template = "::empty::"
+    _handler = "hlp.BindEnv(bindResources(logUserOutHandler))"
+    _path = "/[# .Name #]/delete"
+    _method = "POST"
+    _doc = "Clear all cookies and remove corresponding session record from the login DB"
+
+    [[content]]
+    _ref = "sign-up-form"
+    _handler = "hlp.BindEnv(bindResources(signUpFormHandler))"
+    _template = "[# .Templates #]/content/sign-up-form.html.tmpl"
+    _partial = true
+    _method = "GET"
+    _path = "/[# .Name #]/register"
+    _doc = "User registeration, included for completeness"
+
+        [[content.register-name]]
+        _ref = "reg-name-input"
+        _default = true
+        _handler = "treetop.Noop"
+        _template = "[# .Templates #]/content/sign-up-inputs/register-name.html.tmpl"
+        _doc = "template for the sign up form name input group"
+
+        [[content.register-email]]
+        _ref = "reg-email-input"
+        _default = true
+        _handler = "treetop.Noop"
+        _template = "[# .Templates #]/content/sign-up-inputs/register-email.html.tmpl"
+        _doc = "template for the sign up form email input group"
+
+        [[content.register-password]]
+        _ref = "reg-password-input"
+        _default = true
+        _handler = "treetop.Noop"
+        _template = "[# .Templates #]/content/sign-up-inputs/register-password.html.tmpl"
+        _doc = "template for the sign up form password input group"
+
+        [[content.register-alert]]
+        _ref = "reg-error-alert"
+        _default = true
+        _handler = "treetop.Noop"
+        _template = "[# .Templates #]/content/sign-up-inputs/register-alert.html.tmpl"
+        _doc = "sign up form error alert template"
+
+    [[content]]
+    _ref = "sign-up-submit"
+    _template = "[# .Templates #]/content/sign-up-submit.html.tmpl"
+    _handler = "hlp.BindEnv(bindResources(signUpSubmitHandler))"
+    _fragment = true
+    _method = "POST"
+    _path = "/[# .Name #]/register/create"
+    _doc = "Process registration submit request, render input fragments if an error occurs"
+    _includes = ["reg-name-input", "reg-email-input", "reg-password-input", "reg-error-alert"]
+        [[content.register-name]]
+        [[content.register-email]]
+        [[content.register-password]]
+        [[content.register-alert]]
+
+    [[scripts]]
+    _ref = "page-scripts"
+    _default = true
+    _doc = "Inline scripts for the page"
+    _template = "[# .Templates #]/scripts.html.tmpl"
+    _handler = "treetop.Noop"
+
+    [[styles]]
+    _ref = "page-styles"
+    _default = true
+    _doc = "Custom inline styles for this page"
+    _template = "[# .Templates #]/styles.html.tmpl"
+    _handler = "treetop.Noop"
