@@ -1,0 +1,37 @@
+package [# .Name #]
+
+import (
+	"net/http"
+
+	"[# .Namespace #]/site"
+	"github.com/rur/treetop"
+)
+
+// Ref: base
+// Doc: Base HTML template for [# .Name #] page
+func baseHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data := struct {
+		PageTitle string
+
+		Content interface{}
+		Scripts interface{}
+		Styles  interface{}
+	}{
+		// sub-templates:
+		Content: rsp.HandleSubView("content", req),
+		Scripts: rsp.HandleSubView("scripts", req),
+		Styles:  rsp.HandleSubView("styles", req),
+	}
+	switch req.URL.Path {
+	case "/[# .Name #]":
+		data.PageTitle = "User sign in"
+	case "/[# .Name #]/whoami":
+		data.PageTitle = "Session details"
+	case "/[# .Name #]/register":
+		data.PageTitle = "Sign up a new user"
+	default:
+		data.PageTitle = "Site Authentication"
+	}
+
+	return data
+}

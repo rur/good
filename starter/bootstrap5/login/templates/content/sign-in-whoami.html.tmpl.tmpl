@@ -1,0 +1,25 @@
+
+<div id="content" class="form-signin">
+    {{ if .User }}
+    <h2>You are signed in</h2>
+    <p>You have a valid session cookie for the following user...</p>
+    <dl class="row text-start">
+      <dt class="col-sm-5">Name</dt>
+      <dd class="col-sm-7">{{ .User.Name }}</dd>
+
+      <dt class="col-sm-5">Email</dt>
+      <dd class="col-sm-7">{{ .User.Email }}</dd>
+
+      <dt class="col-sm-5">Remember</dt>
+      <dd class="col-sm-7">{{ if .RememberMe }}yes{{ else }}no{{ end }}</dd>
+    </dl>
+
+    <form action="/[# .Name #]/delete" method="post"><button class="w-100 btn btn-outline-secondary">Sign me out</button></form>
+
+  {{ else }}
+    <h2>You are not signed in</h2>
+    <p>You do not have a valid session cookie. Follow the link below and enter your credentials.</p>
+    <a href="/[# .Name #]" class="btn btn-outline-primary w-100">Sign in</a>
+
+  {{ end }}
+</div>

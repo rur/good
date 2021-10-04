@@ -1,0 +1,48 @@
+package [# .Name #]
+
+import (
+	"net/http"
+	"time"
+
+	"[# .Namespace #]/site"
+	"github.com/rur/treetop"
+)
+
+// -------------------------
+// [# .Name #] Handlers
+// -------------------------
+
+// Ref: log-user-out
+// Block: content
+// Method: POST
+// Doc: Clear all cookies and remove corresponding session record from the [# .Name #] DB
+func logUserOutHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
+	var (
+		session, remember string
+	)
+	if cookie, err := req.Cookie(SessionCookieName); err == nil {
+		session = cookie.Value
+		http.SetCookie(rsp, &http.Cookie{
+			Name:     SessionCookieName,
+			Value:    "",
+			Path:     "/",
+			Expires:  time.Unix(0, 0),
+			HttpOnly: true,
+			Secure:   env.HTTPS,
+		})
+	}
+	if cookie, err := req.Cookie(SessionRefreshCookieName); err == nil {
+		remember = cookie.Value
+		http.SetCookie(rsp, &http.Cookie{
+			Name:     SessionRefreshCookieName,
+			Value:    "",
+			Path:     "/[# .Name #]",
+			Expires:  time.Unix(0, 0),
+			HttpOnly: true,
+			Secure:   env.HTTPS,
+		})
+	}
+	rsc.db.deleteUserSession(session, remember)
+	treetop.Redirect(rsp, req, "/[# .Name #]", http.StatusSeeOther)
+	return nil
+}

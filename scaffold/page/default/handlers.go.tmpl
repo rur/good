@@ -4,11 +4,11 @@ import (
 	"net/http"
 
 	"github.com/rur/treetop"
-	"[# .Namespace #]/service"
+	"[# .Namespace #]/site"
 )
 
 // exampleHandler demonstrates a handler with page resources and the site environment
-func exampleHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func exampleHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	return struct {
 		Description string
 	}{

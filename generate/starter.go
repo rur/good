@@ -23,6 +23,7 @@ func StarterScaffold(dir string, scaffold, starter fs.FS) (files []File, err err
 		"routemap.toml.tmpl": false,
 		"resources.go.tmpl":  false,
 		"handlers.go.tmpl":   false,
+		"README.md.tmpl":     false,
 	}
 	err = fs.WalkDir(starter, ".", func(path string, d fs.DirEntry, walkErr error) error {
 		if walkErr != nil {

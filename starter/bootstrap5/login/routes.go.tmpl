@@ -1,0 +1,19 @@
+package [# .Name #]
+
+import (
+	"github.com/rur/treetop"
+	"[# .Namespace #]/page"
+)
+
+func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
+
+	// Placeholder setup, run `go generate [# .PagePath #]` see the starter page
+
+	readme := treetop.NewView(
+		"::placeholder::",
+		treetop.Noop,
+	)
+
+	hlp.Handle("/[# .Name #]",
+		exec.NewViewHandler(readme).PageOnly())
+}

@@ -13,7 +13,7 @@ import (
 	"github.com/rur/treetop"
 
 	"github.com/rur/good/baseline/starter_test/page"
-	"github.com/rur/good/baseline/starter_test/service"
+	"github.com/rur/good/baseline/starter_test/site"
 )
 
 var (
@@ -36,7 +36,8 @@ var (
 	// binding views to template files
 	exec treetop.ViewExecutor
 
-	env *service.Env
+	// site environment singleton
+	env *site.Env
 )
 
 func init() {
@@ -69,8 +70,9 @@ func init() {
 
 func main() {
 	// Initialize Env instance to be shared with all handlers
-	env = &service.Env{
+	env = &site.Env{
 		// EDITME: initialize site-wide stuff here, for example...
+		HTTPS:    !devMode,
 		ErrorLog: log.New(os.Stderr, "[error]: ", log.Llongfile),
 		WarnLog:  log.New(os.Stdout, "[warn]: ", log.Llongfile),
 		InfoLog:  log.New(os.Stdout, "[info]: ", log.Llongfile),

@@ -1,0 +1,23 @@
+{{ if .Success }}
+  <main id="content" class="form-signin">
+    <p class="alert alert-success">User {{ .RegisterName.Value }} was created successfully.</p>
+    <a href="/[# .Name #]?email={{ .RegisterEmail.Value }}" class="btn btn-outline-primary">Sign in as {{ .RegisterEmail.Value }}</a>
+  </main>
+
+{{ else }}
+  {{/* An error occurred, render input errors as HTML fragments */}}
+
+  {{ if .RegisterName.Error }}
+    {{ template "register-name" .RegisterName }}
+  {{ end }}
+
+  {{ if .RegisterEmail.Error }}
+    {{ template "register-email" .RegisterEmail }}
+  {{ end }}
+
+  {{/* Always reset the password */}}
+  {{ template "register-password" .RegisterPassword }}
+
+  {{ template "register-alert" .RegisterAlert }}
+
+{{ end }}

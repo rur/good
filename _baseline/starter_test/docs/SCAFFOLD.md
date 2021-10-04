@@ -26,20 +26,33 @@ It is important to understand the dependency relationships within the Go
 packages of the scaffold.
 
 ```
-[main]
-    +----------------> [{site}/page/{*name}] --+
-    |                              |           |
-    +----> [{site}/page] <---------+           |
-    |           |                              |
-    |           V                              |
-    +----> [{site}/service] <------------------+
-    |
-    +----> [{site}/static](embedded)
+# Go packages:
+
+ ┌─────────────────┐
+ │ {scaffold}/main │
+ └────────┬────────┘
+          │
+          │      ┌────────────────────────┐
+          ├─────►│ {scaffold}/page/{name} ├─┬───┐
+          │      └────────────────────────┘ │   │
+          │                                 │   │
+          │      ┌─────────────────┐        │   │
+          ├─────►│ {scaffold}/page │◄───────┘   │
+          │      └───────┬─────────┘            │
+          │              │                      │
+          │              │                      │
+          │      ┌───────▼─────────┐            │
+          ├─────►│ {scaffold}/site │◄───────────┘
+          │      └─────────────────┘
+          │
+          │      ┌───────────────────┐
+          └─────►│ {scaffold}/static │ (embedded)
+                 └───────────────────┘
 ```
 
 > **note**
 >
-> Cyclical imports are prohibited in Golang. Therefore, the `{site}/page` pkg cannot refer to code
+> Cyclical imports are prohibited in Golang. Therefore, the `{scaffold}/page` pkg cannot refer to code
 > inside any of the named pages, this is by design.
 
 ## Site Env
@@ -66,12 +79,15 @@ These are the key files created by the `good scaffold` command.
 
 | Location                  | Note                                                                      |
 | ------------------------- | ------------------------------------------------------------------------- |
-| main.go                   | Initiailize and start the web server                                      |
+| main.go                   | Initialize and start the web server                                       |
 | pages.go                  | (generated file) static link to page routes during init                   |
 | static/{js styles public} | embedded browser assets                                                   |
-| service/env.go            | Site-wide services and config passed to handlers                          |
-| service/\*.go             | Place your IO & wrapper code in this package (Auth, Postgres, S3, etc...) |
-| page/handlers.go          | Handlers and utilities available to ALL pages                             |
+| site/env.go               | Site-wide services and config passed to handlers                          |
+| site/\*.go                | Place your standard types, IO & wrapper code here (eg. Auth, Postgres, S3, etc...) |
+| page/handlers.go          | Handler code available to ALL pages                                       |
+| page/helper.go            | Helper type passed to page routes.go during initialization                |
+| page/keyed.go             | Key map of hard coded raw template strings (comes in handy)               |
+| page/\*.go                | Misc shared page utilities                                                |
 | page/templates/\*\*.tmpl  | Template files available to ALL pages                                     |
 | page/{\*name}/            | A named page package (see details below)                                  |
 | doc/\*.md                 | Scaffold documentation                                                    |
@@ -85,5 +101,5 @@ These are the key files created by the `good page {name}` command.
 | page/{name}/routemap.toml          | configuration of route, template and handler mappings                   |
 | page/{name}/routes.go              | (generated file) endpoint plumbing generated from the routemap          |
 | page/{name}/resources.go           | Request-scoped handler resources, implements `bindResources(myHandler)` |
-| page/{name}/handlers.go            | Local request handlers, referenced in routes.go                         |
-| page/{name}/templates/\*\*/\*.tmpl | Template files for this page, organized by block name                   |
+| page/{name}/handlers_\*.go            | Local request handlers, referenced in routes.go                         |
+| page/{name}/templates/\*\*/\*.tmpl | Template files for this page, usually organized by block name                   |

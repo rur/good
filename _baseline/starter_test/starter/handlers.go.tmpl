@@ -4,11 +4,11 @@ import (
 	"net/http"
 
 	"github.com/rur/treetop"
-	"[# .Namespace #]/service"
+	"[# .Namespace #]/site"
 )
 
 // baseHandler is the default top level handler for the [# .Name #] page
-func baseHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func baseHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		PageTitle string
 		Nav       interface{}

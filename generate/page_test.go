@@ -93,8 +93,8 @@ func TestPageScaffold(t *testing.T) {
 			"# Page `testing`",
 		},
 		"page/testing/handlers.go": {
-			`"github.com/rur/example/admin/site/service"`,
-			`(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {`,
+			`"github.com/rur/example/admin/site/site"`,
+			`(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {`,
 		},
 		"static/js/testing/example.js": {
 			`function test() {`,

@@ -1,7 +1,7 @@
 github.com/pelletier/go-toml v1.9.1 h1:a6qW1EVNZWH9WGI6CsYdD8WAylkoXBS5yv0XHlh17Tc=
 github.com/pelletier/go-toml v1.9.1/go.mod h1:u1nR/EPcESfeI/szUZKdtJ0xRNbUoANCkoOuaOx1Y+c=
-github.com/rur/treetop v0.4.0 h1:0XftcBAQiQvMikiiNL2C9vrJSYUvKSe0b/G/CSuuSCQ=
-github.com/rur/treetop v0.4.0/go.mod h1:VFCQmta7OnTIcJaz6RbkXKK5MDLTtLZpJcVxF1lzkMs=
+github.com/rur/treetop v0.4.1 h1:juO2hVBzsT/0r78AGDpJgjg/G2Qzqy67E/CdnAaKc5E=
+github.com/rur/treetop v0.4.1/go.mod h1:VFCQmta7OnTIcJaz6RbkXKK5MDLTtLZpJcVxF1lzkMs=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
 golang.org/x/mod v0.5.0 h1:UG21uOlmZabA4fW5i7ZX6bjw1xELEGg/ZLgZq9auk/Q=

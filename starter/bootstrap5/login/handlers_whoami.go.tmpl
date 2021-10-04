@@ -1,0 +1,29 @@
+package [# .Name #]
+
+import (
+	"net/http"
+
+	"[# .Namespace #]/site"
+	"github.com/rur/treetop"
+)
+
+// -------------------------
+// login Handlers
+// -------------------------
+
+// Ref: sign-in-whoami
+// Block: content
+// Doc: Preview current logged in status
+func signInWhoamiHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
+	data := struct {
+		User       *site.User
+		RememberMe bool
+	}{
+		User: rsc.user,
+	}
+	if cookie, err := req.Cookie(SessionRefreshCookieName); err == nil {
+		data.RememberMe = rsc.db.rememberUserSession(cookie.Value) != nil
+	}
+	rsp.Header().Add("Vary", "Cookie")
+	return data
+}

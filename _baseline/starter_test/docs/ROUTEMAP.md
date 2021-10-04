@@ -181,7 +181,7 @@ in your route map TOML like so,
 Your handler must have the following function signature.
 
 ```
-func myHandlerWithEnv(env service.Env, resp treetop.Response, req *http.Request) interface{} {
+func myHandlerWithEnv(env site.Env, resp treetop.Response, req *http.Request) interface{} {
   return "data for the template"
 }
 ```
@@ -197,7 +197,7 @@ route map like so
 Your handler must have the following function signature.
 
 ```
-func myHandlerWithResources(rsc resources, env service.Env, resp treetop.Response, req *http.Request) interface{} {
+func myHandlerWithResources(rsc resources, env site.Env, resp treetop.Response, req *http.Request) interface{} {
   return "data for the template"
 }
 ```

@@ -1,0 +1,30 @@
+<div id="register-email" class="input-form-group mb-4">
+	<div class="form-floating">
+	  <input
+      id="registrationEmailInput"
+      name="email"
+      type="email"
+      class="form-control --first{{ if .Error }} is-invalid{{ end }}"
+      placeholder="name@example.com"
+      data-submit-reset-bs5-validation
+      required
+      value="{{ .Value }}">
+	  <label for="registrationEmailInput">Email</label>
+	</div>
+	<div class="form-floating">
+	  <input
+      id="registrationConfirmEmailInput"
+      name="confirm-email"
+      type="email"
+      class="form-control --last{{ if .Error }} is-invalid{{ end }}"
+      data-submit-reset-bs5-validation
+      required
+      placeholder="name@example.com">
+	  <label for="registrationConfirmEmailInput">Confirm Email</label>
+    {{ if .Error }}
+    <div class="invalid-feedback">
+      {{ .Error }}
+    </div>
+    {{ end }}
+	</div>
+</div>

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"[# .Namespace #]/service"
+	"[# .Namespace #]/site"
 	"github.com/rur/treetop"
 )
 
@@ -15,7 +15,7 @@ import (
 
 // Ref: datatable
 // Block: subsection
-func datatableHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func datatableHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	return struct {
 		SubsectionTabs interface{}
 		MainTable      interface{}
@@ -29,7 +29,7 @@ func datatableHandler(rsc *resources, env *service.Env, rsp treetop.Response, re
 // Block: main-table
 // Method: GET
 // Doc: table capable of being dynamically expanded
-func expandingDatatableHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func expandingDatatableHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		Rows     []DataTableRow
 		MoreLink string

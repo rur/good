@@ -5,16 +5,16 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/rur/good/baseline/scaffold_test/service"
+	"github.com/rur/good/baseline/scaffold_test/site"
 	"github.com/rur/treetop"
 )
 
 // ViewHandlerWithEnv is the signature of a treetop view with injected Env instance (see BindEnv)
-type ViewHandlerWithEnv func(*service.Env, treetop.Response, *http.Request) interface{}
+type ViewHandlerWithEnv func(*site.Env, treetop.Response, *http.Request) interface{}
 
 // Helper is passed to page Routes functions at startup for binding handlers and paths
 type Helper struct {
-	Env *service.Env
+	Env *site.Env
 	// EDITME: if you wish to use a different router library
 	Mux *http.ServeMux
 }

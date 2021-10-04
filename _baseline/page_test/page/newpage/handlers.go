@@ -3,12 +3,12 @@ package newpage
 import (
 	"net/http"
 
-	"github.com/rur/good/baseline/page_test/service"
+	"github.com/rur/good/baseline/page_test/site"
 	"github.com/rur/treetop"
 )
 
 // baseHandler is the default top level handler for the newpage page
-func baseHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func baseHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		PageTitle string
 		Nav       interface{}
