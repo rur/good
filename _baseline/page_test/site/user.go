@@ -4,6 +4,6 @@ package site
 // page handers, utilities, etc... The site package
 // is a good place for this kind of definition.
 type User struct {
-	Name string
+	Name  string
 	Email string
 }
