@@ -16,6 +16,9 @@ a functioning sign-in and sign-up user flow (mock in-memory database).
 - Added new starter template `:bootstrap5/login`
 - Add an `env.HTTPS` flag to the site Env, because it is useful
 - The server setup assumes that HTTPS is enabled in non-dev mode
+- Added README.md.tmpl to default good starter output
+- Add README to the `:intro` starter template
+  - same info as the intro index.html file
 
 ### Fixed
 
