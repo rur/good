@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - 2021-10-03
+
+Rename scaffold sub-package to "site" and add a new starter template with
+a functioning sign-in and sign-up user flow (mock in-memory database).
+
+### Breaking Change
+
+- Renamed scaffold _service_ package to _site_, since that is more appropriate
+
+### Added
+
+- Added new starter template `:bootstrap5/login`
+- Add an `env.HTTPS` flag to the site Env, because it is useful
+- The server setup assumes that HTTPS is enabled in non-dev mode
+
+### Fixed
+
+- Upgrade version of Treetop to __v0.4.1__ to get a patch fix for `Vary` header handling
+
+
 ## [Unreleased] - 2021-09-23
 
 Minor improvements, main fix is to allow pages to be added even when a scaffold
