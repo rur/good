@@ -3,13 +3,13 @@ package [# .Name #]
 import (
 	"net/http"
 
-	"[# .Namespace #]/service"
+	"[# .Namespace #]/site"
 	"github.com/rur/treetop"
 )
 
 // Ref: base
 // Doc: Base HTML template for [# .Name #] page
-func baseHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func baseHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		PageTitle string
 		Content   interface{}
@@ -32,7 +32,7 @@ func baseHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *ht
 // Block: content
 // Method: GET
 // Doc: Landing content view for the [# .Name #] page URI
-func contentWrapperHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func contentWrapperHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		SubSection      interface{}
 		QuickSearchMenu interface{}
@@ -45,9 +45,9 @@ func contentWrapperHandler(rsc *resources, env *service.Env, rsp treetop.Respons
 
 // Ref: sidebar-nav
 // Block: nav
-func sidebarNavHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func sidebarNavHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
-		User     service.User
+		User     site.User
 		NavLinks interface{}
 	}{
 		User:     rsc.user,
@@ -58,7 +58,7 @@ func sidebarNavHandler(rsc *resources, env *service.Env, rsp treetop.Response, r
 
 // Ref: sidebar-nav-links
 // Block: nav-links
-func sidebarNavLinksHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func sidebarNavLinksHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	type NavItem struct {
 		Title    string
 		Href     string

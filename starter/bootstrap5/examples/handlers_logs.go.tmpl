@@ -8,13 +8,13 @@ import (
 	"strings"
 	"time"
 
-	"[# .Namespace #]/service"
+	"[# .Namespace #]/site"
 	"github.com/rur/treetop"
 )
 
 // Ref: logview
 // Block: subsection
-func logviewHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func logviewHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	return struct {
 		SubsectionTabs interface{}
 		LogStream      interface{}
@@ -30,7 +30,7 @@ func logviewHandler(rsc *resources, env *service.Env, rsp treetop.Response, req 
 // Block: log-stream
 // Method: GET
 // Doc: endpoint implementing a mock event stream using long polling
-func longPollTickerHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func longPollTickerHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	query := req.URL.Query()
 	data := struct {
 		WatchToken string

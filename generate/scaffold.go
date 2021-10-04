@@ -81,8 +81,8 @@ func SiteScaffold(pkg GoPackage, scaffold fs.FS) (files []File, err error) {
 	}); err != nil {
 		return
 	}
-	// service/*
-	if err = fs.WalkDir(scaffold, "scaffold/service", func(path string, d fs.DirEntry, err error) error {
+	// site/*
+	if err = fs.WalkDir(scaffold, "scaffold/site", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}

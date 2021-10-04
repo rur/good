@@ -145,13 +145,13 @@ func TestSiteScaffold(t *testing.T) {
 		contains string
 	}{
 		{
-			"simple /service/user.go",
-			"service/user.go",
+			"simple /site/user.go",
+			"site/user.go",
 			"type User struct {",
 		}, {
 			"simple /page/helper.go",
 			"page/helper.go",
-			`"github.com/rur/example/admin/site/service"`,
+			`"github.com/rur/example/admin/site/site"`,
 		}, {
 			"simple /main.go",
 			"main.go",
@@ -165,8 +165,8 @@ func TestSiteScaffold(t *testing.T) {
 			"static/styles/app.css",
 			"/* side wide CSS here */",
 		}, {
-			"simple service env.go",
-			"service/env.go",
+			"simple site env.go",
+			"site/env.go",
 			"type Env struct {",
 		}, {
 			"simple app.js",
@@ -179,11 +179,11 @@ func TestSiteScaffold(t *testing.T) {
 		}, {
 			"import for page handlers.go",
 			"page/handlers.go",
-			`"github.com/rur/example/admin/site/service"`,
+			`"github.com/rur/example/admin/site/site"`,
 		}, {
 			"content handler for page handlers.go",
 			"page/handlers.go",
-			`func ExampleSharedHandler(env *service.Env, rsp treetop.Response, req *http.Request) interface{} {`,
+			`func ExampleSharedHandler(env *site.Env, rsp treetop.Response, req *http.Request) interface{} {`,
 		}, {
 			"base template",
 			"page/templates/shared.html.tmpl",
