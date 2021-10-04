@@ -3,7 +3,7 @@ package example
 import (
 	"net/http"
 
-	"github.com/rur/good/baseline/routes_test/service"
+	"github.com/rur/good/baseline/routes_test/site"
 	"github.com/rur/treetop"
 )
 
@@ -13,7 +13,7 @@ import (
 
 // Ref: example
 // Doc: Base HTML template for example page
-func exampleHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func exampleHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 		Content     interface{}
@@ -32,7 +32,7 @@ func exampleHandler(rsc *resources, env *service.Env, rsp treetop.Response, req 
 // Block: form
 // Method: POST
 // Doc: Placeholder form
-func placeholderFormHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func placeholderFormHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 		FormError   interface{}
@@ -46,7 +46,7 @@ func placeholderFormHandler(rsc *resources, env *service.Env, rsp treetop.Respon
 // Ref: basic-form-error
 // Block: form-error
 // Doc: Format and display a form error message
-func basicFormErrorHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func basicFormErrorHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{
@@ -58,7 +58,7 @@ func basicFormErrorHandler(rsc *resources, env *service.Env, rsp treetop.Respons
 // Ref: alternative-content
 // Block: content
 // Doc: Alaternative Content Page
-func alternativeContentHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func alternativeContentHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{
@@ -70,7 +70,7 @@ func alternativeContentHandler(rsc *resources, env *service.Env, rsp treetop.Res
 // Ref: settings-layout
 // Block: content
 // Doc: Settings page layout
-func settingsLayoutHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func settingsLayoutHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 		Settings    interface{}
@@ -86,7 +86,7 @@ func settingsLayoutHandler(rsc *resources, env *service.Env, rsp treetop.Respons
 // Ref: general-settings
 // Block: settings
 // Doc: General settings area
-func generalSettingsHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func generalSettingsHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{
@@ -98,7 +98,7 @@ func generalSettingsHandler(rsc *resources, env *service.Env, rsp treetop.Respon
 // Ref: advanced-settings
 // Block: settings
 // Doc: Advanced settings area
-func advancedSettingsHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func advancedSettingsHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo  string
 		SettingsForm interface{}
@@ -113,7 +113,7 @@ func advancedSettingsHandler(rsc *resources, env *service.Env, rsp treetop.Respo
 // Block: settings-form
 // Method: POST
 // Doc: Accept update to advanced settings and show result
-func updateAdvancedSettingsHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func updateAdvancedSettingsHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 		FormError   interface{}
@@ -126,7 +126,7 @@ func updateAdvancedSettingsHandler(rsc *resources, env *service.Env, rsp treetop
 
 // Ref: main-nav
 // Block: nav
-func mainNavHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func mainNavHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{

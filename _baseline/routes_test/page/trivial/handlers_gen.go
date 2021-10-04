@@ -3,7 +3,7 @@ package trivial
 import (
 	"net/http"
 
-	"github.com/rur/good/baseline/routes_test/service"
+	"github.com/rur/good/baseline/routes_test/site"
 	"github.com/rur/treetop"
 )
 
@@ -13,7 +13,7 @@ import (
 
 // Ref: trivial-page
 // Doc: Just a single HTML page
-func trivialPageHandler(rsc *resources, env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+func trivialPageHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{

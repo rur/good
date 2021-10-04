@@ -6,24 +6,24 @@ import (
 	"time"
 
 	"github.com/rur/good/baseline/routes_test/page"
-	"github.com/rur/good/baseline/routes_test/service"
+	"github.com/rur/good/baseline/routes_test/site"
 	"github.com/rur/treetop"
 )
 
 // resources that are request-scoped data bound to page handlers
 type resources struct {
-	user service.User
+	user site.User
 	// EDITME: add request specific resources for this page
 }
 
 // loadResources constructs a resources struct for use by the request handlers of this page
 //
 // If an error or failure occurs, this function is responsible for responding to the client using the ResponseWriter.
-func loadResources(env *service.Env, w http.ResponseWriter, req *http.Request) (rsc *resources, ok bool) {
+func loadResources(env *site.Env, w http.ResponseWriter, req *http.Request) (rsc *resources, ok bool) {
 	// EDITME: setup your handler resources here
 	ok = true
 	rsc = &resources{
-		user: service.User{
+		user: site.User{
 			Name:  "!unauthenticated!",
 			Email: "unauthenticated@example.com",
 		},
@@ -33,7 +33,7 @@ func loadResources(env *service.Env, w http.ResponseWriter, req *http.Request) (
 
 // teardownResources happens after the response has been written for the request,
 // this hook exists in case any special teardown is needed for your resources instance
-func teardownResources(rsc *resources, env *service.Env) {
+func teardownResources(rsc *resources, env *site.Env) {
 	// EDITME: Add teardown logic for your resources
 }
 
@@ -46,11 +46,11 @@ var (
 	rscCacheLock sync.RWMutex
 )
 
-type handlerWithResources func(*resources, *service.Env, treetop.Response, *http.Request) interface{}
+type handlerWithResources func(*resources, *site.Env, treetop.Response, *http.Request) interface{}
 
 // bindResources is middleware with memoization which loads trivial page resources for local request handlers
 func bindResources(f handlerWithResources) page.ViewHandlerWithEnv {
-	return func(env *service.Env, rsp treetop.Response, req *http.Request) interface{} {
+	return func(env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 		key := rsp.ResponseID()
 		rscCacheLock.RLock()
 		rsc, ok := rscCache[key]
