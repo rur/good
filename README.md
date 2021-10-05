@@ -109,8 +109,7 @@ to a layout hierarchy of HTML files and template handlers.
 The `good routes gen` command reads the TOML config of a page and generates the plumbing code for:
 routing, HTTP handlers and template inheritance.
 
-This basic config has two endpoints which share the same base template.
-To learn more, [try the scaffold](#tldr-quickstart) and explore some working examples.
+#### Routemap preview
 
 ```TOML
 _ref = "base"
@@ -129,6 +128,9 @@ _handler = "baseHandler"
   _handler = "otherContentHandler"
   _path = "/other-example"
 ```
+
+This basic config has two endpoints which share the same base template.
+To learn more, [try the scaffold](#tldr-quickstart) and explore some working examples.
 
 ## Developer Notes
 
