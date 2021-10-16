@@ -88,20 +88,23 @@ func main() {
 	}, exec)
 
 	if errs := exec.FlushErrors(); len(errs) > 0 {
-		// templates referred by the router but could not be found
+		// flush any template related errors from the routes config
+		// templates are eagerly loaded and parsed to try surface issues at startup
 		log.Fatalf("Template errors:\n%s", errs)
 	}
 
-	m.Handle("/js/treetop.js", treetop.ServeClientLibrary)
 	{
-		// root static files
+		// static files
 		public, _ := fs.Sub(assets, "static/public")
 		m.Handle("/favicon.ico", http.FileServer(http.FS(public)))
 		m.Handle("/humans.txt", http.FileServer(http.FS(public)))
+		m.Handle("/js/treetop.js", treetop.ServeClientLibrary)
+
+		// static folders
+		m.Handle("/js/", http.FileServer(staticFS))
+		m.Handle("/styles/", http.FileServer(staticFS))
+		m.Handle("/public/", http.FileServer(staticFS))
 	}
-	m.Handle("/styles/", http.FileServer(staticFS))
-	m.Handle("/js/", http.FileServer(staticFS))
-	m.Handle("/public/", http.FileServer(staticFS))
 
 	addr := fmt.Sprintf(":%d", port)
 	fmt.Printf("Starting github.com/rur/good/baseline/routes_test server at %s\n", addr)
