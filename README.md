@@ -4,7 +4,7 @@
 
 ## A pretty good web scaffold for Golang
 
-Tools for embedding a web GUI in a Golang project.
+Tools for embedding a web UI in a Golang project.
 
 - CLI that generates plain, grok-able code
 - Self contained server with basic dependencies
@@ -20,8 +20,8 @@ Tools for embedding a web GUI in a Golang project.
 ### Overview
 
 The `good scaffold` command outputs files for a web server to a sub package of a
-Go module. The GUI scaffold is geared towards Golang web services
-or daemons, for building web consoles and admin tools.
+Go module. The scaffold is geared towards building web consoles and admin tools 
+for Golang web services or daemons.
 
 Top-level pages are added using the `good page` command, which has a
 [starter template](#starter-templates) feature to speed-up development. The scaffold package
@@ -109,8 +109,7 @@ to a layout hierarchy of HTML files and template handlers.
 The `good routes gen` command reads the TOML config of a page and generates the plumbing code for:
 routing, HTTP handlers and template inheritance.
 
-This basic config has two endpoints which share the same base template.
-To learn more, [try the scaffold](#tldr-quickstart) and explore some working examples.
+#### Routemap preview
 
 ```TOML
 _ref = "base"
@@ -129,6 +128,9 @@ _handler = "baseHandler"
   _handler = "otherContentHandler"
   _path = "/other-example"
 ```
+
+This basic config has two endpoints which share the same base template.
+To learn more, [try the scaffold](#tldr-quickstart) and explore some working examples.
 
 ## Developer Notes
 
