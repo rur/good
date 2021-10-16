@@ -46,10 +46,8 @@ type loginDB interface {
 //
 // If an error or failure occurs, this function is responsible for responding to the client using the ResponseWriter.
 func loadResources(env *site.Env, w http.ResponseWriter, req *http.Request) (rsc *resources, ok bool) {
-	// EDITME: setup your handler resources here
-	ok = true
-
 	rsc = &resources{
+		// EDITME: setup your own DB backed login instance
 		db: &demoDBSingleton,
 	}
 	// attempt to fetch user from the session cookie
@@ -58,6 +56,7 @@ func loadResources(env *site.Env, w http.ResponseWriter, req *http.Request) (rsc
 		rsc.user = rsc.db.getUserSession(cookie.Value)
 	}
 
+	ok = true
 	return
 }
 

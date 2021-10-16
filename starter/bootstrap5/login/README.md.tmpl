@@ -8,8 +8,7 @@ This page is based on the _Sign In_ template from the [Bootstrap v5 Examples](ht
 
 ### Running the server
 
-Since cookies are involved, this demo will not work locally without the `--dev` flag. Otherwise all
-cookies will be flagged as secure.
+_NB._ Keep in mind when testing locally the this page will use secure Cookies if the `env.HTTPS` flag is set.
 
 #### Install Dependencies
 
@@ -32,18 +31,16 @@ You can use these credentials to try out the GUI.
 
 ## Customization
 
-This starter page aims to be a fairly feature-complete GUI for user registration and login. Your requirements
-might be simpler or very different in some way. This section should help you to figure out what code to keep,
-what to modify and what to get rid of.
+Your requirements might be simpler or very different in some way. This section should help you to figure out
+what code to keep and what to modify or get rid of.
 
 ### Mock Database
 
 The __mock_logindb.go__ file has an in-memory implementation of the `loginDB` interface defined in the
-__resources.go__ file. You can get started fairly quickly by hooking up some kind of DB to a copy of that code.
+__resources.go__ file.
 
 #### Database Procedures
 
-These are the procedures satisfying the `loginDB` interface.
 
 | Procedure              | Description
 |------------------------|-----------------------------------------
@@ -54,35 +51,19 @@ These are the procedures satisfying the `loginDB` interface.
 | getUserSession         | Redeem user info given a session key
 | rememberUserSession    | Redeem user info given a session refresh key (remember me)
 
+#### Page Files
 
-### Restricting Registrations
+Where you can find code and handlers in the starter
 
-You may wish to prevent users from registering themselves with your server.
-
-In that case I would suggest removing the sign-up endpoints from the
-__routemap.toml__, along with the __handler_registration.go__ file.
-Also delete any `sign-up-*.html.tmpl` templates from the _templates_ directory.
-
-Finally, remove links from the other template files and run Go Generate
-to apply your changes. Resolve any compiler errors.
-
-```
-go generate [# .Namespace #]/...
-```
-
-Pay close attention to any error message you see during
-start up. Templates are parsed and validated up front.
-
-
-### Page Files:
-
-- **resources.go** setup DB for the handlers and attempt to load the user session for the current request
-- **handlers.go** Base handler for the base HTML template
-- **handlers_registration.go** load registration form and handle `POST .../create`
-- **handlers_signin.go** login form endpoint, handle `GET` and `POST`
-- **handlers_signout.go** user logout handler
-- **handlers_whoami.go** display current-user session status
-- **mock_logindb.go** in-memory mock DB implementation for demonstration
+| Page File                    | Info
+|------------------------------|-----------------------------------------
+| **resources.go**             | setup DB for the handlers and attempt to load the user session for the current request
+| **handlers.go**              | Base handler for the base HTML template
+| **handlers_registration.go** | load registration form and handle `POST [...]/create`
+| **handlers_signin.go**       | login form endpoint, handle `GET` and `POST`
+| **handlers_signout.go**      | user logout handler
+| **handlers_whoami.go**       | display current-user session status
+| **mock_logindb.go**          | in-memory mock DB implementation for demonstration
 
 Refer to the [Page Routemap Docs](../../docs/ROUTEMAP.md) for guidelines on understanding the
 page endpoint configuration.
