@@ -59,7 +59,7 @@ diff=$(git diff _baseline/scaffold_test)
 if [[ ! -z $diff ]]; then
     echo "WARNING: Check baseline"
     echo ">>> git diff out >>>"
-    printf "$diff"
+    echo "$diff"
     echo
     echo ">>> git diff end >>>"
     exit 1

@@ -37,6 +37,12 @@ func (pkg *GoPackage) RelPath() (string, error) {
 	return "./" + path, err
 }
 
+// IsTTY will check if we have a terminal, should work on Linux or Mac
+func IsTTY() bool {
+	fileInfo, _ := os.Stdout.Stat()
+	return (fileInfo.Mode() & os.ModeCharDevice) != 0
+}
+
 // Name will return the name of the package based on the import path
 func (pkg *GoPackage) Name() string {
 	ind := strings.LastIndex(pkg.ImportPath, "/")

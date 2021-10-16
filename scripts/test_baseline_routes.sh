@@ -17,11 +17,11 @@ rm -rf baseline
 
 go run . scaffold baseline/routes_test
 
-go run . page ./baseline/routes_test example --starter :minimum
+go run . page ./baseline/routes_test example --starter :minimum -y
 rm baseline/routes_test/page/example/routemap.toml
 cp _baseline/testfixtures/routemap.toml baseline/routes_test/page/example/routemap.toml
 
-go run . page ./baseline/routes_test trivial --starter :minimum
+go run . page ./baseline/routes_test trivial --starter :minimum -y
 rm baseline/routes_test/page/trivial/routemap.toml
 cp _baseline/testfixtures/routemap_trivial.toml baseline/routes_test/page/trivial/routemap.toml
 
@@ -82,7 +82,7 @@ diff=$(git diff _baseline/routes_test)
 if [[ ! -z $diff ]]; then
     echo "WARNING: Check baseline"
     echo ">>> git diff out >>>"
-    printf "$diff"
+    echo "$diff"
     echo
     echo ">>> git diff end >>>"
     exit 1

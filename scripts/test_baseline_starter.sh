@@ -18,7 +18,7 @@ rm -rf baseline
 set -x
 go run . scaffold baseline/starter_test
 go run . starter baseline/starter_test/starter
-go run . page ./baseline/starter_test newpage --starter ./baseline/starter_test/starter
+go run . page ./baseline/starter_test newpage --starter ./baseline/starter_test/starter -y
 set +x
 
 if [[ ! -z $(bash ./scripts/usedports.sh | grep 8000) ]]; then
@@ -55,7 +55,7 @@ diff=$(git diff _baseline/starter_test)
 if [[ ! -z $diff ]]; then
     echo "WARNING: Check baseline"
     echo ">>> git diff out >>>"
-    printf "$diff"
+    echo "$diff"
     echo
     echo ">>> git diff end >>>"
     exit 1

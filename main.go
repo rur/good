@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"io/fs"
 	"io/ioutil"
@@ -10,6 +11,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/pelletier/go-toml"
@@ -61,6 +63,8 @@ Arguments
 Options
     -h
 	Print usage for page command
+    -y
+	Skip interactive confirmation message
     --starter <dir path>
         Use specified directory as the starter template for the new page scaffold.
 
@@ -192,8 +196,8 @@ func main() {
 			log.Fatalf("Missing required arguments")
 		}
 		starterTemplatePath := fArgs["--starter"]
-		fmt.Printf("Starter template %#v \n", starterTemplatePath)
-		pageCmd(pArgs[1], pArgs[2], starterTemplatePath)
+		_, yesFlag := fArgs["-y"]
+		pageCmd(pArgs[1], pArgs[2], starterTemplatePath, !yesFlag && generate.IsTTY())
 
 	case "pages":
 		if _, help := fArgs["-h"]; help {
@@ -306,17 +310,50 @@ func scaffoldCmd(sitePkgRel string) {
 }
 
 // pageCmd attempts to add a new page to an existing scaffold site
-func pageCmd(sitePkgInput, pageName, starterTemplatePath string) {
+func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive bool) {
 	err := generate.ValidatePageName(pageName)
 	mustNot(err)
 	sitePkg, err := generate.GoListPackage(sitePkgInput)
 	mustNot(err)
 	err = generate.ValidatePageLocation(filepath.Join(sitePkg.Dir, "page", pageName), scaffold)
 	mustNot(err)
+
+	if starterTemplatePath == "" {
+		if interactive {
+			// ask user what starter they would like to use
+			fmt.Println("Choose a starter template")
+			fmt.Println("Built-in options:")
+			options := map[string]string{
+				"1": ":basic                 No layout, just a simple page scaffold (default)",
+				"2": ":bootstrap5/layout     Useful Bootsrap v5.0 web console layout",
+				"3": ":bootstrap5/examples   Working demos with the Bootsrap v5.0 layout and components",
+				"4": ":bootstrap5/login      user login and registration flow with a mock mem-DB",
+				"5": ":minimum               Most bare bones option",
+				"6": ":intro                 Introduction page to the good scaffold",
+			}
+			for i := 1; i <= len(options); i++ {
+				fmt.Printf("\t[%d] %s\n", i, options[strconv.Itoa(i)])
+			}
+			fmt.Println("Select a built in by number, leave empty to use default ':basic' or provide a local starter path")
+			fmt.Printf("> ")
+			var input string
+			fmt.Scanln(&input)
+			if input == "" {
+				starterTemplatePath = ":basic"
+			} else if option, ok := options[input]; ok {
+				starterTemplatePath = strings.SplitN(option, " ", 2)[0]
+			} else {
+				starterTemplatePath = input
+			}
+		} else {
+			// just use the default for non-interactive terminals
+			starterTemplatePath = ":basic"
+		}
+	}
+
 	var start fs.FS
 	if starterTemplatePath == "" {
-		start, err = fs.Sub(starter, "starter/basic")
-		mustNot(err)
+		mustNot(errors.New("empty starter template"))
 	} else if starterTemplatePath[0] == ':' {
 		start, err = fs.Sub(starter, "starter/"+starterTemplatePath[1:])
 		mustNot(err)
@@ -328,6 +365,30 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string) {
 			mustNot(fmt.Errorf("starter template must be a directory, a file was found at %s", starterTemplatePath))
 		}
 	}
+
+	if interactive {
+		// ask for confirmation
+		fmt.Printf(
+			strings.Join([]string{
+				"Page Details",
+				"\tscaffold            %s",
+				"\tpage name           %s",
+				"\tstarter template    %s",
+				"",
+				"Create this page? [yY]: ",
+			}, "\n"),
+			sitePkg.ImportPath,
+			pageName,
+			starterTemplatePath,
+		)
+		var answer string
+		if _, err := fmt.Scanln(&answer); err != nil || strings.ToUpper(answer) != "Y" {
+			fmt.Println("Cancelled!")
+			os.Exit(1)
+			return
+		}
+	}
+
 	files, err := generate.PageScaffold(sitePkg, pageName, scaffold, start)
 	mustNot(err)
 	err = generate.FlushFiles(sitePkg.Dir, files)
@@ -351,7 +412,8 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string) {
 		fmt.Println("Output from go fmt:")
 		fmt.Println(stdout)
 	}
-	fmt.Printf("Created good page for %s!", pageName)
+	fmt.Printf("Don't forget to run -> go generate %s/...\n", sitePkg.ImportPath)
+	fmt.Printf("Created a good page for %s!", pageName)
 }
 
 // pagesCmd generates a new pages.go file by scanning the [site]/page/* directory
@@ -405,7 +467,7 @@ func deletePageCmd(pagePackage string) {
 		sitePkg, err = generate.GoListPackage(strings.Join(parts[:len(parts)-2], "/"))
 		mustNot(err)
 	}
-	{
+	if generate.IsTTY() {
 		// ask user if they want to delete the page folder
 		fmt.Println("Found scaffold page at path ", pagePkg.Dir)
 		fmt.Printf(">> Are you sure you want to delete this directory [yY]: ")

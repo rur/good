@@ -16,7 +16,7 @@ echo "clearing any previously failed run data"
 rm -rf baseline
 
 go run . scaffold baseline/page_test
-go run . page ./baseline/page_test newpage
+go run . page ./baseline/page_test newpage -y
 
 if [[ ! -z $(bash ./scripts/usedports.sh | grep 8000) ]]; then
   echo >&2 "Port 8000 appears to be in use, cannot run test"
@@ -52,7 +52,7 @@ diff=$(git diff _baseline/page_test)
 if [[ ! -z $diff ]]; then
     echo "WARNING: Check baseline"
     echo ">>> git diff out >>>"
-    printf "$diff"
+    echo "$diff"
     echo
     echo ">>> git diff end >>>"
     exit 1
