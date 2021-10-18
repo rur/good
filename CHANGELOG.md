@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - 2021-10-17
+
+Add interactive confirmation to page command and improve reporting of CLI errors to the
+user.
+
+### Breaking Change
+
+- `good page` command will now trigger a wizard in terminal mode, this might break scripts
+  - use the `-y` flag to prevent blocking on user input
+
+### Changes
+
+- All commands attempt to explain any expected CLI errors to the user
+  - Unexpected errors continue to cause a panic and spew a stack trace
+- CLI commands that read interactive input now have a 30 second time limit
+
+### Bugfix
+
+- Recursive `go list ./...`, searching for a go package when _go.mod_ is not found cause CLI to hang
+  - Use a 5 second timeout context when calling out to the Go tools.
+
 ## [Unreleased] - 2021-10-03
 
 Rename scaffold sub-package to "site" and add a new starter template with

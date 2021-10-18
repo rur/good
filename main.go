@@ -74,7 +74,7 @@ Options
 		:basic                 No layout, just a simple page scaffold (default)
 		:bootstrap5/layout     Useful Bootsrap v5.0 web console layout
 		:bootstrap5/examples   Working demos with the Bootsrap v5.0 layout and components
-		:bootstrap5/login      TODO!
+		:bootstrap5/login      user login and registration flow with a mock mem-DB
 		:bootstrap5/datatable  TODO!
 		:minimum               Most bare bones option
 		:intro                 Introduction page to the good scaffold
@@ -273,18 +273,18 @@ func scaffoldCmd(sitePkgRel string) {
 			Path: path,
 			Dir:  dir,
 		}, sitePkgRel)
-		mustNot(err)
+		userFail("reading project go.mod", err)
 	} else {
 		// use current package to find go module
 		curPkg, err := generate.GoListPackage("./...")
-		mustNot(err)
+		userFail("scanning subdirectires for a Go package", err)
 		sitePkg, err = generate.ParseSitePackage(curPkg.Module, sitePkgRel)
-		mustNot(err)
+		userFail("parsing module path", err)
 	}
 	err = generate.ValidateScaffoldLocation(sitePkg.Dir, scaffold)
-	mustNot(err)
+	userFail("validating scaffold destination", err)
 	files, err := generate.SiteScaffold(sitePkg, scaffold)
-	mustNot(err)
+	userFail("generating scaffold files", err)
 	pageFile, err := generate.PagesScaffold(sitePkg, []string{"intro"}, scaffold)
 	mustNot(err)
 	files = append(files, pageFile)
@@ -296,7 +296,7 @@ func scaffoldCmd(sitePkgRel string) {
 
 	// FS operations
 	err = generate.FlushFiles(sitePkg.Dir, files)
-	mustNot(err)
+	userFail("writing scaffold files", err)
 
 	stdout, err := generate.GoFormat(sitePkg.ImportPath + "/...")
 	if err != nil {
@@ -312,11 +312,11 @@ func scaffoldCmd(sitePkgRel string) {
 // pageCmd attempts to add a new page to an existing scaffold site
 func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive bool) {
 	err := generate.ValidatePageName(pageName)
-	mustNot(err)
+	userFail("validating your page name", err)
 	sitePkg, err := generate.GoListPackage(sitePkgInput)
-	mustNot(err)
+	userFail("loading the scaffold package detail", err)
 	err = generate.ValidatePageLocation(filepath.Join(sitePkg.Dir, "page", pageName), scaffold)
-	mustNot(err)
+	userFail("validating the page destination", err)
 
 	if starterTemplatePath == "" {
 		if interactive {
@@ -334,10 +334,10 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive boo
 			for i := 1; i <= len(options); i++ {
 				fmt.Printf("\t[%d] %s\n", i, options[strconv.Itoa(i)])
 			}
-			fmt.Println("Select a built in by number, leave empty to use default ':basic' or provide a local starter path")
+			fmt.Println("Select a built-in by number, leave empty to use default ':basic' or provide a local starter path")
 			fmt.Printf("> ")
-			var input string
-			fmt.Scanln(&input)
+			input, err := generate.TimeoutScanln()
+			userFail("reading your input", err)
 			if input == "" {
 				starterTemplatePath = ":basic"
 			} else if option, ok := options[input]; ok {
@@ -353,17 +353,18 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive boo
 
 	var start fs.FS
 	if starterTemplatePath == "" {
+		// this shouldn't happen
 		mustNot(errors.New("empty starter template"))
 	} else if starterTemplatePath[0] == ':' {
 		start, err = fs.Sub(starter, "starter/"+starterTemplatePath[1:])
-		mustNot(err)
+		userFail(fmt.Sprintf("loading internal starter template '%s'", starterTemplatePath), err)
 	} else {
 		start = os.DirFS(starterTemplatePath)
 		stat, err := fs.Stat(start, ".")
-		mustNot(err)
-		if !stat.IsDir() {
-			mustNot(fmt.Errorf("starter template must be a directory, a file was found at %s", starterTemplatePath))
+		if err == nil && !stat.IsDir() {
+			err = fmt.Errorf("starter template must be a directory, a file was found at path '%s'", starterTemplatePath)
 		}
+		userFail(fmt.Sprintf("reading custom starter directory path '%s'", starterTemplatePath), err)
 	}
 
 	if interactive {
@@ -381,8 +382,9 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive boo
 			pageName,
 			starterTemplatePath,
 		)
-		var answer string
-		if _, err := fmt.Scanln(&answer); err != nil || strings.ToUpper(answer) != "Y" {
+		answer, err := generate.TimeoutScanln()
+		userFail("reading your answer", err)
+		if strings.ToUpper(answer) != "Y" {
 			fmt.Println("Cancelled!")
 			os.Exit(1)
 			return
@@ -390,9 +392,9 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive boo
 	}
 
 	files, err := generate.PageScaffold(sitePkg, pageName, scaffold, start)
-	mustNot(err)
+	userFail("generating page scaffold", err)
 	err = generate.FlushFiles(sitePkg.Dir, files)
-	mustNot(err)
+	userFail("writing page files", err)
 
 	pageImport := fmt.Sprintf("%s/page/%s", sitePkg.ImportPath, pageName)
 	fmt.Printf("Created page at %s\n", pageImport)
@@ -400,9 +402,9 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive boo
 	pageList, err := generate.ScanSitemap(sitePkg)
 	mustNot(err)
 	pages, err := generate.PagesScaffold(sitePkg, pageList, scaffold)
-	mustNot(err)
+	userFail("generating new scaffold pages.go", err)
 	err = generate.FlushFiles(sitePkg.Dir, []generate.File{pages})
-	mustNot(err)
+	userFail("writing the updated pages.go file", err)
 
 	stdout, err := generate.GoFormat(sitePkg.ImportPath + "/...")
 	if err != nil {
@@ -420,14 +422,14 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive boo
 // for pages
 func pagesCmd(sitePkgRel string) {
 	sitePkg, err := generate.GoListPackage(sitePkgRel)
-	mustNot(err)
+	userFail("scanning for a Go package at "+sitePkgRel, err)
 	pageList, err := generate.ScanSitemap(sitePkg)
-	mustNot(err)
+	userFail("scanning the scaffold for pages", err)
 	fmt.Println("Found pages:", pageList)
 	pages, err := generate.PagesScaffold(sitePkg, pageList, scaffold)
-	mustNot(err)
+	userFail(fmt.Sprintf("generating updated pages.go for %v", pageList), err)
 	err = generate.FlushFiles(sitePkg.Dir, []generate.File{pages})
-	mustNot(err)
+	userFail("writing pages.go file", err)
 	stdout, err := generate.GoFormat(sitePkg.ImportPath)
 	if err != nil {
 		log.Fatalf("Pages file for '%s' scaffold was create with formatting error: %s", sitePkg.ImportPath, err)
@@ -442,22 +444,21 @@ func pagesCmd(sitePkgRel string) {
 // listPagesCmd prints the list of page names to stdout
 func listPagesCmd(sitePkgRel string) {
 	sitePkg, err := generate.GoListPackage(sitePkgRel)
-	mustNot(err)
+	userFail(fmt.Sprintf("scanning for a Go package at '%s'", sitePkgRel), err)
 	pageList, err := generate.ScanSitemap(sitePkg)
-	mustNot(err)
+	userFail(fmt.Sprintf("scanning for pages in the scaffold '%s'", sitePkgRel), err)
 	fmt.Printf("%s", strings.Join(pageList, "\n"))
 }
 
 // deletePageCmd unlinks the page from the FS and updates the site pages
 func deletePageCmd(pagePackage string) {
 	pagePkg, err := generate.GoListPackage(pagePackage)
-	mustNot(err)
+	userFail(fmt.Sprintf("scanning for a Go package at '%s'", pagePackage), err)
 	_, err = os.Stat(path.Join(pagePkg.Dir, "routemap.toml"))
 	if os.IsNotExist(err) {
-		log.Fatalf("Not a scaffold page '%s'", pagePackage)
-	} else {
-		mustNot(err)
+		err = fmt.Errorf("not a scaffold page '%s'", pagePackage)
 	}
+	userFail(fmt.Sprintf("reading scaffold page package '%s'", pagePackage), err)
 	var sitePkg generate.GoPackage
 	{
 		parts := strings.Split(pagePkg.ImportPath, "/")
@@ -465,21 +466,21 @@ func deletePageCmd(pagePackage string) {
 			mustNot(fmt.Errorf("invalid page path '%s'", pagePackage))
 		}
 		sitePkg, err = generate.GoListPackage(strings.Join(parts[:len(parts)-2], "/"))
-		mustNot(err)
+		userFail("loading details of the scaffold Go package", err)
 	}
 	if generate.IsTTY() {
 		// ask user if they want to delete the page folder
 		fmt.Println("Found scaffold page at path ", pagePkg.Dir)
 		fmt.Printf(">> Are you sure you want to delete this directory [yY]: ")
-		var input string
-		_, scErr := fmt.Scanln(&input)
-		if scErr != nil || (input != "y" && input != "Y") {
-			log.Fatalf("Cancelled delete, received answer '%s'\n", input)
+		answer, err := generate.TimeoutScanln()
+		userFail("reading your answer", err)
+		if answer != "y" && answer != "Y" {
+			log.Fatalf("Cancelled delete, received answer '%s'\n", answer)
 		}
 	}
 
 	err = os.RemoveAll(pagePkg.Dir)
-	mustNot(err)
+	userFail(fmt.Sprintf("removing page directory '%s'", pagePkg.Dir), err)
 	fmt.Println("Updating scaffold pages", sitePkg.ImportPath)
 	pagesCmd(sitePkg.ImportPath)
 }
@@ -488,21 +489,37 @@ func deletePageCmd(pagePackage string) {
 // as needed
 func routesGenCmd(pagePkgRel string) {
 	pkg, err := generate.GoListPackage(pagePkgRel)
-	mustNot(err)
-	routemapContent, err := ioutil.ReadFile(filepath.Join(pkg.Dir, "routemap.toml"))
-	mustNot(err)
+	userFail(fmt.Sprintf("scanning for a Go package at '%s'", pagePkgRel), err)
+	routemapPath := filepath.Join(pkg.Dir, "routemap.toml")
+	routemapContent, err := ioutil.ReadFile(routemapPath)
+	userFail(
+		fmt.Sprintf("reading routemap file at path '%s'", routemapPath),
+		err,
+	)
 	tree, err := toml.LoadBytes(routemapContent)
-	mustNot(err)
+	userFail(
+		fmt.Sprintf("parsing TOML format of file '%s'", routemapPath),
+		err,
+	)
 	pageName := pkg.Name()
 	sitePkg, err := generate.SiteFromPagePackage(pkg)
-	mustNot(err)
+	userFail(
+		fmt.Sprintf("loading the scaffold Go package for page '%s'", pkg.ImportPath),
+		err,
+	)
 	pageRoutes, missTpl, missHlr, err := routemap.ProcessRoutemap(
 		tree,
 		filepath.Join("page", pageName, "templates"),
 	)
-	mustNot(err)
+	userFail(
+		fmt.Sprintf("parsing routemap views for file '%s'", routemapPath),
+		err,
+	)
 	entries, routes, handlers, templates, err := routemap.TemplateDataForRoutes(pageRoutes, missTpl, missHlr)
-	mustNot(err)
+	userFail(
+		fmt.Sprintf("processing routemap details for file '%s'", routemapPath),
+		err,
+	)
 	files, err := generate.RoutesScaffold(
 		sitePkg,
 		pageName,
@@ -512,10 +529,13 @@ func routesGenCmd(pagePkgRel string) {
 		templates,
 		scaffold,
 	)
-	mustNot(err)
+	userFail(fmt.Sprintf("generating routemap files for page '%s'", pkg.ImportPath), err)
 	if len(missHlr)+len(missTpl) > 0 {
 		modifiedContent, err := routemap.ModifiedRoutemap(bytes.NewReader(routemapContent), missTpl, missHlr)
-		mustNot(err)
+		userFail(
+			fmt.Sprintf("modifying routemap contents for file '%s'", routemapPath),
+			err,
+		)
 		files = append(files, generate.File{
 			Dir:       filepath.Join("page", pageName),
 			Name:      "routemap.toml",
@@ -526,7 +546,7 @@ func routesGenCmd(pagePkgRel string) {
 
 	// write files to disk
 	err = generate.FlushFiles(sitePkg.Dir, files)
-	mustNot(err)
+	userFail(fmt.Sprintf("Writing routing related files for page '%s'", pkg.Dir), err)
 	stdout, err := generate.GoFormat(pkg.ImportPath)
 	if err != nil {
 		log.Fatalf("Routes for '%s' page were create with formatting error: %s", pkg.ImportPath, err)
@@ -543,9 +563,9 @@ func starterCmd(dest string) {
 	start, err := fs.Sub(starter, "starter/basic")
 	mustNot(err)
 	files, err := generate.StarterScaffold(dest, scaffold, start)
-	mustNot(err)
+	userFail("generating starter template files to '"+dest+"'", err)
 	err = generate.FlushFiles(".", files)
-	mustNot(err)
+	userFail("writing starter template files to '"+dest+"'", err)
 	fmt.Println("Created files:")
 	for _, file := range files {
 		fmt.Println("\t-", filepath.Join(file.Dir, file.Name))
@@ -555,8 +575,21 @@ func starterCmd(dest string) {
 	fmt.Printf("Outputted default starter template to dest folder %s!", dest)
 }
 
+// mustNot will panic if the error is not nil. The panic will produce a stack trace
+// of all running Goroutines, hence it should be used when a non-nil error means there
+// is likely a bug in the program that is not likely to be meaningful to the CLI user.
 func mustNot(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// userFail will log an error for the user to see, describing what task was being attempted
+// when the error was encountered. This will not print a stack trace. It should be used when
+// an error might be expected and the user *might* be able to do something about it.
+func userFail(task string, err error) {
+	if err == nil {
+		return
+	}
+	log.Fatalf("Failed while %s. Error: %s", task, err)
 }

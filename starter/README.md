@@ -29,7 +29,7 @@ it is mature and well documented. You have a few different setups to choose from
 
 * `:bootstrap5/layout` A robust layout for dashboards, built using the Bootstrap toolkit.
 * `:bootstrap5/examples` A set of functioning demo apps using the BSv5 layout
-* `:bootstrap5/login` Functioning user login and registration flow with a mock mem-DB
+* `:bootstrap5/login` User login and registration demo with a mock mem-DB
 * `:bootstrap5/datatable` __TODO:__ Bootstrap data table with pagination and sorting
 
 #### Screenshot of `:bootstrap5/examples`

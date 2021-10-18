@@ -2,7 +2,9 @@ package generate
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -10,9 +12,13 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"golang.org/x/mod/modfile"
 )
+
+// duration that calls to exec.Command are allow to block before they are cancelled
+const execTimeout = 3 * time.Second
 
 // GoModule represents a golang project level module
 type GoModule struct {
@@ -52,8 +58,10 @@ func (pkg *GoPackage) Name() string {
 // GoListPackage will get the Go module information for the go path provied
 func GoListPackage(path string) (pkg GoPackage, err error) {
 	var stdout, stderr bytes.Buffer
+	timeout, cancel := context.WithTimeout(context.Background(), execTimeout)
+	defer cancel()
 	if path == "./..." {
-		cmd := exec.Command("go", "list", "./...")
+		cmd := exec.CommandContext(timeout, "go", "list", "./...")
 		cmd.Stdout = &stdout
 		cmd.Stderr = &stderr
 		if err = cmd.Run(); err != nil {
@@ -69,7 +77,7 @@ func GoListPackage(path string) (pkg GoPackage, err error) {
 		}
 	}
 
-	cmd := exec.Command("go", "list", "-e", "--json", path)
+	cmd := exec.CommandContext(timeout, "go", "list", "-e", "--json", path)
 	stdout.Reset()
 	stderr.Reset()
 	cmd.Stdout = &stdout
@@ -112,7 +120,9 @@ func GoListPackage(path string) (pkg GoPackage, err error) {
 // GoListModule will get the Go module information for the import path provied
 func GoListModule(path string) (mod GoModule, err error) {
 	var stdout, stderr bytes.Buffer
-	cmd := exec.Command("go", "list", "-m", "--json", path)
+	timeout, cancel := context.WithTimeout(context.Background(), execTimeout)
+	defer cancel()
+	cmd := exec.CommandContext(timeout, "go", "list", "-m", "--json", path)
 	stdout.Reset()
 	stderr.Reset()
 	cmd.Stdout = &stdout
@@ -127,7 +137,9 @@ func GoListModule(path string) (mod GoModule, err error) {
 
 // GoFormat will execute the go fmt command on the module path
 func GoFormat(path string) (string, error) {
-	cmd := exec.Command("go", "fmt", path)
+	timeout, cancel := context.WithTimeout(context.Background(), execTimeout)
+	defer cancel()
+	cmd := exec.CommandContext(timeout, "go", "fmt", path)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("go fmt error: %s, output: %s", err, output)
@@ -154,4 +166,26 @@ func TryReadModFile() (module string, baseDir string) {
 	}
 	module = modfile.ModulePath(contents)
 	return
+}
+
+// TimeoutScanln will wait for at most 10 seconds for a line of input from the user
+func TimeoutScanln() (string, error) {
+	var (
+		input string
+		err   error
+		done  = make(chan struct{})
+	)
+	go func() {
+		_, err = fmt.Scanln(&input)
+		close(done)
+	}()
+	select {
+	case <-done:
+		return input, err
+	case <-time.After(30 * time.Second):
+		return "", errors.New(
+			"input timeout, sorry you'll have to be quicker than that! " +
+				"Good CLI will not block the terminal for more than 30 seconds",
+		)
+	}
 }

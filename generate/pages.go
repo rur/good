@@ -7,8 +7,7 @@ import (
 	"path/filepath"
 )
 
-// ScanSitemap will scan the site page package and load site routing
-// data
+// ScanSitemap will scan the site page package and list pages
 func ScanSitemap(sitePkg GoPackage) (pages []string, err error) {
 	list, err := filepath.Glob(path.Join(sitePkg.Dir, "page", "*", "routes.go"))
 	if err != nil {
