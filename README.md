@@ -4,7 +4,7 @@
 
 ## A pretty good web scaffold for Golang
 
-`good` is a tool for embedding a web GUI in a Golang project.
+The `good` tool embeds a web GUI in a Golang project.
 
 - CLI that generates plain, grok-able code
 - Self contained server with basic dependencies
