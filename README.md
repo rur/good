@@ -92,8 +92,8 @@ This can be used with the Good Page command like so.
 As a backend dev, how can I create a dashboard for my web service
 without adding a lot of complications and dependencies to the project?
 
-...by making the most of the Go standard library! This scaffold was created to
-reduce the maintenance cost for that kind of an app in the following ways:
+...by making the most of the Go standard library! This scaffold tries to reduce the
+maintenance cost for that kind of an app in the following ways:
 
 * Minimize logic outside of Golang,
   * Use more of your available project code
@@ -184,7 +184,8 @@ codebase to integrate your chosen libraries manually.
 
 The `//go:embed ` compiler directive <sup>[≥[go1.16](https://golang.org/doc/go1.16#library-embed)]</sup>
 is configured so that web server assets can be fully embedded at compile time.
-This gives you the option to distribute your GUI as a self-contained binary.
+This gives you the option to distribute your GUI as a self-contained binary or embedded in an
+another Go server.
 
 #### 4. Classic HTML template composition
 
