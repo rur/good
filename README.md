@@ -2,9 +2,6 @@
 
 # <img src="docs/readme_logo.svg" alt="Good Web Scaffold"/>
 
-_Background; I'm sharing a scaffold I use for Go web consoles. The CLI is on a stable track. Improvements from here on will mostly affect
-docs, tests, bugs and example pages._
-
 ## A pretty good web scaffold for Golang
 
 `good` is a tool for embedding a web GUI in a Golang project.
