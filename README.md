@@ -2,9 +2,12 @@
 
 # <img src="docs/readme_logo.svg" alt="Good Web Scaffold"/>
 
+_Background; I'm sharing a scaffold I use for Go web consoles. The CLI is on a stable track. Improvements from here on will mostly affect
+docs, tests, bugs and example pages._
+
 ## A pretty good web scaffold for Golang
 
-Tools for embedding a web UI in a Golang project.
+`good` is a tool for embedding a web GUI in a Golang project.
 
 - CLI that generates plain, grok-able code
 - Self contained server with basic dependencies
@@ -14,13 +17,13 @@ Tools for embedding a web UI in a Golang project.
 
 [ [CLI Overview](#cli-overview) ~
 [Building GUIs](#building-guis) ~
-[Developer Notes](#developer-notes) ~
-[Starter Templates](#starter-templates)]
+[Starter Templates](#starter-templates) ~
+[Developer Notes](#developer-notes) ]
 
 ### Overview
 
 The `good scaffold` command outputs files for a web server to a sub package of a
-Go module. The scaffold is geared towards building web consoles and admin tools 
+Go module. The scaffold is geared towards building web consoles and admin tools
 for Golang web services or daemons.
 
 Top-level pages are added using the `good page` command, which has a
@@ -44,17 +47,17 @@ to suit your needs.
 
 > Tip: _Use the `-h` flag for help with commands_
 
-#### Good Scaffold \<site\>
+#### Good Scaffold \<scaffoldPkg\>
 
-The snippet creates a new app at `./portal`, relative to the current Go module.
+This snippet creates a new scaffold at `./portal`, relative to the current Go module.
 
     $ good scaffold ./portal
 
-#### Good Page \<site\> \<name\>
+#### Good Page \<scaffoldPkg\> \<pagename\>
 
 Adds a new 'settings' page to our `./portal` example.
 
-    $ good page ./portal settings --starter :bootstrap5/layout
+    $ good page ./portal settings
 
 #### Good Pages {gen list delete} ...
 
@@ -64,11 +67,13 @@ Utilities for site pages. For example, list the pages to stdout
     home
     settings
 
-#### Good Routes Gen \<page\>
+#### Good Routes Gen \<pagePkg\>
 
-Generate the routes.go file for a specified page containing the [Treetop](https://github.com/rur/treetop) layout plumbing code.
+Update the routing code for the specified scaffold page package.
 
-The following example will generate a routes file for the `./portal/page/settings/routemap.toml` config file.
+Generate a __routes.go__ file from the `routemap.toml` config file in the target page. This
+contains layout and endpoint plumbing code that uses the [Treetop](https://github.com/rur/treetop) library.
+
 
     $ good routes gen ./portal/page/settings
 
@@ -87,27 +92,36 @@ This can be used with the Good Page command like so.
 >
 >_– Backend Developer_
 
-The mission is to make GUI development more enjoyable and
-approachable for backend developers in the following ways:
+As a backend dev, how can I create a dashboard for my web service
+without adding a lot of complications and dependencies to the project?
 
-* Include quick-start layout templates:
-  * Integrate a suitable CSS tookit
-  * Plenty of functioning examples (WIP)
+...by making the most of the Go standard library! This scaffold was created to
+reduce the maintenance cost for that kind of an app in the following ways:
+
+* Minimize logic outside of Golang,
+  * Use more of your available project code
+  * Make it convenient to do templating on the server-side
+* Use quick-start page templates:
+  * Pick a suitable CSS toolkit
+  * Build new pages from examples
 * Code generation with [TOML](https://toml.io/en/) config:
-  * Generate readable 'plumbing' code
+  * Generate route 'plumbing' code that is readable
   * Take advantage of the compiler
-* Minimize logic outside of Golang
-  * Server-side rendering
-  * Existing project code can be utilized directly
+
+#### Interactivity
+
+The scaffold server can send page fragments to the web browser via XHR.
+Most common interactive requirements can be satisfied this way: web forms, tabs, modals,
+pagination, etc... (see the example pages). Full stack
+apps can be reserved for special cases.
 
 ### Treetop Routemap Layouts
 
-Routemaps combine code generation with a familiar approach to web templating.
-The [Treetop library](https://github.com/rur/treetop) is used to bind endpoints
-to a layout hierarchy of HTML files and template handlers.
+Routemaps combine code generation with a classic hierarchical approach to web
+templating. The [Treetop library](https://github.com/rur/treetop) is used to build layouts and handlers
+for endpoints.
 
-The `good routes gen` command reads the TOML config of a page and generates the plumbing code for:
-routing, HTTP handlers and template inheritance.
+The command `good routes gen` will read a TOML config for a page and generate endpoint plumbing code.
 
 #### Routemap preview
 
@@ -129,8 +143,30 @@ _handler = "baseHandler"
   _path = "/other-example"
 ```
 
-This basic config has two endpoints which share the same base template.
-To learn more, [try the scaffold](#tldr-quickstart) and explore some working examples.
+This basic config has two endpoints that share the same base view. Templates can be nested further.
+[Try the scaffold](#tldr-quickstart) and explore some working examples.
+
+
+## Starter Templates
+
+Page boilerplate can be loaded from a local folder or using one of the built-in options.
+
+
+### Built-in page starter
+
+See the [starter/README](starter/README.md) for details about what built-in options are available.
+
+```
+good page ./mysite mynewpage --starter :bootstrap5/layout
+```
+
+### Custom page starter
+
+Commit a starter page to your project with custom boilerplate. Very useful if
+you like to do a lot of prototyping!
+
+The `good starter` command will help you to get set up.
+
 
 ## Developer Notes
 
@@ -155,7 +191,7 @@ This gives you the option to distribute your GUI as a self-contained binary.
 
 #### 4. Classic HTML template composition
 
-HTML template composition has excellent support in Golang. Our scaffold uses the
+HTML template composition has excellent support in Golang. This scaffold uses the
 [Treetop library](https://github.com/rur/treetop) to help organize templates and handlers,
 with the added benefit of fragment hot-swapping for enhanced interactivity.
 
@@ -164,23 +200,3 @@ with the added benefit of fragment hot-swapping for enhanced interactivity.
 The scaffold is more of a workhorse than a unicorn; we embrace some practical
 limitations for the purpose of tight server-side integration.
 Take care to judge the limitations for yourself and decide what is right for your project.
-
-## Starter Templates
-
-A starter template is a folder containing files used by the page generator to set up a new page.
-Page boilerpate can be loaded from a local folder or using one of the built-in options.
-
-
-### Built-in Page Boilerplate
-
-```
-good page ./mysite mynewpage --starter :bootstrap5/layout
-```
-
-See the [starter/README](starter/README.md) for details about what built-in options are available.
-
-### Customized starter template
-
-It should be quick and cheap to add a new page to your site, and try something out. Add a custom
-starter template to your project using the `good starter` command. Modify the
-code templates with your own boilerplate.

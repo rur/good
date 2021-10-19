@@ -334,7 +334,7 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive boo
 			for i := 1; i <= len(options); i++ {
 				fmt.Printf("\t[%d] %s\n", i, options[strconv.Itoa(i)])
 			}
-			fmt.Println("Select a built-in by number, leave empty to use default ':basic' or provide a local starter path")
+			fmt.Println("Select a built-in by number, blank for the default (:basic) or provide a page starter path")
 			fmt.Printf("> ")
 			input, err := generate.TimeoutScanln()
 			userFail("reading your input", err)
