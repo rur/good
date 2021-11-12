@@ -19,11 +19,11 @@ The `good` tool embeds a web GUI in a Golang project.
 
 ### Overview
 
-The `good scaffold` command outputs files for a web server to a sub package of a
-Go module. The scaffold is geared towards building web consoles and admin tools
-for Golang web services or daemons.
+The `good scaffold` command outputs a web GUI setup to a sub package of a
+Go project. The scaffold is geared towards web consoles and admin tools
+for backend services or daemons.
 
-Top-level pages are added using the `good page` command, which has a
+Pages are added using the `good page` command, which has a
 [starter template](#starter-templates) feature to speed-up development. The scaffold package
 is unobtrusive so that it can be embedded in an existing codebase without difficulty.
 
@@ -89,32 +89,30 @@ This can be used with the Good Page command like so.
 >
 >_– Backend Developer_
 
-As a backend dev, how can I create a dashboard for my web service
-without adding a lot of complications and dependencies to the project?
+This scaffold reduces the overhead of adding a GUI to your
+project in the following ways:
 
-...by making the most of the Go standard library! This scaffold tries to reduce the
-maintenance cost for that kind of an app in the following ways:
-
-* Minimize logic outside of Golang,
+* Minimize the code outside of Golang,
   * Use more of your available project code
   * Make it convenient to do templating on the server-side
-* Use quick-start page templates:
-  * Pick a suitable CSS toolkit
-  * Build new pages from examples
-* Code generation with [TOML](https://toml.io/en/) config:
-  * Generate route 'plumbing' code that is readable
+* Quick-start page templates:
+  * Pick a suitable layout and CSS toolkit
+  * Share examples for common workflows
+* Code generation with TOML config:
+  * Static plumbing code for page routes 
   * Take advantage of the compiler
 
-#### Interactivity
+#### Low Cost Interactivity
 
-The scaffold server can send page fragments to the web browser via XHR.
-Most common interactive requirements can be satisfied this way: web forms, tabs, modals,
-pagination, etc... (see the example pages). Full stack
-apps can be reserved for special cases.
+The server is able to render fragments of your page layout to be applied to the browser DOM.
+It is possible to satisfy most UX requirements this way, without the need to ship an API for your GUI
+or the corresponding IO boilerplate. 
+
+Try the [example starter page](starter#bootstrap-v5)
 
 ### Treetop Routemap Layouts
 
-Routemaps combine code generation with a classic hierarchical approach to web
+Routemaps combine code generation with the classic _hierarchical_ approach to web
 templating. The [Treetop library](https://github.com/rur/treetop) is used to build layouts and handlers
 for endpoints.
 
@@ -151,7 +149,7 @@ Page boilerplate can be loaded from a local folder or using one of the built-in 
 
 ### Built-in page starter
 
-See the [starter/README](starter/README.md) for details about what built-in options are available.
+See the [starter#good-starter](starter/README.md) for details about what built-in options are available.
 
 ```
 good page ./mysite mynewpage --starter :bootstrap5/layout
