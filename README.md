@@ -7,8 +7,8 @@
 The `good` tool embeds a web GUI in a Golang project.
 
 - CLI that generates plain, grok-able code
-- Self contained server with basic dependencies
-- Embedded assets
+- Self contained with basic dependencies
+- Fully embedded assets and templates
 - Classic HTML template composition
 - Boring tech, fewer surprises
 
