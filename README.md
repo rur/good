@@ -6,7 +6,7 @@
 
 The `good` tool embeds a web GUI in a Golang project.
 
-- CLI that generates plain, grok-able code
+- Plain, grok-able code
 - Self contained with basic dependencies
 - Fully embedded assets and templates
 - Classic HTML template composition
