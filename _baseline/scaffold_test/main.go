@@ -66,9 +66,7 @@ func init() {
 			KeyedString: page.KeyedTemplates,
 		}
 	}
-}
 
-func main() {
 	// Initialize Env instance to be shared with all handlers
 	env = &site.Env{
 		// EDITME: initialize site-wide stuff here, for example...
@@ -78,7 +76,9 @@ func main() {
 		InfoLog:  log.New(os.Stdout, "[info]: ", log.Llongfile),
 		DB:       nil,
 	}
+}
 
+func main() {
 	m := &http.ServeMux{}
 
 	// see ./pages.go
