@@ -93,32 +93,32 @@ This scaffold reduces the overhead of adding a GUI to your
 project in the following ways:
 
 * Minimize the code outside of Golang,
-  * Use more of your available project code
   * Make it convenient to do templating on the server-side
+  * Use your available project code
 * Quick-start page templates:
-  * Pick a suitable layout and CSS toolkit
-  * Share examples for common workflows
+  * Starter examples for common workflows
+  * Use a suitable CSS toolkit
 * Code generation with TOML config:
-  * Static plumbing code for page routes 
+  * Static plumbing code for page routes
   * Take advantage of the compiler
 
-#### Low Cost Interactivity
+### Low Cost Interactivity
 
-The server is able to render fragments of your page layout to be applied to the browser DOM.
-It is possible to satisfy most UX requirements this way, without the need to ship an API for your GUI
-or the corresponding IO boilerplate. 
+The scaffold server is able to render parts of a page layout. Many modern UX
+requirements can be satisfied using fragments to update the browser DOM. This reduces the need to
+expose APIs, eliminating some of the complexity of a typical webapp.
 
-Try the [example starter page](starter#bootstrap-v5)
+Partial rendering is configured using the `_partial` or `_fragment` flags in the Routemap config file.
 
-### Treetop Routemap Layouts
+Check out the [example starter page](starter#bootstrap-v5)
 
-Routemaps combine code generation with the classic _hierarchical_ approach to web
-templating. The [Treetop library](https://github.com/rur/treetop) is used to build layouts and handlers
-for endpoints.
+### Routemap Layouts
 
-The command `good routes gen` will read a TOML config for a page and generate endpoint plumbing code.
+Routemaps combine code generation with the classic 'layout hierarchy' approach to web
+templating. The [Treetop library](https://github.com/rur/treetop) is used to bind template files
+and handlers to HTTP endpoints.
 
-#### Routemap preview
+The `good routes gen`command uses a TOML config to generate the endpoint plumbing code for a page.
 
 ```TOML
 _ref = "base"
@@ -138,7 +138,7 @@ _handler = "baseHandler"
   _path = "/other-example"
 ```
 
-This basic config has two endpoints that share the same base view. Templates can be nested further.
+^ This basic example has two endpoints that share the same base view. Templates can be nested further.
 [Try the scaffold](#tldr-quickstart) and explore some working examples.
 
 
