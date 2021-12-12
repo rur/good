@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.1.0] - 2021-12-11
+
+Stamp out an initial release build with a version number.
+
+### Added
+
+- Add the `good version` command to print the current version of the CLI
+
+
 ## [Unreleased] - 2021-10-17
 
 Add interactive confirmation to page command and improve reporting of CLI errors to the

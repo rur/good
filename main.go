@@ -32,6 +32,7 @@ Commands
 	pages delete <page_pkg>              Remove a page from a site
 	routes gen   <page_pkg>              enerate the routes.go file for a specified scaffold page package
 	starter      <out_dir>               Create a new dir and populate it with a template for a custom starter page
+	version                              Current version of the CLI
 
 `
 	scaffoldUsage = `usage: good scaffold <site_pkg_rel>
@@ -175,6 +176,9 @@ func main() {
 		log.Fatalf("Missing <command>")
 	}
 	switch pArgs[0] {
+	case "version":
+		fmt.Printf("good version v0.1.0")
+
 	case "scaffold":
 		if _, help := fArgs["-h"]; help {
 			fmt.Println(scaffoldUsage)
