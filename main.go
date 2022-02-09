@@ -177,7 +177,7 @@ func main() {
 	}
 	switch pArgs[0] {
 	case "version":
-		fmt.Printf("good version v0.1.0")
+		fmt.Printf("good version v0.1.1dev")
 
 	case "scaffold":
 		if _, help := fArgs["-h"]; help {
@@ -376,9 +376,9 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive boo
 		fmt.Printf(
 			strings.Join([]string{
 				"Page Details",
-				"\tscaffold            %s",
-				"\tpage name           %s",
-				"\tstarter template    %s",
+				"\tscaffold            %q",
+				"\tpage name           %q",
+				"\tstarter template    %q",
 				"",
 				"Create this page? [yY]: ",
 			}, "\n"),
@@ -511,9 +511,12 @@ func routesGenCmd(pagePkgRel string) {
 		fmt.Sprintf("loading the scaffold Go package for page '%s'", pkg.ImportPath),
 		err,
 	)
+	_, rscErr := os.Stat(filepath.Join(pkg.Dir, "resources.go"))
+	hasResources := !os.IsNotExist(rscErr)
 	pageRoutes, missTpl, missHlr, err := routemap.ProcessRoutemap(
 		tree,
 		filepath.Join("page", pageName, "templates"),
+		hasResources,
 	)
 	userFail(
 		fmt.Sprintf("parsing routemap views for file '%s'", routemapPath),
@@ -532,6 +535,7 @@ func routesGenCmd(pagePkgRel string) {
 		handlers,
 		templates,
 		scaffold,
+		hasResources,
 	)
 	userFail(fmt.Sprintf("generating routemap files for page '%s'", pkg.ImportPath), err)
 	if len(missHlr)+len(missTpl) > 0 {

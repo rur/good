@@ -82,19 +82,22 @@ func RoutesScaffold(
 	templates []HTMLTemplate,
 	handlers []Handler,
 	scaffold fs.FS,
+	hasResources bool,
 ) (files []File, err error) {
 	data := struct {
-		Name      string
-		Namespace string
-		Entries   []Entry
-		Routes    []Route
-		Handlers  []Handler
+		Name         string
+		Namespace    string
+		HasResources bool
+		Entries      []Entry
+		Routes       []Route
+		Handlers     []Handler
 	}{
-		Name:      pageName,
-		Namespace: sitePkg.ImportPath,
-		Entries:   entries,
-		Routes:    routes,
-		Handlers:  handlers,
+		Name:         pageName,
+		Namespace:    sitePkg.ImportPath,
+		HasResources: hasResources,
+		Entries:      entries,
+		Routes:       routes,
+		Handlers:     handlers,
 	}
 	// page/name/routes.go
 	files = append(files, File{

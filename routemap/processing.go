@@ -75,10 +75,11 @@ type Missing struct {
 
 // ProcessRoutemap will unmarshal and validate a TOML routemap.
 // This will keep track of missing template and handler values.
-func ProcessRoutemap(tree *toml.Tree, templatePath string) (routes PageRoutes, templates []Missing, handlers []Missing, err error) {
+func ProcessRoutemap(tree *toml.Tree, templatePath string, bindResources bool) (routes PageRoutes, templates []Missing, handlers []Missing, err error) {
 	parser := routeParser{
-		usedRefs:     make(map[string]toml.Position),
-		templateBase: templatePath,
+		usedRefs:      make(map[string]toml.Position),
+		templateBase:  templatePath,
+		bindResources: bindResources,
 	}
 	routes.RouteView, err = parser.unmarshalView(tree)
 	if err != nil {
@@ -102,6 +103,7 @@ type routeParser struct {
 	missingHandlers  []Missing
 	blockPath        []string
 	templateBase     string
+	bindResources    bool
 }
 
 // unmarshalView will parse fields, validate and descend to unmarshal sub views routes
@@ -144,7 +146,11 @@ func (parser *routeParser) unmarshalView(tree *toml.Tree) (view RouteView, err e
 	}
 	// fill handler field if missing
 	if view.Handler == "" {
-		view.Handler = fmt.Sprintf("hlp.BindEnv(bindResources(%sHandler))", kebabToCamel(view.Ref))
+		if parser.bindResources {
+			view.Handler = fmt.Sprintf("hlp.BindEnv(bindResources(%sHandler))", kebabToCamel(view.Ref))
+		} else {
+			view.Handler = fmt.Sprintf("hlp.BindEnv(%sHandler)", kebabToCamel(view.Ref))
+		}
 		parser.missingHandlers = append(parser.missingHandlers, Missing{
 			Position:      tree.GetPosition("_ref"),
 			Ref:           view.Ref,
