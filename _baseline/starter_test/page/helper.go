@@ -23,9 +23,9 @@ type Helper struct {
 func (hlp Helper) BindEnv(fn ViewHandlerWithEnv) treetop.ViewHandlerFunc {
 	return func(rsp treetop.Response, req *http.Request) interface{} {
 		defer func() {
-			if panic := recover(); panic != nil {
+			if err := recover(); err != nil {
 				// EDITME: you might wish to handle panics in your own way
-				hlp.Env.ErrorLog.Println("[runtime panic]", panic, "\nStack Trace:\n", string(debug.Stack()))
+				hlp.Env.ErrorLog.Println("[runtime panic]", err, "\nStack Trace:\n", string(debug.Stack()))
 
 				if !rsp.Finished() {
 					// the response has not been written yet, do so now
