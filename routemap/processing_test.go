@@ -104,7 +104,7 @@ func TestProcessRoutemapBasic(t *testing.T) {
 			},
 		},
 	}
-	got, missT, missH, err := ProcessRoutemap(tree, "page/example")
+	got, missT, missH, err := ProcessRoutemap(tree, "page/example", true)
 	if err != nil {
 		t.Errorf("GetPageRoutes() error = %v", err)
 		return
@@ -192,7 +192,7 @@ _ref = "mypage"
 			if err != nil {
 				t.Fatal("Bad toml string", tt.name, err.Error())
 			}
-			_, _, _, err = ProcessRoutemap(tree, tt.args.templatePath)
+			_, _, _, err = ProcessRoutemap(tree, tt.args.templatePath, true)
 			if err == nil {
 				t.Error("ProcessRoutemap() error handling, expecting an error, got none")
 				return
