@@ -1,18 +1,23 @@
 _ref = "base"
-_handler = "hlp.BindEnv(bindResources(baseHandler))"
 _template = "[# .Templates #]/base.html.tmpl"
 _doc = "Base HTML template for [# .Name #] page"
 _entrypoint = "/[# .Name #]"
 
     [[nav]]
     _ref = "sidebar-nav"
+    _doc = "main sidebar details including user settings links"
+    [# if $.HasResources -#]
     _handler = "hlp.BindEnv(bindResources(sidebarNavHandler))"
+    [# else -#]
+    _handler = "hlp.BindEnv(sidebarNavHandler)"
+    [#- end #]
     _default = true
     _template = "[# .Templates #]/nav/sidebar-nav.html.tmpl"
 
         [[nav.nav-links]]
         _ref = "sidebar-nav-links"
-        _handler = "hlp.BindEnv(bindResources(sidebarNavLinksHandler))"
+        _doc = "list of sidebar links, activate a link based on the page name"
+        _handler = 'hlp.BindEnv(sidebarNavLinksHandler("[# .Name #]"))'
         _default = true
         _template = "[# .Templates #]/nav/nav-link/sidebar-nav-links.html.tmpl"
 
@@ -20,14 +25,13 @@ _entrypoint = "/[# .Name #]"
     _ref = "content-wrapper"
     _default = true
     _template = "[# .Templates #]/content/wrapper.html.tmpl"
-    _handler = "hlp.BindEnv(bindResources(contentWrapperHandler))"
     _doc = "Landing content view for the [# .Name #] page URI"
     _method = "GET"
 
         [[content.quick-search-menu]]
         _ref = "quick-search-demo"
         _template = "[# .Templates #]/content/quick-search-menu/search-result-content.html.tmpl"
-        _handler = "hlp.BindEnv(bindResources(quickSearchDemoHandler))"
+        _handler = "hlp.BindEnv(quickSearchDemoHandler)"
         _default = true
         _fragment = true
         _path = "/[# .Name #]/search"
@@ -39,7 +43,7 @@ _entrypoint = "/[# .Name #]"
         _default = true
         _partial = true
         _template = "[# .Templates #]/content/subsection/datatable.html.tmpl"
-        _handler = "hlp.BindEnv(bindResources(datatableHandler))"
+        _handler = "hlp.BindEnv(datatableHandler)"
         _path = "/[# .Name #]"
         _method = "GET"
 
@@ -52,7 +56,7 @@ _entrypoint = "/[# .Name #]"
             [[content.subsection.main-table]]
             _ref = "expanding-datatable"
             _template = "[# .Templates #]/content/subsection/main-table/expanding.html.tmpl"
-            _handler = "hlp.BindEnv(bindResources(expandingDatatableHandler))"
+            _handler = "hlp.BindEnv(expandingDatatableHandler)"
             _default = true
             _method = "GET"
             _path = "/[# .Name #]/datatable/more"
@@ -64,7 +68,7 @@ _entrypoint = "/[# .Name #]"
         _ref = "comments"
         _partial = true
         _template = "[# .Templates #]/content/subsection/comments.html.tmpl"
-        _handler = "hlp.BindEnv(bindResources(commentsHandler))"
+        _handler = "hlp.BindEnv(commentsHandler)"
         _path = "/[# .Name #]/comments"
         _method = "GET"
 
@@ -79,7 +83,7 @@ _entrypoint = "/[# .Name #]"
             _default = true
             _doc = "increment if a valid comment is referenced, ignore otherwise"
             _template = "[# .Templates #]/content/subsection/comments-likes.html.tmpl"
-            _handler = "hlp.BindEnv(bindResources(commentsLikesHandler))"
+            _handler = "hlp.BindEnv(commentsLikesHandler)"
             _method = "POST"
             _path = "/[# .Name #]/comments/like"
             _fragment = true
@@ -88,7 +92,7 @@ _entrypoint = "/[# .Name #]"
         _ref = "logview"
         _partial = true
         _template = "[# .Templates #]/content/subsection/logview.html.tmpl"
-        _handler = "hlp.BindEnv(bindResources(logviewHandler))"
+        _handler = "hlp.BindEnv(logviewHandler)"
         _path = "/[# .Name #]/logs"
         _method = "GET"
 
@@ -101,7 +105,7 @@ _entrypoint = "/[# .Name #]"
             [[content.subsection.log-stream]]
             _ref = "long-poll-ticker"
             _template = "[# .Templates #]/content/subsection/log-stream/long-poll-ticker.html.tmpl"
-            _handler = "hlp.BindEnv(bindResources(longPollTickerHandler))"
+            _handler = "hlp.BindEnv(longPollTickerHandler)"
             _doc = "endpoint implementing a mock event stream using long polling"
             _path = "/[# .Name #]/logs/poll"
             _method = "GET"
@@ -142,7 +146,7 @@ _entrypoint = "/[# .Name #]"
 
     [[modal]]
     _ref = "reply-modal"
-    _handler = "hlp.BindEnv(bindResources(replyModalHandler))"
+    _handler = "hlp.BindEnv(replyModalHandler)"
     _fragment = true
     _path = "/[# .Name #]/comments/reply"
     _template = "[# .Templates #]/modal/reply-modal.html.tmpl"

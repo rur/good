@@ -25,7 +25,7 @@ var nonAlpha = regexp.MustCompile(`[^\w]`)
 // Block: quick-search-menu
 // Method: GET
 // Doc: Show options for search query, as it is being typed (must be fast!)
-func quickSearchDemoHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
+func quickSearchDemoHandler(env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		RawQuery string
 		Results  []QuickSearchResult
