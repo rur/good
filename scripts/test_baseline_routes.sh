@@ -28,13 +28,13 @@ cp _baseline/testfixtures/routemap_trivial.toml baseline/routes_test/page/trivia
 go run . routes gen ./baseline/routes_test/page/example
 go run . routes gen ./baseline/routes_test/page/trivial
 
-if [[ ! -z $(bash ./scripts/usedports.sh | grep 8000) ]]; then
-  echo >&2 "Port 8000 appears to be in use, cannot run test"
+if [[ ! -z $(bash ./scripts/usedports.sh | grep 8001) ]]; then
+  echo >&2 "Port 8001 appears to be in use, cannot run test"
   exit 1
 fi
 
 echo "---- run new server and ping /example endpoint ---"
-go run ./baseline/routes_test --port 8000 > testing_stdout.log 2> testing_stderr.log &
+go run ./baseline/routes_test --port 8001 > testing_stdout.log 2> testing_stderr.log &
 serverPID=$!
 function killserver() {
     echo "Kill test server at PID $serverPID"
@@ -46,25 +46,25 @@ sleep 1 # plenty of time to start up
 rm -rf _test_output
 mkdir _test_output
 
-curl http://localhost:8000/example > _test_output/1.html
-curl --fail http://localhost:8000/trivial > _test_output/1.html
+curl http://localhost:8001/example > _test_output/1.html
+curl --fail http://localhost:8001/trivial > _test_output/1.html
 echo
 echo "---"
-curl --fail http://localhost:8000/example > _test_output/2.html
+curl --fail http://localhost:8001/example > _test_output/2.html
 echo
 echo "---"
-curl --fail http://localhost:8000/example/alt > _test_output/3.html
+curl --fail http://localhost:8001/example/alt > _test_output/3.html
 echo
 echo "---"
-curl --fail -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/settings > _test_output/4.html
+curl --fail -H "Accept: application/x.treetop-html-template+xml" http://localhost:8001/example/settings > _test_output/4.html
 echo
 echo "---"
-curl --fail http://localhost:8000/example/advanced-settings > _test_output/5.html
+curl --fail http://localhost:8001/example/advanced-settings > _test_output/5.html
 echo
 echo "---"
-curl --fail -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/form > _test_output/6.html
+curl --fail -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8001/example/form > _test_output/6.html
 echo
-curl --fail -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8000/example/advanced-settings/submit > _test_output/7.html
+curl --fail -X POST -H "Accept: application/x.treetop-html-template+xml" http://localhost:8001/example/advanced-settings/submit > _test_output/7.html
 echo
 echo "---- Feched example page successfully ---"
 
