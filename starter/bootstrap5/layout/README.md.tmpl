@@ -10,10 +10,9 @@ to help you get started with your new page!
 ### Page Files:
 
 - **routemap.toml** is the configuration of all page endpoints
-- **routes.go** is generated from the route map config
-- **resources.go** loads request specific resources for handlers
-- **handlers.go** private request handlers
-- **handlers_landing.go** handlers for the initial landing content page
+- **routes.go** is generated from the route map config[# if $.HasResources #]
+- **resources.go** loads request specific resources for handlers[# end #]
+- **handlers_nav.go** sidebar handlers, one for the main sidebar and one for the link list
 - **templates/\*\*.html.tmpl** page templates
 
 Refer to the [Page Routemap Docs](../../docs/ROUTEMAP.md) for guidelines on understanding the
