@@ -21,7 +21,7 @@ go run . page ./baseline/routes_test example --starter :minimum -y
 rm baseline/routes_test/page/example/routemap.toml
 cp _baseline/testfixtures/routemap.toml baseline/routes_test/page/example/routemap.toml
 
-go run . page ./baseline/routes_test trivial --starter :minimum -y
+go run . page ./baseline/routes_test trivial --starter :minimum -y --no-resources
 rm baseline/routes_test/page/trivial/routemap.toml
 cp _baseline/testfixtures/routemap_trivial.toml baseline/routes_test/page/trivial/routemap.toml
 

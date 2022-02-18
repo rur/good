@@ -12,7 +12,7 @@ func Routes(hlp page.Helper, exec treetop.ViewExecutor) {
 
 	trivialPage := treetop.NewView(
 		"page/trivial/templates/trivial-page.html.tmpl",
-		hlp.BindEnv(bindResources(trivialPageHandler)),
+		hlp.BindEnv(trivialPageHandler),
 	)
 
 	hlp.Handle("/trivial",
