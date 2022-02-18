@@ -29,23 +29,19 @@ var (
 	//go:embed page/*/templates
 	//go:embed page/templates
 	templates embed.FS
-
-	// used to serve static assets
-	staticFS http.FileSystem
-
-	// binding views to template files
-	exec treetop.ViewExecutor
-
-	// site environment singleton
-	env *site.Env
 )
 
 func init() {
-	// CLI
-	flag.BoolVar(&devMode, "dev", false, "Development mode, disable caching and other production optimizations")
 	flag.UintVar(&port, "port", 8000, "Port number to bind to")
+	flag.BoolVar(&devMode, "dev", false, "Development mode, disable caching and other production optimizations")
 	flag.Parse()
+}
 
+func main() {
+	var (
+		staticFS http.FileSystem
+		exec     treetop.ViewExecutor
+	)
 	if devMode {
 		// all static assets and templates should be read from disk at runtime
 		fmt.Println("Server running in DEVELOPMENT MODE")
@@ -67,8 +63,8 @@ func init() {
 		}
 	}
 
-	// Initialize Env instance to be shared with all handlers
-	env = &site.Env{
+	// Initialize Env singleton, it will be bound to handlers using the page.BindEnv helper
+	env := &site.Env{
 		// EDITME: initialize site-wide stuff here, for example...
 		HTTPS:    !devMode,
 		ErrorLog: log.New(os.Stderr, "[error]: ", log.Llongfile),
@@ -76,9 +72,8 @@ func init() {
 		InfoLog:  log.New(os.Stdout, "[info]: ", log.Llongfile),
 		DB:       nil,
 	}
-}
 
-func main() {
+	// EDITME: it is recommended to replace this with your preferred routing library
 	m := &http.ServeMux{}
 
 	// see ./pages.go
