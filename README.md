@@ -7,7 +7,7 @@
 The `good` tool embeds a web GUI in a Golang project.
 
 - Plain, grok-able code
-- Self contained with basic dependencies
+- Self contained with minimal dependencies
 - Fully embedded assets and templates
 - Classic HTML template composition
 - Boring tech, fewer surprises
@@ -92,21 +92,21 @@ This can be used with the Good Page command like so.
 This scaffold reduces the overhead of adding a GUI to your
 project in the following ways:
 
-* Minimize the code outside of Golang,
-  * Make it convenient to do templating on the server-side
-  * Use your available project code
 * Quick-start page templates:
   * Starter examples for common workflows
   * Use a suitable CSS toolkit
 * Code generation with TOML config:
   * Static plumbing code for page routes
-  * Take advantage of the compiler
+  * Take advantage of the type checker
+* Minimize code outside of Golang,
+  * Make it convenient to do templating on the server-side
+  * Use your available project code
 
 ### Low Cost Interactivity
 
-The scaffold server is able to render parts of a page layout. Many modern UX
-requirements can be satisfied using fragments to update the browser DOM. This reduces the need to
-expose APIs, eliminating some of the complexity of a typical webapp.
+The scaffold server is able to serve HTML fragments that passively update the current page layout. Many modern UX
+requirements can be satisfied with fragment DOM updates while keeping business logic entirely on the sever side.
+This reduces the reliance on APIs to support a modern user journey, avoiding some of the overhead of a typical webapp.
 
 Partial rendering is configured using the `_partial` or `_fragment` flags in the Routemap config file.
 
@@ -172,9 +172,9 @@ so that the code will be more static, easier to read and customize.
 This works well with the Golang type system and tooling, which makes refactoring a cinch
 at the cost of some extra typing.
 
-#### 2. Self-contained server with basic dependencies
+#### 2. Self-contained server with minimal dependencies
 
-We avoid a lot of mandatory dependencies by taking full advantage of the standard library.
+We avoid a lot of mandatory dependencies by making the most of the standard library.
 There is no plugin system; if you are familiar with Golang you can rely on an easy-to-follow
 codebase to integrate your chosen libraries manually.
 
