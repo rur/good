@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.1.2] - 2022-04-23
+
+Bugfix to correct slice-abuse in generating entries from the route map for the
+routes.go template.
+
+## [v0.1.1] - 2022-02-17
+
+Tighten up some code and make page resources optional
+
+### Added
+
+- Added `--no-resources` flag to the page generation command
+
+### Remove
+
+- Trim unused resources and handlers in some of the page starter templates
+
+### Improve
+
+- Make site main file generally easier to read
+- Env singleton instance is scopes to the main function
+- Initializing Env resources in main func allows the use of defer for teardown
+
 ## [v0.1.0] - 2021-12-11
 
 Stamp out an initial release build with a version number.

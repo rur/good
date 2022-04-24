@@ -179,7 +179,7 @@ func main() {
 	}
 	switch pArgs[0] {
 	case "version":
-		fmt.Printf("good version v0.1.1dev")
+		fmt.Printf("good version v0.1.2")
 
 	case "scaffold":
 		if _, help := fArgs["-h"]; help {
