@@ -16,21 +16,22 @@ var (
 )
 
 // PageScaffold will assemble files for adding a new page to the site scaffold
-func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, starter fs.FS) (files []File, err error) {
+func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, starter fs.FS, withResources bool) (files []File, err error) {
 	dest, err := sitePkg.RelPath()
 	if err != nil {
 		return
 	}
 	// setup page with some placeholder data
 	data := struct {
-		Name       string // Go package name for page
-		Namespace  string
-		Handlers   []Handler
-		Templates  string
-		PagePath   string
-		SiteDirRel string
-		Entries    []Entry
-		Routes     []Route
+		Name         string // Go package name for page
+		Namespace    string
+		Handlers     []Handler
+		Templates    string
+		PagePath     string
+		SiteDirRel   string
+		HasResources bool
+		Entries      []Entry
+		Routes       []Route
 	}{
 		PagePath:  strings.Join([]string{sitePkg.ImportPath, "page", name}, "/"),
 		Name:      name,
@@ -44,8 +45,9 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, starter fs.FS)
 				Identifier: "exampleDummyHandler",
 			},
 		},
-		Templates:  filepath.Join("page", name, "templates"),
-		SiteDirRel: dest,
+		Templates:    filepath.Join("page", name, "templates"),
+		SiteDirRel:   dest,
+		HasResources: withResources,
 
 		// placeholder routes.go
 		Entries: []Entry{{
@@ -138,15 +140,7 @@ func PageScaffold(sitePkg GoPackage, name string, scaffold fs.FS, starter fs.FS)
 			Contents: mustExecute("scaffold/page/default/gen.go.tmpl", data, scaffold),
 		})
 	}
-	if ok := found["handlers.go.tmpl"]; !ok {
-		// page/default/handlers.go
-		files = append(files, File{
-			Dir:      pageDir,
-			Name:     "handlers.go",
-			Contents: mustExecute("scaffold/page/default/handlers.go.tmpl", data, scaffold),
-		})
-	}
-	if ok := found["resources.go.tmpl"]; !ok {
+	if ok := found["resources.go.tmpl"]; !ok && withResources {
 		// page/default/resources.go
 		files = append(files, File{
 			Dir:      pageDir,

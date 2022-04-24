@@ -6,7 +6,6 @@ This is a page within the `github.com/rur/good/baseline/routes_test` HTML web ap
 
 - **routemap.toml** is the configuration of all page endpoints
 - **routes.go** is generated from the route map config
-- **resources.go** loads request specific resources for handlers
 - **handlers.go** private request handlers
 - **templates/\*\*.html.tmpl** page templates
 

@@ -65,6 +65,7 @@ func TestPageScaffold(t *testing.T) {
 		"testing",
 		scaffold,
 		bootstrap,
+		true,
 	)
 	if err != nil {
 		t.Errorf("PageScaffold() error = %v", err)

@@ -66,6 +66,8 @@ Options
 	Print usage for page command
     -y
 	Skip interactive confirmation message
+    --no-resources
+	Do not include a resources.go file in the new page
     --starter <dir path>
         Use specified directory as the starter template for the new page scaffold.
 
@@ -177,7 +179,7 @@ func main() {
 	}
 	switch pArgs[0] {
 	case "version":
-		fmt.Printf("good version v0.1.1dev")
+		fmt.Printf("good version v0.1.2")
 
 	case "scaffold":
 		if _, help := fArgs["-h"]; help {
@@ -199,9 +201,14 @@ func main() {
 			fmt.Println(pageUsage)
 			log.Fatalf("Missing required arguments")
 		}
+		var interactive bool
+		if _, yesFlag := fArgs["-y"]; !yesFlag {
+			interactive = generate.IsTTY()
+		}
+
 		starterTemplatePath := fArgs["--starter"]
-		_, yesFlag := fArgs["-y"]
-		pageCmd(pArgs[1], pArgs[2], starterTemplatePath, !yesFlag && generate.IsTTY())
+		_, noResources := fArgs["--no-resources"]
+		pageCmd(pArgs[1], pArgs[2], starterTemplatePath, !noResources, interactive)
 
 	case "pages":
 		if _, help := fArgs["-h"]; help {
@@ -294,7 +301,7 @@ func scaffoldCmd(sitePkgRel string) {
 	files = append(files, pageFile)
 	start, err := fs.Sub(starter, "starter/intro")
 	mustNot(err)
-	pFiles, err := generate.PageScaffold(sitePkg, "intro", scaffold, start)
+	pFiles, err := generate.PageScaffold(sitePkg, "intro", scaffold, start, false)
 	mustNot(err)
 	files = append(files, pFiles...)
 
@@ -314,7 +321,7 @@ func scaffoldCmd(sitePkgRel string) {
 }
 
 // pageCmd attempts to add a new page to an existing scaffold site
-func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive bool) {
+func pageCmd(sitePkgInput, pageName, starterTemplatePath string, withResources, interactive bool) {
 	err := generate.ValidatePageName(pageName)
 	userFail("validating your page name", err)
 	sitePkg, err := generate.GoListPackage(sitePkgInput)
@@ -341,9 +348,13 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive boo
 			fmt.Println("Select a built-in by number, blank for the default (:basic) or provide a page starter path")
 			fmt.Printf("> ")
 			input, err := generate.TimeoutScanln()
-			userFail("reading your input", err)
-			if input == "" {
-				starterTemplatePath = ":basic"
+			if err != nil {
+				if err.Error() == "unexpected newline" {
+					// empty value, just fall back on default
+					starterTemplatePath = ":basic"
+				} else {
+					userFail("reading your input", err)
+				}
 			} else if option, ok := options[input]; ok {
 				starterTemplatePath = strings.SplitN(option, " ", 2)[0]
 			} else {
@@ -372,6 +383,10 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive boo
 	}
 
 	if interactive {
+		resourceMsg := "no"
+		if withResources {
+			resourceMsg = "yes"
+		}
 		// ask for confirmation
 		fmt.Printf(
 			strings.Join([]string{
@@ -379,12 +394,14 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive boo
 				"\tscaffold            %q",
 				"\tpage name           %q",
 				"\tstarter template    %q",
+				"\tresources.go        %s",
 				"",
 				"Create this page? [yY]: ",
 			}, "\n"),
 			sitePkg.ImportPath,
 			pageName,
 			starterTemplatePath,
+			resourceMsg,
 		)
 		answer, err := generate.TimeoutScanln()
 		userFail("reading your answer", err)
@@ -395,7 +412,7 @@ func pageCmd(sitePkgInput, pageName, starterTemplatePath string, interactive boo
 		}
 	}
 
-	files, err := generate.PageScaffold(sitePkg, pageName, scaffold, start)
+	files, err := generate.PageScaffold(sitePkg, pageName, scaffold, start, withResources)
 	userFail("generating page scaffold", err)
 	err = generate.FlushFiles(sitePkg.Dir, files)
 	userFail("writing page files", err)

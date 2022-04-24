@@ -1,18 +1,23 @@
 _ref = "base"
-_handler = "hlp.BindEnv(bindResources(baseHandler))"
 _template = "[# .Templates #]/base.html.tmpl"
 _doc = "Base HTML template for [# .Name #] page"
 _entrypoint = "/[# .Name #]"
 
     [[nav]]
     _ref = "sidebar-nav"
+    _doc = "main sidebar details including user settings links"
+    [# if $.HasResources -#]
     _handler = "hlp.BindEnv(bindResources(sidebarNavHandler))"
+    [# else -#]
+    _handler = "hlp.BindEnv(sidebarNavHandler)"
+    [#- end #]
     _default = true
     _template = "[# .Templates #]/nav/sidebar-nav.html.tmpl"
 
         [[nav.nav-links]]
         _ref = "sidebar-nav-links"
-        _handler = "hlp.BindEnv(bindResources(sidebarNavLinksHandler))"
+        _doc = "list of sidebar links, activate a link based on the page name"
+        _handler = 'hlp.BindEnv(sidebarNavLinksHandler("[# .Name #]"))'
         _default = true
         _template = "[# .Templates #]/nav/nav-link/sidebar-nav-links.html.tmpl"
 
@@ -20,7 +25,6 @@ _entrypoint = "/[# .Name #]"
     _ref = "content-wrapper"
     _default = true
     _template = "[# .Templates #]/content/wrapper.html.tmpl"
-    _handler = "hlp.BindEnv(bindResources(contentWrapperHandler))"
     _doc = "Landing content view for the [# .Name #] page URI"
     _method = "GET"
 
@@ -29,7 +33,6 @@ _entrypoint = "/[# .Name #]"
         _default = true
         _partial = true
         _template = "[# .Templates #]/content/subsection/landing.html.tmpl"
-        _handler = "hlp.BindEnv(bindResources(landingHandler))"
         _path = "/[# .Name #]"
         _method = "GET"
 

@@ -8,7 +8,7 @@ import (
 )
 
 // exampleHandler demonstrates a handler with page resources and the site environment
-func exampleHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
+func exampleHandler([# if $.HasResources #]rsc *resources, [# end #]env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	return struct {
 		Description string
 	}{

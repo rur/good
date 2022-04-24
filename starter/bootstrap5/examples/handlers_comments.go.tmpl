@@ -12,7 +12,7 @@ import (
 
 // Ref: comments
 // Block: subsection
-func commentsHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
+func commentsHandler(env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		SubsectionTabs interface{}
 		Comments       []Comment
@@ -27,7 +27,7 @@ func commentsHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *h
 // Method: POST
 // Doc: increment like if a valid comment is found, ignore otherwise
 // Block: likes
-func commentsLikesHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
+func commentsLikesHandler(env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	commentIndex, err := strconv.Atoi(req.URL.Query().Get("comment"))
 	if err != nil || commentIndex < 0 && commentIndex >= len(mockComments) {
 		env.ErrorLog.Printf("Invlaid comment index %s", req.URL.Query().Get("comment"))
@@ -41,7 +41,7 @@ func commentsLikesHandler(rsc *resources, env *site.Env, rsp treetop.Response, r
 // Ref: reply-modal
 // Block: modal
 // Doc: GET/POST endpoint to add a reply to a comment
-func replyModalHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
+func replyModalHandler(env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		Comment      Comment
 		CommentIndex int

@@ -31,11 +31,9 @@ func TemplateDataForRoutes(page PageRoutes, missTpl []Missing, missHlr []Missing
 	err error,
 ) {
 	refCount := make(map[string]int)
-
 	stack := []stackData{
 		{view: page.RouteView},
 	}
-	var spacer string
 	tmplRef := make(map[string]bool)
 	for i := range missTpl {
 		tmplRef[missTpl[i].Ref] = true
@@ -47,6 +45,7 @@ func TemplateDataForRoutes(page PageRoutes, missTpl []Missing, missHlr []Missing
 
 	// emitting entries using a pre-order traversal will ensure that all view variable are declared
 	// before they are used to create sub views
+	var spacer string
 	for len(stack) > 0 {
 		sData := popStack(&stack)
 		view := sData.view
@@ -103,7 +102,9 @@ func TemplateDataForRoutes(page PageRoutes, missTpl []Missing, missHlr []Missing
 
 		for i := len(view.Blocks) - 1; i >= 0; i-- {
 			blockName := view.Blocks[i].Name
-			bPath := append(sData.blockPath, blockName)
+			bPath := make([]string, len(sData.blockPath))
+			copy(bPath, sData.blockPath)
+			bPath = append(bPath, blockName)
 
 			if len(view.Blocks[i].Views) == 0 {
 				refCount[entry.Assignment]++
@@ -115,6 +116,8 @@ func TemplateDataForRoutes(page PageRoutes, missTpl []Missing, missHlr []Missing
 				})
 				continue
 			}
+			// add block views in reverse order so that they will appear
+			// in-order when popped from the stack
 			for j := len(view.Blocks[i].Views) - 1; j >= 0; j-- {
 				refCount[entry.Assignment]++
 				// add subview to BFS stack

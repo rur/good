@@ -13,7 +13,7 @@ import (
 
 // Ref: trivial-page
 // Doc: Just a single HTML page
-func trivialPageHandler(rsc *resources, env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
+func trivialPageHandler(env *site.Env, rsp treetop.Response, req *http.Request) interface{} {
 	data := struct {
 		HandlerInfo string
 	}{
