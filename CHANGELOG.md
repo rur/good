@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 Bugfix to correct slice-abuse in generating entries from the route map for the
 routes.go template.
 
-## [v0.1.1] - 2022-02-17
+## [v0.1.1] - skipped (not released)
 
 Tighten up some code and make page resources optional
 
