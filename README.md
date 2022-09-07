@@ -2,15 +2,15 @@
 
 # <img src="docs/readme_logo.svg" alt="Good Web Scaffold"/>
 
-## A pretty good web scaffold for Golang
+## A good-enough web scaffold for Golang web consoles
 
-The `good` tool embeds a web GUI in a Golang project.
+The `good` tool embeds a web GUI in an existing Golang project.
 
 - Plain, grok-able code
 - Self contained with minimal dependencies
 - Fully embedded assets and templates
 - Classic HTML template composition
-- Boring tech, fewer surprises
+- Boring tech, few surprises
 
 [ [CLI Overview](#cli-overview) ~
 [Building GUIs](#building-guis) ~
@@ -20,12 +20,12 @@ The `good` tool embeds a web GUI in a Golang project.
 ### Overview
 
 The `good scaffold` command outputs a web GUI setup to a sub package of a
-Go project. The scaffold is geared towards web consoles and admin tools
-for backend services or daemons.
+Go project.
 
 Pages are added using the `good page` command, which has a
-[starter template](#starter-templates) feature to speed-up development. The scaffold package
-is unobtrusive so that it can be embedded in an existing codebase without difficulty.
+[starter template](#starter-templates) feature to speed things up. The scaffold package
+is unobtrusive so that it can be embedded in a Go project and make use of your existing
+boilerplate.
 
 #### TLDR; quickstart
 
@@ -85,32 +85,34 @@ This can be used with the Good Page command like so.
 
 ## Building GUIs
 
-> We'll add a web console in the _next_ version
->
->_– Backend Developer_
+> We'll add a console in the next version  _– Go Developer_
 
-This scaffold reduces the overhead of adding a GUI to your
-project in the following ways:
+This scaffold aims to reduce the overhead of adding a GUI to your
+Go project in the following ways:
 
-* Quick-start page templates:
-  * Starter examples for common workflows
-  * Use a suitable CSS toolkit
-* Code generation with TOML config:
-  * Static plumbing code for page routes
-  * Take advantage of the type checker
-* Minimize code outside of Golang,
-  * Make it convenient to do templating on the server-side
-  * Use your available project code
+* Quick-start page templates,
+  * Start with a workable layout and CSS toolkit.
+* Code generation with TOML config,
+  * Static plumbing code for page routes (you don't want to do this manually).
+  * We try to balance complexity between code-gen, compile time and runtime.
+* Keep the bulk of the business logic in Go,
+  * Make it convenient to do GUI templating on the server-side.
+  * Above all, avoid the multiplication of IO boilerplate.
 
-### Low Cost Interactivity
+#### Light weight interactivity
 
-The scaffold server is able to serve HTML fragments that passively update the current page layout. Many modern UX
-requirements can be satisfied with fragment DOM updates while keeping business logic entirely on the sever side.
-This reduces the reliance on APIs to support a modern user journey, avoiding some of the overhead of a typical webapp.
+In addition to standard HTML page requests, the web server supports a custom protocol extension enabling 
+HTML fragments to be projected to the client. Many moden UX requirements can be satisfied this way, 
+alleviating the need for a more fully fledged interactive approach.
 
-Partial rendering is configured using the `_partial` or `_fragment` flags in the Routemap config file.
+_Note:_ HTML fragments are an opt-in feature at the endpoint level, see `_partial` and `_fragment` 
+flags in the Routemap config guide.
 
-Check out the [example starter page](starter#bootstrap-v5)
+#### Serving SPAs
+
+If a Single Page App is what you have in mind, a scaffold is a great way to serve your app container 
+templates, along with top level nav and any auxiliary content, without incorporating a full-featured 
+HTML web framework to your project.
 
 ### Routemap Layouts
 
@@ -191,7 +193,7 @@ HTML template composition has excellent support in Golang. This scaffold uses th
 [Treetop library](https://github.com/rur/treetop) to help organize templates and handlers,
 with the added benefit of fragment hot-swapping for enhanced interactivity.
 
-#### 5. Boring tech, fewer surprises
+#### 5. Boring tech, few surprises
 
 The scaffold is more of a workhorse than a unicorn; we embrace some practical
 limitations for the purpose of tight server-side integration.
