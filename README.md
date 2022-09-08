@@ -29,7 +29,7 @@ boilerplate.
 
 #### TLDR; quickstart
 
-    $ go get github.com/rur/good
+    $ go install github.com/rur/good
     $ cd ~/path/to/mygoproject
     [mygoproject]$ good scaffold ./myportal
     [mygoproject]$ go generate ./myportal/...
