@@ -22,10 +22,12 @@ The `good` tool embeds a web GUI in an existing Golang project.
 The `good scaffold` command outputs a web GUI setup to a sub package of a
 Go project.
 
-Pages are added using the `good page` command, which has a
-[starter template](#starter-templates) feature to speed things up. The scaffold package
-is unobtrusive so that it can be embedded in a Go project and make use of your existing
+The scaffold package
+is unobtrusive so that it can be embedded in an existing Go module and make use of the project
 boilerplate.
+
+Pages are added using the `good page` command, which has a
+[starter template](#starter-templates) feature to speed things up. 
 
 #### TLDR; quickstart
 
