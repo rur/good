@@ -6,8 +6,8 @@
 
 The `good` tool embeds a web GUI in an existing Golang project.
 
+- Self-contained with minimal dependencies
 - Plain, grok-able code
-- Self contained with minimal dependencies
 - Fully embedded assets and templates
 - Classic HTML template composition
 - Boring tech, few surprises
@@ -102,7 +102,7 @@ Go project in the following ways:
 #### Light weight interactivity
 
 In addition to standard HTML page requests, the web server supports a custom protocol extension enabling 
-HTML fragments to be projected to the client. Many moden UX requirements can be satisfied this way, 
+HTML fragments to be projected to the client. Many modern UX requirements can be satisfied this way, 
 alleviating the need for a more fully fledged interactive approach.
 
 _Note:_ HTML fragments are an opt-in feature at the endpoint level, see `_partial` and `_fragment` 
@@ -110,9 +110,9 @@ flags in the Routemap config guide.
 
 #### Serving SPAs
 
-If a Single Page App is what you have in mind, a scaffold is a great way to serve your app container 
-templates, along with top level nav and any auxiliary content, without incorporating a full-featured 
-HTML web framework to your project.
+If a Single Page App is what you have in mind, a simple web scaffold is a great way to serve your app container 
+templates, along with top-level nav and any auxiliary content, without incorporating a full-featured 
+HTML web framework with your codebase.
 
 ### Routemap Layouts
 
@@ -170,7 +170,7 @@ The `good starter` command will help you to get set up.
 #### 1. CLI that generates plain, grok-able code
 
 The output is mostly vanilla Golang and HTML templates. We embrace some redundancy
-so that the code will be more static, easier to read and customize.
+so that the code will be more static, and easier to read and customize.
 This works well with the Golang type system and tooling, which makes refactoring a cinch
 at the cost of some extra typing.
 
@@ -196,5 +196,5 @@ with the added benefit of fragment hot-swapping for enhanced interactivity.
 #### 5. Boring tech, few surprises
 
 The scaffold is more of a workhorse than a unicorn; we embrace some practical
-limitations for the purpose of tight server-side integration.
+limitations for tight server-side integration.
 Take care to judge the limitations for yourself and decide what is right for your project.
