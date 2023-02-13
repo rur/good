@@ -1,4 +1,4 @@
-[![Build Status](https://app.travis-ci.com/rur/good.svg?branch=main)](https://app.travis-ci.com/rur/good)
+[![Build Status](https://rur.semaphoreci.com/badges/good/branches/master.svg?key=12cc127d-6aa0-4cae-8e0b-d667acfcdb4b)](https://rur.semaphoreci.com/projects/good)
 
 # <img src="docs/readme_logo.svg" alt="Good Web Scaffold"/>
 
@@ -27,7 +27,7 @@ is unobtrusive so that it can be embedded in an existing Go module and make use 
 boilerplate.
 
 Pages are added using the `good page` command, which has a
-[starter template](#starter-templates) feature to speed things up. 
+[starter template](#starter-templates) feature to speed things up.
 
 #### TLDR; quickstart
 
@@ -70,9 +70,8 @@ Utilities for site pages. For example, list the pages to stdout
 
 Update the routing code for the specified scaffold page package.
 
-Generate a __routes.go__ file from the `routemap.toml` config file in the target page. This
+Generate a **routes.go** file from the `routemap.toml` config file in the target page. This
 contains layout and endpoint plumbing code that uses the [Treetop](https://github.com/rur/treetop) library.
-
 
     $ good routes gen ./portal/page/settings
 
@@ -87,33 +86,33 @@ This can be used with the Good Page command like so.
 
 ## Building GUIs
 
-> We'll add a console in the next version  _– Go Developer_
+> We'll add a console in the next version _– Go Developer_
 
 This scaffold aims to reduce the overhead of adding a GUI to your
 Go project in the following ways:
 
-* Quick-start page templates,
-  * Start with a workable layout and CSS toolkit.
-* Code generation with TOML config,
-  * Static plumbing code for page routes (you don't want to do this manually).
-  * We try to balance complexity between code-gen, compile time and runtime.
-* Keep the bulk of the business logic in Go,
-  * Make it convenient to do GUI templating on the server-side.
-  * Above all, avoid the multiplication of IO boilerplate.
+- Quick-start page templates,
+  - Start with a workable layout and CSS toolkit.
+- Code generation with TOML config,
+  - Static plumbing code for page routes (you don't want to do this manually).
+  - We try to balance complexity between code-gen, compile time and runtime.
+- Keep the bulk of the business logic in Go,
+  - Make it convenient to do GUI templating on the server-side.
+  - Above all, avoid the multiplication of IO boilerplate.
 
 #### Light weight interactivity
 
-In addition to standard HTML page requests, the web server supports a custom protocol extension enabling 
-HTML fragments to be projected to the client. Many modern UX requirements can be satisfied this way, 
+In addition to standard HTML page requests, the web server supports a custom protocol extension enabling
+HTML fragments to be projected to the client. Many modern UX requirements can be satisfied this way,
 alleviating the need for a more fully fledged interactive approach.
 
-_Note:_ HTML fragments are an opt-in feature at the endpoint level, see `_partial` and `_fragment` 
+_Note:_ HTML fragments are an opt-in feature at the endpoint level, see `_partial` and `_fragment`
 flags in the Routemap config guide.
 
 #### Serving SPAs
 
-If a Single Page App is what you have in mind, a simple web scaffold is a great way to serve your app container 
-templates, along with top-level nav and any auxiliary content, without incorporating a full-featured 
+If a Single Page App is what you have in mind, a simple web scaffold is a great way to serve your app container
+templates, along with top-level nav and any auxiliary content, without incorporating a full-featured
 HTML web framework with your codebase.
 
 ### Routemap Layouts
@@ -145,11 +144,9 @@ _handler = "baseHandler"
 ^ This basic example has two endpoints that share the same base view. Templates can be nested further.
 [Try the scaffold](#tldr-quickstart) and explore some working examples.
 
-
 ## Starter Templates
 
 Page boilerplate can be loaded from a local folder or using one of the built-in options.
-
 
 ### Built-in page starter
 
@@ -165,7 +162,6 @@ Commit a starter page to your project with custom boilerplate. Very useful if
 you like to do a lot of prototyping!
 
 The `good starter` command will help you to get set up.
-
 
 ## Developer Notes
 
