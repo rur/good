@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.1.3] - 2023-02-13
+
+Remove the RWMutex from the resources.go template.
+
+### Improve
+
+- Use the request context to keep resource caching local to the handler goroutine.
+
 ## [v0.1.2] - 2022-04-23
 
 Bugfix to correct slice-abuse in generating entries from the route map for the
@@ -32,7 +40,6 @@ Stamp out an initial release build with a version number.
 ### Added
 
 - Add the `good version` command to print the current version of the CLI
-
 
 ## [Unreleased] - 2021-10-17
 
@@ -75,8 +82,7 @@ a functioning sign-in and sign-up user flow (mock in-memory database).
 
 ### Fixed
 
-- Upgrade version of Treetop to __v0.4.1__ to get a patch fix for `Vary` header handling
-
+- Upgrade version of Treetop to **v0.4.1** to get a patch fix for `Vary` header handling
 
 ## [Unreleased] - 2021-09-23
 
