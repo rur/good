@@ -5,9 +5,30 @@ agent:
     type: e1-standard-2
     os_image: ubuntu2004
 blocks:
-  - name: 'Block #1'
+  - name: CodeTests
     task:
+      jobs:
+        - name: Go Test
+          commands:
+            - sem-version go 1.16
+            - '"export GO111MODULE=on"'
+            - '"export GOPATH=~/go"'
+            - '"export PATH=/home/semaphore/go/bin:$PATH"'
+            - checkout
+            - go get ./...
+            - go test ./...
+            - go build -v .
+  - name: Integration Tests
+    task:
+      prologue:
+        commands:
+          - sem-version go 1.16
+          - '"export GO111MODULE=on"'
+          - '"export GOPATH=~/go"'
+          - '"export PATH=/home/semaphore/go/bin:$PATH"'
+          - checkout
+          - go get ./...
       jobs:
         - name: 'Job #1'
           commands:
-            - checkout
+            - ./scripts/test_baseline_scaffold.sh
