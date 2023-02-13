@@ -2,7 +2,7 @@
 
 # <img src="docs/readme_logo.svg" alt="Good Web Scaffold"/>
 
-## A good-enough web scaffold for Golang web consoles
+## A vanilla web scaffold for Golang web consoles
 
 The `good` tool embeds a web GUI in an existing Golang project.
 
