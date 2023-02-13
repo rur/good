@@ -1,4 +1,4 @@
-[![Build Status](https://rur.semaphoreci.com/badges/good/branches/master.svg?key=12cc127d-6aa0-4cae-8e0b-d667acfcdb4b)](https://rur.semaphoreci.com/projects/good)
+[![Build Status](https://rur.semaphoreci.com/badges/good/branches/main.svg?key=12cc127d-6aa0-4cae-8e0b-d667acfcdb4b)](https://rur.semaphoreci.com/projects/good)
 
 # <img src="docs/readme_logo.svg" alt="Good Web Scaffold"/>
 
