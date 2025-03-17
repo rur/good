@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.1.4] - 2025-03-16
+
+Update development version of golang to 1.23.
+
+
 ## [v0.1.3] - 2023-02-13
 
 Remove the RWMutex from the resources.go template.
