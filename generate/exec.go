@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -28,6 +27,7 @@ type GoModule struct {
 
 // GoPackage represents a package within a go module
 type GoPackage struct {
+	Name       string   `json:"Name"`
 	Dir        string   `json:"Dir"`
 	ImportPath string   `json:"ImportPath"`
 	Module     GoModule `json:"Module"`
@@ -47,12 +47,6 @@ func (pkg *GoPackage) RelPath() (string, error) {
 func IsTTY() bool {
 	fileInfo, _ := os.Stdout.Stat()
 	return (fileInfo.Mode() & os.ModeCharDevice) != 0
-}
-
-// Name will return the name of the package based on the import path
-func (pkg *GoPackage) Name() string {
-	ind := strings.LastIndex(pkg.ImportPath, "/")
-	return pkg.ImportPath[ind+1:]
 }
 
 // GoListPackage will get the Go module information for the go path provied
@@ -160,7 +154,7 @@ func TryReadModFile() (module string, baseDir string) {
 	if err != nil {
 		return
 	}
-	contents, err := ioutil.ReadFile(filepath.Join(baseDir, "go.mod"))
+	contents, err := os.ReadFile(filepath.Join(baseDir, "go.mod"))
 	if err != nil {
 		return
 	}

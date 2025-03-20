@@ -38,6 +38,7 @@ func TestGoListPackage(t *testing.T) {
 		wantImport     string
 		wantModulePath string
 		wantModuleDir  string
+		wantName       string
 		wantErr        bool
 	}{
 		{
@@ -46,6 +47,7 @@ func TestGoListPackage(t *testing.T) {
 			wantDir:        "^.+/good/generate$",
 			wantImport:     "^github.com/rur/good/generate$",
 			wantModulePath: "^github.com/rur/good$",
+			wantName:       "generate",
 			wantModuleDir:  "^.+/good$",
 		},
 		{
@@ -54,6 +56,7 @@ func TestGoListPackage(t *testing.T) {
 			wantDir:        "^.+/good/generate$",
 			wantImport:     "^github.com/rur/good/generate$",
 			wantModulePath: "^github.com/rur/good$",
+			wantName:       "generate",
 			wantModuleDir:  "^.+/good$",
 		},
 		{
@@ -62,6 +65,7 @@ func TestGoListPackage(t *testing.T) {
 			wantDir:        "^.+/good$",
 			wantImport:     "^github.com/rur/good$",
 			wantModulePath: "^github.com/rur/good$",
+			wantName:       "main",
 			wantModuleDir:  "^.+/good$",
 		},
 		{
@@ -88,6 +92,9 @@ func TestGoListPackage(t *testing.T) {
 				}
 				if !assertPath("Module.Dir", pkg.Module.Dir, tt.wantModuleDir) {
 					return
+				}
+				if pkg.Name != tt.wantName {
+					t.Errorf("expecting name %q, got %q", tt.wantName, pkg.Name)
 				}
 			}
 		})

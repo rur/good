@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -512,7 +511,7 @@ func routesGenCmd(pagePkgRel string) {
 	pkg, err := generate.GoListPackage(pagePkgRel)
 	userFail(fmt.Sprintf("scanning for a Go package at '%s'", pagePkgRel), err)
 	routemapPath := filepath.Join(pkg.Dir, "routemap.toml")
-	routemapContent, err := ioutil.ReadFile(routemapPath)
+	routemapContent, err := os.ReadFile(routemapPath)
 	userFail(
 		fmt.Sprintf("reading routemap file at path '%s'", routemapPath),
 		err,
@@ -522,7 +521,7 @@ func routesGenCmd(pagePkgRel string) {
 		fmt.Sprintf("parsing TOML format of file '%s'", routemapPath),
 		err,
 	)
-	pageName := pkg.Name()
+	pageName := pkg.Name
 	sitePkg, err := generate.SiteFromPagePackage(pkg)
 	userFail(
 		fmt.Sprintf("loading the scaffold Go package for page '%s'", pkg.ImportPath),
