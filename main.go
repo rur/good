@@ -291,6 +291,9 @@ func scaffoldCmd(sitePkgRel string) {
 		sitePkg, err = generate.ParseSitePackage(curPkg.Module, sitePkgRel)
 		userFail("parsing module path", err)
 	}
+	if sitePkg.Name == "" {
+		sitePkg.Name = "main"
+	}
 	err = generate.ValidateScaffoldLocation(sitePkg.Dir, scaffold)
 	userFail("validating scaffold destination", err)
 	files, err := generate.SiteScaffold(sitePkg, scaffold)
@@ -310,7 +313,7 @@ func scaffoldCmd(sitePkgRel string) {
 
 	stdout, err := generate.GoFormat(sitePkg.ImportPath + "/...")
 	if err != nil {
-		log.Fatalf("Page '%s' scaffold was create with formatting errors: %s", sitePkg, err)
+		log.Fatalf("Page '%s' scaffold was create with formatting errors: %s", sitePkg.Name, err)
 	}
 	if len(stdout) > 0 {
 		fmt.Println("Output from go fmt:")
