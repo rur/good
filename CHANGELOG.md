@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v0.1.5] - 2025-03-16
+## [v0.1.5] - 2025-03-21
 
 - Update Semaphore CI README tag
 - Allow good pages command to adopt the package name for the pages template
