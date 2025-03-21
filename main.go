@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -292,6 +291,9 @@ func scaffoldCmd(sitePkgRel string) {
 		sitePkg, err = generate.ParseSitePackage(curPkg.Module, sitePkgRel)
 		userFail("parsing module path", err)
 	}
+	if sitePkg.Name == "" {
+		sitePkg.Name = "main"
+	}
 	err = generate.ValidateScaffoldLocation(sitePkg.Dir, scaffold)
 	userFail("validating scaffold destination", err)
 	files, err := generate.SiteScaffold(sitePkg, scaffold)
@@ -311,7 +313,7 @@ func scaffoldCmd(sitePkgRel string) {
 
 	stdout, err := generate.GoFormat(sitePkg.ImportPath + "/...")
 	if err != nil {
-		log.Fatalf("Page '%s' scaffold was create with formatting errors: %s", sitePkg, err)
+		log.Fatalf("Page '%s' scaffold was create with formatting errors: %s", sitePkg.Name, err)
 	}
 	if len(stdout) > 0 {
 		fmt.Println("Output from go fmt:")
@@ -512,7 +514,7 @@ func routesGenCmd(pagePkgRel string) {
 	pkg, err := generate.GoListPackage(pagePkgRel)
 	userFail(fmt.Sprintf("scanning for a Go package at '%s'", pagePkgRel), err)
 	routemapPath := filepath.Join(pkg.Dir, "routemap.toml")
-	routemapContent, err := ioutil.ReadFile(routemapPath)
+	routemapContent, err := os.ReadFile(routemapPath)
 	userFail(
 		fmt.Sprintf("reading routemap file at path '%s'", routemapPath),
 		err,
@@ -522,7 +524,7 @@ func routesGenCmd(pagePkgRel string) {
 		fmt.Sprintf("parsing TOML format of file '%s'", routemapPath),
 		err,
 	)
-	pageName := pkg.Name()
+	pageName := pkg.Name
 	sitePkg, err := generate.SiteFromPagePackage(pkg)
 	userFail(
 		fmt.Sprintf("loading the scaffold Go package for page '%s'", pkg.ImportPath),

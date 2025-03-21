@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.1.5] - 2025-03-16
+
+- Update Semaphore CI README tag
+- Allow good pages command to adopt the package name for the pages template
+- Update, remove use of deprecated ioutil std library
+
 ## [v0.1.4] - 2025-03-16
 
 Update development version of golang to 1.23.

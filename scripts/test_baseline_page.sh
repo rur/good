@@ -15,7 +15,7 @@ TESTINFO
 echo "clearing any previously failed run data"
 rm -rf baseline
 
-go run . scaffold baseline/page_test
+go run . scaffold ./baseline/page_test
 go run . page ./baseline/page_test newpage -y
 
 if [[ ! -z $(bash ./scripts/usedports.sh | grep 8001) ]]; then

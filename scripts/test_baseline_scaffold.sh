@@ -15,7 +15,7 @@ TESTINFO
 echo "clearly any previously failed run data"
 rm -rf baseline
 
-go run . scaffold baseline/scaffold_test
+go run . scaffold ./baseline/scaffold_test
 
 if [[ ! -z $(bash ./scripts/usedports.sh | grep 8001) ]]; then
   echo >&2 "Port 8001 appears to be in use, cannot run test"

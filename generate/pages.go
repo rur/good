@@ -29,9 +29,11 @@ func PagesScaffold(sitePkg GoPackage, pages []string, scaffold fs.FS) (file File
 	// treat each dir name as a page
 	file.Name = "pages.go"
 	file.Contents = mustExecute("scaffold/pages.go.tmpl", struct {
+		PkgName   string
 		Pages     []string
 		Namespace string
 	}{
+		PkgName:   sitePkg.Name,
 		Pages:     pages,
 		Namespace: sitePkg.ImportPath,
 	}, scaffold)
